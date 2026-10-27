@@ -1,0 +1,552 @@
+% =====================================================================
+%  Análisis Matricial -- Trabajo práctico: la descomposición en valores
+%  singulares.  FIQ-UNL, 2026.
+%
+%  AUTOCONTENIDO: no depende del apunte.  Todo resultado que se usa está
+%  enunciado en los recuadros "Para tener a mano".
+%
+%  Un solo archivo con interruptor:
+%     \solucionestrue   -> compila enunciado + soluciones
+%     \solucionesfalse  -> compila sólo el enunciado
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\newif\ifsoluciones
+\solucionesfalse          % <-- cambiar a \solucionestrue para las soluciones
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nolists,es-noquoting]{babel}
+\usepackage{lmodern}
+\usepackage{lato}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{titlesec}
+\usepackage[margin=2.4cm,top=2.2cm,bottom=2.4cm]{geometry}
+\usepackage[colorlinks=true,linkcolor=fiqrojo,urlcolor=fiqrojo]{hyperref}
+
+% ---- identidad visual --------------------------------------------------
+\definecolor{fiqrojo}{HTML}{E42313}
+\definecolor{fiqgris}{HTML}{585856}
+\definecolor{fiqtexto}{HTML}{262625}
+\definecolor{fiqclaro}{HTML}{F5F5F4}
+\definecolor{fiqlinea}{HTML}{D6D6D3}
+
+\titleformat{\section}{\normalfont\large\bfseries\color{fiqtexto}}
+  {\color{fiqrojo}Ejercicio \thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.6em}{0.7em}
+
+% ---- cajas -------------------------------------------------------------
+\newtcolorbox{manojo}[1][Para tener a mano]{
+  enhanced, breakable, colback=fiqclaro, colframe=fiqlinea,
+  boxrule=0.6pt, left=8pt, right=8pt, top=6pt, bottom=6pt,
+  fonttitle=\bfseries\small\color{fiqtexto}, title={#1},
+  colbacktitle=fiqclaro, coltitle=fiqtexto,
+  borderline west={2pt}{0pt}{fiqgris}}
+
+\usepackage{comment}
+\newenvironment{solucionfmt}{%
+  \par\medskip\noindent
+  \begingroup\color{fiqgris}%
+  \textbf{\color{fiqrojo}Solución.}\ \ignorespaces}{%
+  \endgroup\par\medskip}
+\ifsoluciones
+  \newenvironment{solucion}{\solucionfmt}{\endsolucionfmt}
+\else
+  \excludecomment{solucion}   % requiere \end{solucion} en su propia línea
+\fi
+
+% ---- notación ----------------------------------------------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bi}[1]{\boldsymbol{#1}}
+\DeclareMathOperator{\rg}{rg}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\normF}[1]{\left\|#1\right\|_{F}}
+\newcommand{\normdos}[1]{\left\|#1\right\|_{2}}
+\newcommand{\col}{\operatorname{col}}
+
+\begin{document}
+
+% =====================================================================
+\begin{center}
+  {\lato\bfseries\Large\color{fiqtexto} Trabajo práctico: la descomposición
+   en valores singulares}\\[3pt]
+  {\lato\small\color{fiqgris} Análisis Matricial \ \textbf{·}\ Licenciatura en
+   Ciencia de Datos \ \textbf{·}\ Licenciatura en Matemática Aplicada}\\[1pt]
+  {\lato\small\color{fiqgris} Facultad de Ingeniería Química --- UNL \
+   \textbf{·}\ \today}
+\end{center}
+\vspace{0.4em}
+{\color{fiqlinea}\hrule height 1.2pt}
+\vspace{1.2em}
+
+\noindent
+Este trabajo es \textbf{autocontenido}: todo resultado que haga falta está
+enunciado en los recuadros \emph{Para tener a mano}, de modo que puede
+resolverse sin tener el apunte al lado. Lo que sí se supone conocido es el
+álgebra lineal básica: espacio columna $C(A)$, espacio nulo $N(A)$, rango
+$\rg(A)$, matrices ortogonales, y el \textbf{teorema espectral} (toda matriz
+simétrica real $S$ se escribe $S=Q\Lambda Q^T$ con $Q$ ortogonal y $\Lambda$
+diagonal real).
+
+\medskip
+\noindent
+A lo largo de todo el trabajo $\norm{\cdot}$ es la norma euclídea de vectores,
+$\norm{\bi x}^2=\bi x^T\bi x$. Se entrega por escrito; se evalúan los
+razonamientos, no sólo los resultados.
+
+% =====================================================================
+\section{Verdadero o falso}
+
+\begin{manojo}
+Sea $A\in\R^{m\times n}$ de rango $r$. Una \textbf{SVD} de $A$ es una
+factorización $A=U\Sigma V^T$ con $U\in\R^{m\times m}$ y $V\in\R^{n\times n}$
+ortogonales y $\Sigma\in\R^{m\times n}$ con $\sigma_1\ge\cdots\ge\sigma_r>0$
+en las primeras posiciones diagonales y ceros en el resto. Los $\sigma_k$ son
+los \textbf{valores singulares} de $A$: las raíces cuadradas de los
+autovalores de $A^TA$. Agrupando columna por fila,
+\[
+A=\sum_{k=1}^{r}\sigma_k\,\bi u_k\bi v_k^T ,
+\qquad
+A_d:=\sum_{k=1}^{d}\sigma_k\,\bi u_k\bi v_k^T
+\quad(\textbf{SVD truncada en el nivel } d).
+\]
+Se usan libremente los hechos siguientes.
+\begin{enumerate}[label=\textup{(R\arabic*)},leftmargin=*,itemsep=2pt,topsep=3pt]
+\item $\displaystyle\normdos{A}=\max_{\bi x\neq\bi0}\frac{\norm{A\bi x}}{\norm{\bi x}}=\sigma_1$.
+\item $\normF{A}^2=\sum_{i,j}a_{ij}^2=\sigma_1^2+\cdots+\sigma_r^2$.
+\item $\normdos{QAP}=\normdos{A}$ y $\normF{QAP}=\normF{A}$ si $Q$ y $P$ son
+ortogonales de tamaños compatibles.
+\item \emph{(Eckart--Young.)} Para todo $d$,
+\[
+\min_{\rg(M)\le d}\normF{A-M}=\Bigl(\sum_{k>d}\sigma_k^2\Bigr)^{1/2} ,
+\qquad
+\min_{\rg(M)\le d}\normdos{A-M}=\sigma_{d+1} ,
+\]
+y en ambos casos el mínimo se alcanza en $M=A_d$.
+\end{enumerate}
+\end{manojo}
+
+\noindent
+Decidir si cada afirmación es \textbf{verdadera} o \textbf{falsa}. Si es
+verdadera, demostrarla; si es falsa, dar un \textbf{contraejemplo explícito}.
+Las matrices son reales y, donde haga falta, de tamaños compatibles.
+
+\begin{enumerate}[label=\textbf{\arabic*.},itemsep=3pt,topsep=4pt,leftmargin=*]
+\item Si $S$ es simétrica, sus valores singulares son sus autovalores.
+
+\item Si $A$ es cuadrada y $\lambda$ es un autovalor real de $A$, entonces
+$|\lambda|\le\sigma_1(A)$.
+
+\item Si $A$ es cuadrada y $\norm{A\bi x}=\norm{A^T\bi x}$ para todo $\bi x$,
+entonces $A$ es simétrica.
+
+\item Si $A$ tiene rango uno, entonces $\normdos{A}=\normF{A}$.
+
+\item Para toda $A$ y todo $d$, la matriz de rango $\le d$ más próxima a $A$
+en norma de Frobenius es única.
+
+\item El teorema de Eckart--Young vale para cualquier norma de matrices.
+
+\item Los valores singulares de $A^2$ son los cuadrados de los valores
+singulares de $A$.
+
+\item Si $A$ es cuadrada de $n\times n$, entonces
+$|\det A|=\sigma_1\sigma_2\cdots\sigma_n$.
+
+\item Si $A$ es cuadrada de $n\times n$ e invertible, entonces
+$\sigma_n(A)=1/\normdos{A^{-1}}$.
+
+\item $\sigma_1(AB)=\sigma_1(A)\,\sigma_1(B)$.
+
+\item La descomposición en valores singulares de una matriz es única.
+
+\item Si $A,B\in\R^{m\times n}$ tienen los mismos valores singulares, entonces
+existen $Q\in\R^{m\times m}$ y $P\in\R^{n\times n}$ ortogonales tales que
+$B=QAP$.
+
+\item Si $A$ y $B$ tienen los mismos valores singulares, entonces
+$\normF{A-A_d}=\normF{B-B_d}$ para todo $d$.
+
+\item El conjunto de las matrices de $m\times n$ de rango $\le d$ es un
+subespacio de $\R^{m\times n}$.
+
+\item En la norma espectral, $A_d$ es la \emph{única} matriz de rango $\le d$
+que está a distancia mínima de $A$.
+
+\item Si $\Pi\in\R^{n\times n}$ es una proyección ortogonal de rango $d$,
+entonces $\normF{A-A\Pi}\ \ge\ \normF{A-A_d}$.
+\end{enumerate}
+
+\begin{solucion}
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}*{16}{c}@{}}
+\hline
+1&2&3&4&5&6&7&8&9&10&11&12&13&14&15&16\\
+\hline
+F&V&F&V&F&F&F&V&V&F&F&V&V&F&F&V\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{enumerate}[label=\textbf{\arabic*.},itemsep=4pt,topsep=4pt,leftmargin=*]
+\item \textbf{Falsa.} Son los \emph{módulos} de los autovalores. Si
+$S=\diag(1,-5)$ entonces $S^TS=\diag(1,25)$ y los valores singulares son
+$5$ y $1$, mientras que los autovalores son $1$ y $-5$. La afirmación sí es
+cierta si $S$ es además semidefinida positiva.
+
+\item \textbf{Verdadera.} Si $A\bi x=\lambda\bi x$ con $\bi x\neq\bi0$,
+entonces $\norm{A\bi x}=|\lambda|\,\norm{\bi x}$, y por (R1)
+\[
+|\lambda|=\frac{\norm{A\bi x}}{\norm{\bi x}}\ \le\ \normdos{A}=\sigma_1 .
+\]
+La desigualdad puede ser estricta: para
+$A=\begin{bsmallmatrix}1&1\\0&1\end{bsmallmatrix}$ el único autovalor es $1$
+y $\sigma_1=(1+\sqrt5)/2$.
+
+\item \textbf{Falsa.} La hipótesis equivale a $A^TA=AA^T$ (matriz
+\emph{normal}), que es más débil que la simetría. La rotación de $90^\circ$
+\[
+Q=\begin{bmatrix}0&-1\\ 1&0\end{bmatrix}
+\]
+cumple $Q^TQ=QQ^T=I$, así que $\norm{Q\bi x}=\norm{\bi x}=\norm{Q^T\bi x}$
+para todo $\bi x$, y sin embargo $Q^T\neq Q$.
+
+\item \textbf{Verdadera.} Si $\rg(A)=1$ hay un solo valor singular no nulo,
+de modo que por (R1) y (R2)
+\[
+\normF{A}^2=\sigma_1^2=\normdos{A}^2 .
+\]
+Es el único caso en que coinciden: si $r\ge2$, $\normF{A}^2=\sum_k\sigma_k^2>\sigma_1^2$.
+
+\item \textbf{Falsa.} Tomemos $A=I_2$ y $d=1$. Para cualquier vector unitario
+$\bi u$, la matriz $M=\bi u\bi u^T$ tiene rango $1$ y
+\[
+\normF{I-\bi u\bi u^T}^2=\tr\bigl((I-\bi u\bi u^T)^2\bigr)
+=\tr(I-\bi u\bi u^T)=2-1=1=\sigma_2^2 ,
+\]
+usando que $I-\bi u\bi u^T$ es una proyección ortogonal. O sea: \emph{todas}
+las proyecciones de rango $1$ realizan el mínimo. El fenómeno aparece
+exactamente cuando $\sigma_d=\sigma_{d+1}$; si $\sigma_d>\sigma_{d+1}$ el
+minimizante es único.
+
+\item \textbf{Falsa.} La demostración de Eckart--Young usa que la norma es
+invariante por multiplicación por matrices ortogonales (R3), y hay normas de
+matrices que no lo son. Con la norma del máximo
+$\norm{A}_{\max}=\max_{i,j}|a_{ij}|$, tomemos de nuevo $A=I_2$ y $d=1$:
+\[
+A_1=\begin{bmatrix}1&0\\0&0\end{bmatrix},\quad \norm{I-A_1}_{\max}=1,
+\qquad\text{mientras que}\qquad
+M=\tfrac12\begin{bmatrix}1&1\\1&1\end{bmatrix},\quad \norm{I-M}_{\max}=\tfrac12 .
+\]
+$M$ tiene rango $1$ y aproxima mejor que la truncada.
+
+\item \textbf{Falsa.} Es verdad para \emph{autovalores}, no para valores
+singulares. Con
+$A=\begin{bsmallmatrix}0&2\\0&0\end{bsmallmatrix}$ se tiene
+$\sigma(A)=(2,0)$, pero $A^2=0$ y entonces $\sigma(A^2)=(0,0)$, no $(4,0)$.
+La razón de fondo: los $\sigma_k(A)$ son los autovalores de $\sqrt{A^TA}$, y
+$(A^2)^TA^2\neq(A^TA)^2$ salvo que $A$ sea normal.
+
+\item \textbf{Verdadera.} De $A=U\Sigma V^T$,
+\[
+\det A=\det U\cdot\det\Sigma\cdot\det V^T ,
+\]
+y $\det U,\det V^T\in\{1,-1\}$ por ser ortogonales, mientras que
+$\det\Sigma=\sigma_1\cdots\sigma_n$. Tomando módulo quedan sólo los valores
+singulares. Geométricamente: el cubo unitario va a parar a una caja de lados
+$\sigma_1,\dots,\sigma_n$, y $|\det A|$ es su volumen.
+
+\item \textbf{Verdadera.} Si $A=U\Sigma V^T$ entonces
+$A^{-1}=V\Sigma^{-1}U^T$, y
+$\Sigma^{-1}=\diag(1/\sigma_1,\dots,1/\sigma_n)$ tiene como entrada más
+grande a $1/\sigma_n$. Luego $\normdos{A^{-1}}=1/\sigma_n(A)$. Es la
+identidad que hace aparecer el número de condición
+$\kappa_2(A)=\normdos{A}\normdos{A^{-1}}=\sigma_1/\sigma_n$.
+
+\item \textbf{Falsa.} Vale $\le$, no $=$. Con $A=\diag(1,0)$ y
+$B=\diag(0,1)$ resulta $AB=0$, así que $\sigma_1(AB)=0$, mientras que
+$\sigma_1(A)\sigma_1(B)=1$: la dirección que $B$ estira es justo la que $A$
+anula.
+
+\item \textbf{Falsa.} Para $A=I_2$ y \emph{cualquier} $Q$ ortogonal vale
+$I=QIQ^T$, de modo que hay infinitas elecciones de $U$ y $V$. Lo único
+determinado por $A$ son los valores singulares. Cuando los $\sigma_k$ no
+nulos son todos distintos, cada par $(\bi u_k,\bi v_k)$ queda determinado
+salvo un cambio \emph{simultáneo} de signo; si hay $\sigma_k$ repetidos queda
+además la libertad de rotar dentro del subespacio correspondiente.
+
+\item \textbf{Verdadera.} Escribamos $A=U_1\Sigma V_1^T$ y $B=U_2\Sigma V_2^T$
+con el \emph{mismo} $\Sigma$. Entonces
+\[
+B=U_2\Sigma V_2^T
+=\underbrace{(U_2U_1^T)}_{Q}\,\underbrace{U_1\Sigma V_1^T}_{A}\,
+\underbrace{(V_1V_2^T)}_{P} = QAP ,
+\]
+y $Q,P$ son ortogonales por ser producto de ortogonales. Junto con (R3) esto
+dice que los valores singulares son un sistema completo de invariantes para
+la equivalencia ortogonal: $A$ y $B$ tienen los mismos $\sigma_k$ si y sólo
+si una se obtiene de la otra multiplicando por ortogonales.
+
+\item \textbf{Verdadera.} Por (R4), $\normF{A-A_d}=\bigl(\sum_{k>d}\sigma_k^2\bigr)^{1/2}$,
+que depende \emph{sólo} de los valores singulares y no de $U$ ni de $V$. Es
+el complemento del ítem 12: dos matrices ortogonalmente equivalentes se
+aproximan igual de bien en cada nivel.
+
+\item \textbf{Falsa.} No es cerrado por sumas. Con $d=1$, las matrices
+$\diag(1,0)$ y $\diag(0,1)$ tienen rango $1$, pero su suma es $I_2$, de rango
+$2$. Esto es justamente lo que hace notable a Eckart--Young: se minimiza
+sobre un conjunto que \textbf{no} es un subespacio --- así que no hay ninguna
+proyección ortogonal de por medio --- y aun así la solución es explícita.
+
+\item \textbf{Falsa.} El mínimo $\sigma_{d+1}$ se alcanza, pero en general en
+muchas matrices a la vez. Sea $A=\diag(3,2,1)$ y $d=1$. Toda
+$M_t=\diag(t,0,0)$ tiene rango $\le1$ y
+\[
+\normdos{A-M_t}=\max\{|3-t|,\,2,\,1\}=2=\sigma_2
+\qquad\text{para todo } t\in[1,5] ,
+\]
+mientras que $A_1=\diag(3,0,0)$ corresponde a $t=3$. Buen contraste con el
+ítem 5: en Frobenius la unicidad sólo falla cuando $\sigma_d=\sigma_{d+1}$;
+en la espectral falla casi siempre, porque $\normdos{\cdot}$ no ``ve'' lo que
+ocurre fuera de la dirección dominante del error.
+
+\item \textbf{Verdadera.} Como $\rg(A\Pi)\le\rg(\Pi)=d$, la matriz $A\Pi$
+compite en el mismo conjunto en el que $A_d$ realiza el mínimo, y (R4) da la
+desigualdad de inmediato. La igualdad se alcanza tomando
+$\Pi=V_dV_d^T$ con $V_d=[\,\bi v_1\ \cdots\ \bi v_d\,]$. Este renglón es el
+teorema que está detrás del análisis de componentes principales: entre todas
+las proyecciones sobre subespacios de dimensión $d$, la de las $d$ primeras
+direcciones singulares derechas es la que menos información pierde.
+\end{enumerate}
+\end{solucion}
+
+% =====================================================================
+\section{Construir la SVD a partir de \texorpdfstring{$AA^T$}{AAT}}
+
+\begin{manojo}
+Para $A\in\R^{m\times n}$:
+\begin{itemize}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item Una matriz $S$ es \textbf{semidefinida positiva} si $S^T=S$ y
+$\bi x^TS\bi x\ge0$ para todo $\bi x$; equivalentemente, si es simétrica y
+todos sus autovalores son $\ge0$.
+\item $\rg(AA^T)=\rg(A^TA)=\rg(A)$. En particular, como $AA^T$ es simétrica,
+tiene exactamente $r=\rg(A)$ autovalores no nulos contados con multiplicidad.
+\end{itemize}
+\end{manojo}
+
+\noindent Sea $A\in\R^{m\times n}$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt,topsep=4pt]
+\item Probar que $A^TA$ y $AA^T$ son simétricas, semidefinidas positivas, y
+que tienen los mismos autovalores no nulos. \emph{Sugerencia:} para lo
+último, si $A^TA\,\bi v=\lambda\bi v$ con $\lambda\neq0$, ver que $A\bi v$ es
+autovector de $AA^T$ con el mismo autovalor, y verificar que
+$A\bi v\neq\bi 0$.
+\end{enumerate}
+
+\medskip
+\noindent
+Por el ítem (a) y el recuadro, los autovalores no nulos de $AA^T$ son
+positivos y son exactamente $r=\rg(A)$. Sean entonces
+$\sigma_1\ge\cdots\ge\sigma_r>0$ tales que $\sigma_1^2,\dots,\sigma_r^2$ son
+esos autovalores. Sea $U=[\,\bi u_1\ \cdots\ \bi u_m\,]$ una matriz ortogonal
+cuyas columnas son autovectores de $AA^T$, ordenados de modo que
+$\bi u_1,\dots,\bi u_r$ correspondan a $\sigma_1^2,\dots,\sigma_r^2$ (existe
+por el teorema espectral). Escribimos $U_r=[\,\bi u_1\ \cdots\ \bi u_r\,]$,
+$U_{-r}=[\,\bi u_{r+1}\ \cdots\ \bi u_m\,]$,
+$\Sigma_r=\diag(\sigma_1,\dots,\sigma_r)$, y definimos
+\[
+V_r=A^TU_r\Sigma_r^{-1}\in\R^{n\times r} .
+\]
+Elegimos $V_{-r}=[\,\bi v_{r+1}\ \cdots\ \bi v_n\,]$ una base ortonormal de
+$N(A)$, y ponemos
+\[
+V=[\,V_r\ \ V_{-r}\,]\in\R^{n\times n},
+\qquad
+\Sigma=\begin{bmatrix}\Sigma_r&0\\ 0&0\end{bmatrix}\in\R^{m\times n} .
+\]
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt,topsep=4pt,start=2]
+\item Probar que $AV_r=U_r\Sigma_r$.
+\item Probar que $AV_{-r}=0$.
+\item Concluir que $AV=[\,U_r\Sigma_r\ \ 0\,]=U\Sigma$.
+\item Probar que $V^TV=I_n$. \emph{Sugerencia:} verificar por separado
+$V_r^TV_r=I_r$, $V_r^TV_{-r}=0$ y $V_{-r}^TV_{-r}=I_{n-r}$.
+\item Deducir, por ser $V$ cuadrada, que $VV^T=I_n$ y $V^T=V^{-1}$.
+\item Concluir que $A=U\Sigma V^T$.
+\end{enumerate}
+
+% =====================================================================
+\section{La norma espectral}
+
+\begin{manojo}
+Sea $A\in\R^{m\times n}$ y sean $\lambda_1\ge\cdots\ge\lambda_n\ge0$ los
+autovalores de $A^TA$. Los \textbf{valores singulares} de $A$ son
+$\sigma_k=\sqrt{\lambda_k}$, y los no nulos son $\sigma_1\ge\cdots\ge\sigma_r>0$
+con $r=\rg(A)$. La \textbf{norma espectral} de $A$ es
+\[
+\normdos{A}=\max_{\bi x\neq\bi 0}\frac{\norm{A\bi x}}{\norm{\bi x}} .
+\]
+Se usan libremente los tres hechos siguientes.
+\begin{enumerate}[label=\textup{(R\arabic*)},leftmargin=*,itemsep=2pt,topsep=3pt]
+\item $\normdos{A}=\sigma_1$, y el máximo \emph{se alcanza}: en todo
+autovector unitario de $A^TA$ asociado a $\lambda_1$.
+\item Si $A$ es cuadrada y $\lambda$ es un autovalor real de $A$, entonces
+$|\lambda|\le\sigma_1$.
+\item $A^TA$ y $AA^T$ tienen los mismos autovalores no nulos.
+\end{enumerate}
+Además, la \textbf{norma de Frobenius} es
+$\normF{A}=\bigl(\sum_{i,j}a_{ij}^2\bigr)^{1/2}=\sqrt{\tr(A^TA)}$, y una
+norma $\norm{\cdot}$ sobre un espacio vectorial proviene de un producto
+interno \textbf{si y sólo si} cumple la \emph{ley del paralelogramo}
+(teorema de Jordan--von Neumann):
+\[
+\norm{x+y}^2+\norm{x-y}^2=2\norm{x}^2+2\norm{y}^2
+\qquad\text{para todos } x,y .
+\]
+\end{manojo}
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt,topsep=4pt]
+\item Verificar, directamente sobre la definición, que
+\[
+\normdos{A}=\max_{\norm{\bi x}=1}\norm{A\bi x}
+=\max_{0<\norm{\bi x}\le1}\norm{A\bi x} ,
+\]
+es decir, que las tres expresiones dan el mismo número.
+
+\item Calcular $\normdos{A}$ para
+\[
+A=\begin{bmatrix}1&0\\ 0&3\end{bmatrix},
+\qquad
+A=\begin{bmatrix}0&2\\ 0&0\end{bmatrix},
+\qquad
+A=\begin{bmatrix}1&1\\ 0&1\end{bmatrix} .
+\]
+En el último caso, comparar $\normdos{A}$ con $\max_i|\lambda_i(A)|$ y
+observar que la desigualdad de (R2) es \emph{estricta}.
+
+\item Probar que $\normdos{A}=\normdos{A^T}$. \emph{Sugerencia:} usar (R3).
+Mostrar en cambio, con un ejemplo, que \emph{no} es cierto que
+$\norm{A\bi x}=\norm{A^T\bi x}$ para todo $\bi x$, y probar que sí lo es
+cuando $A$ conmuta con su traspuesta.
+
+\item Probar que $\normdos{QA}=\normdos{A}=\normdos{AQ'}$ si $Q$ y $Q'$ son
+matrices ortogonales de tamaños compatibles. \emph{Sugerencia:} las matrices
+ortogonales no cambian la norma de los vectores.
+
+\item \emph{(Una submatriz no puede estirar más que la matriz entera.)} Sea
+$B$ la submatriz de $A$ formada por algunas de sus filas y algunas de sus
+columnas. Probar que $\normdos{B}\le\normdos{A}$ de las dos maneras
+siguientes.
+\begin{enumerate}[label=(\roman*),itemsep=2pt,topsep=2pt]
+\item \emph{A mano.} Si $C$ se obtiene de $A$ quedándose con algunas
+columnas y $\bi y$ es un vector del tamaño correspondiente, sea
+$\bi x\in\R^n$ el vector que resulta de rellenar con ceros las posiciones
+eliminadas: verificar que $A\bi x=C\bi y$ y $\norm{\bi x}=\norm{\bi y}$, y
+concluir $\normdos{C}\le\normdos{A}$. Después, si $D$ sale de $C$ quedándose
+con algunas filas, observar que $D\bi y$ es $C\bi y$ con coordenadas
+borradas, así que $\norm{D\bi y}\le\norm{C\bi y}$. Encadenar las dos
+operaciones.
+\item \emph{En forma matricial.} Escribir $B=R\,A\,C^T$ con $R$ y $C$
+matrices de ceros y unos que seleccionan filas y columnas, verificar que $R$
+y $C$ tienen filas ortonormales y deducir la desigualdad del ítem (d).
+\end{enumerate}
+
+\item Sea $A$ con valores singulares $\sigma_1,\dots,\sigma_r$. Determinar
+los valores singulares de $A^T$, de $A^TA$, de $AA^TA$, y de $A^{-1}$ cuando
+$A$ es cuadrada e invertible. ¿Cuánto vale $\normdos{A^{-1}}$?
+
+\item \emph{(La norma espectral no viene de un producto interno.)} Tomar
+\[
+A=\begin{bmatrix}1&0\\ 0&0\end{bmatrix},
+\qquad
+B=\begin{bmatrix}0&0\\ 0&1\end{bmatrix} .
+\]
+Calcular $\normdos{A+B}$, $\normdos{A-B}$, $\normdos{A}$ y $\normdos{B}$, y
+verificar que falla la ley del paralelogramo. Concluir, por Jordan--von
+Neumann, que $\normdos{\cdot}$ no proviene de ningún producto interno.
+Repetir la cuenta con $\normF{\cdot}$ y las mismas dos matrices, y explicar
+por qué esta vez la ley \emph{tiene} que cumplirse.
+\end{enumerate}
+
+% =====================================================================
+\section{La SVD y los cuatro subespacios}
+
+\begin{manojo}
+Sea $A\in\R^{m\times n}$ de rango $r$, con SVD $A=U\Sigma V^T$: $U$ de
+$m\times m$ y $V$ de $n\times n$ ortogonales, $\Sigma$ de $m\times n$ con
+$\sigma_1\ge\cdots\ge\sigma_r>0$ en las primeras posiciones diagonales y
+ceros en el resto. Escribimos $U_r=[\,\bi u_1\ \cdots\ \bi u_r\,]$,
+$V_r=[\,\bi v_1\ \cdots\ \bi v_r\,]$. Multiplicando columna por fila,
+\[
+A=\sigma_1\bi u_1\bi v_1^T+\cdots+\sigma_r\bi u_r\bi v_r^T ,
+\qquad\text{y}\qquad
+A_d:=\sum_{k\le d}\sigma_k\bi u_k\bi v_k^T
+\]
+se llama la \textbf{SVD truncada} de $A$ en el nivel $d$.
+
+\smallskip
+La SVD exhibe bases ortonormales de los cuatro subespacios fundamentales:
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lll@{}}
+\hline
+subespacio & base ortonormal & dimensión\\
+\hline
+espacio fila $C(A^T)$ & $\bi v_1,\dots,\bi v_r$ & $r$\\
+espacio nulo $N(A)$ & $\bi v_{r+1},\dots,\bi v_n$ & $n-r$\\
+espacio columna $C(A)$ & $\bi u_1,\dots,\bi u_r$ & $r$\\
+espacio nulo a izquierda $N(A^T)$ & $\bi u_{r+1},\dots,\bi u_m$ & $m-r$\\
+\hline
+\end{tabular}
+\end{center}
+y las proyecciones ortogonales sobre $C(A)$ y sobre $C(A^T)$ son,
+respectivamente, $U_rU_r^T$ y $V_rV_r^T$.
+\end{manojo}
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt,topsep=4pt]
+\item Calcular la SVD completa de
+\[
+A=\begin{bmatrix}0&2&0\\ 0&0&3\\ 0&0&0\end{bmatrix}
+\]
+y exhibir las bases ortonormales de los cuatro subespacios. (Acá $U$ y $V$
+son matrices de permutación.)
+
+\item Verificar sobre esa matriz que $U_rU_r^T$ y $V_rV_r^T$ son
+efectivamente proyecciones ortogonales, comprobando $P^2=P=P^T$ y
+$\tr(P)=r$, y que proyectan sobre $C(A)$ y $C(A^T)$.
+
+\item Probar en general que $U_rU_r^TA=A$ y $AV_rV_r^T=A$, e interpretar las
+dos igualdades en palabras.
+
+\item Probar que los valores singulares de $A_d$ son
+$\sigma_1,\dots,\sigma_d$ y los de $A-A_d$ son
+$\sigma_{d+1},\dots,\sigma_r$. Deducir que $\normdos{A_d}\le\normdos{A}$ y
+que $\normdos{A-A_d}=\sigma_{d+1}$.
+
+\item \emph{(La esfera y el elipsoide.)} Sea
+$A=\begin{bmatrix}3&0\\ 4&5\end{bmatrix}$, cuya SVD es
+\[
+\sigma_1=3\sqrt5,\qquad \sigma_2=\sqrt5,
+\]
+\[
+\bi v_1=\tfrac1{\sqrt2}\begin{pmatrix}1\\ 1\end{pmatrix},\quad
+\bi v_2=\tfrac1{\sqrt2}\begin{pmatrix}-1\\ 1\end{pmatrix},\qquad
+\bi u_1=\tfrac1{\sqrt{10}}\begin{pmatrix}1\\ 3\end{pmatrix},\quad
+\bi u_2=\tfrac1{\sqrt{10}}\begin{pmatrix}-3\\ 1\end{pmatrix}
+\]
+(conviene verificarlo). Dibujar la circunferencia unitaria marcando $\bi v_1$
+y $\bi v_2$, y dibujar su imagen $\{A\bi x:\norm{\bi x}=1\}$ marcando
+$\sigma_1\bi u_1$ y $\sigma_2\bi u_2$. Verificar sobre el dibujo que
+$\bi v_1\perp\bi v_2$ y que $\bi u_1\perp\bi u_2$, y observar que $A$
+\emph{no} preserva los ángulos entre otros pares de vectores.
+\end{enumerate}
+
+\end{document}

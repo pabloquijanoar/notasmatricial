@@ -1,0 +1,790 @@
+%% =====================================================================
+%%  Capítulo 13: Mínimos cuadrados y pseudoinversa.
+%%  Reescritura (2026-10) del borrador minimoscuadrados.tex: se quitó la
+%%  duplicación de la segunda mitad, se corrigieron el ejemplo de regresión
+%%  y la demostración de existencia, y se agregaron QR, el número de
+%%  condición al cuadrado, las dos figuras y los ejercicios.
+%%  Etiquetas con prefijo "mc-".
+%% =====================================================================
+
+\chapter{Mínimos cuadrados y pseudoinversa}\label{cap:minimos}
+
+Casi todos los sistemas lineales que aparecen con datos reales son
+\emph{incompatibles}: hay más ecuaciones que incógnitas y ninguna combinación
+de las columnas reproduce exactamente el lado derecho. Este capítulo trata de
+qué hacer entonces. La respuesta corta es que se reemplaza la igualdad
+$A\bi{x}=\bi{b}$ por el problema de minimizar $\normdos{A\bi{x}-\bi{b}}$, que
+siempre tiene solución; la respuesta larga ocupa el capítulo, y el
+instrumento que la organiza es la SVD.
+
+% =====================================================================
+\section{Cuándo tiene solución un sistema}\label{mc-sec:consistencia}
+
+Empecemos por la pregunta previa. Dados $A\in\R^{m\times n}$ y
+$\bi{b}\in\R^m$, ¿cuándo existe $\bi{x}$ con $A\bi{x}=\bi{b}$?
+
+La respuesta ya está en el Capítulo~\ref{cap:algebra-lineal}: por la
+fórmula~\eqref{eq:mat-vec-col}, $A\bi{x}$ es la combinación lineal de las
+columnas de $A$ con coeficientes las entradas de $\bi{x}$, de modo que los
+$A\bi{x}$ barren exactamente el espacio columna $C(A)$. Entonces
+\begin{equation}\label{mc-eq:consistencia}
+A\bi{x}=\bi{b}\ \text{ tiene solución}\qquad\Longleftrightarrow\qquad
+\bi{b}\in C(A).
+\end{equation}
+Y si $\bi{x}_0$ es una solución, todas son $\bi{x}_0+N(A)$, porque restar dos
+soluciones da un vector del núcleo. Hasta acá no hay nada nuevo.
+
+Lo que sí es nuevo, y es lo que vamos a usar todo el capítulo, es que la SVD
+convierte~\eqref{mc-eq:consistencia} en una cuenta con números.
+
+\subsection{La misma pregunta, leída con la SVD}\label{mc-sec:svd-consistencia}
+
+Sea $A=U\Sigma V\transp$ una SVD completa de $A$
+(Capítulo~\ref{cap:SVD}), con $U\in\R^{m\times m}$ y $V\in\R^{n\times n}$
+ortogonales, $r=\rango(A)$ y
+\[
+\Sigma=\begin{bmatrix}D&0\\ 0&0\end{bmatrix}\in\R^{m\times n},
+\qquad D=\diag(\sigma_1,\dots,\sigma_r),\quad \sigma_1\ge\cdots\ge\sigma_r>0 .
+\]
+Hacemos el cambio de variables
+\begin{equation}\label{mc-eq:cambio}
+\bi{z}=V\transp\bi{x}\in\R^n ,\qquad \bi{c}=U\transp\bi{b}\in\R^m .
+\end{equation}
+Como $U$ y $V$ son ortogonales, el cambio es biyectivo y no altera ninguna
+norma: $\normdos{\bi{x}}=\normdos{\bi{z}}$ y $\normdos{\bi{b}}=\normdos{\bi{c}}$.
+Multiplicando $A\bi{x}=\bi{b}$ por $U\transp$ a izquierda,
+\[
+A\bi{x}=\bi{b}
+\quad\Longleftrightarrow\quad
+U\Sigma V\transp\bi{x}=\bi{b}
+\quad\Longleftrightarrow\quad
+\Sigma\bi{z}=\bi{c} .
+\]
+Este último sistema es trivial, porque $\Sigma$ es diagonal: se desacopla en
+$m$ ecuaciones independientes,
+\begin{equation}\label{mc-eq:desacoplado}
+\sigma_i z_i = c_i\quad (i\le r),
+\qquad\qquad
+0 = c_i\quad (i>r).
+\end{equation}
+Las primeras $r$ siempre se pueden resolver, y de manera única:
+$z_i=c_i/\sigma_i$. Las últimas $m-r$ no tienen nada que resolver: o se
+cumplen o no. Y las variables $z_{r+1},\dots,z_n$ no aparecen en ninguna
+ecuación: quedan libres.
+
+Esa lectura de un renglón contesta las tres preguntas a la vez.
+
+\begin{theorem}[Consistencia, vista desde la SVD]\label{mc-teo:consistencia}
+Sea $A=U\Sigma V\transp$ de rango $r$ y sea $\bi{c}=U\transp\bi{b}$.
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=*]
+\item $A\bi{x}=\bi{b}$ tiene solución si y sólo si
+$c_{r+1}=\cdots=c_m=0$, es decir si y sólo si $\bi{b}$ está en el subespacio
+generado por las primeras $r$ columnas de $U$ ---que son, justamente, una base
+ortonormal de $C(A)$.
+\item Cuando hay solución, el conjunto de todas ellas es
+$\bi{x}_0+N(A)$, con $N(A)=\gen(\bi{v}_{r+1},\dots,\bi{v}_n)$ de dimensión
+$n-r$. Hay una sola solución exactamente cuando $r=n$.
+\item $A\bi{x}=\bi{b}$ tiene solución para \emph{todo} $\bi{b}\in\R^m$ si y
+sólo si $r=m$, es decir si y sólo si $\Sigma$ no tiene filas nulas.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Todo sale de~\eqref{mc-eq:desacoplado}. (a) El sistema es compatible si y
+sólo si las ecuaciones $0=c_i$ con $i>r$ se cumplen; y $c_i=\bi{u}_i\transp\bi{b}$,
+así que pedir que se anulen para $i>r$ es pedir que $\bi{b}$ no tenga
+componente fuera de $\gen(\bi{u}_1,\dots,\bi{u}_r)=C(A)$.
+(b) Las coordenadas $z_1,\dots,z_r$ quedan determinadas y
+$z_{r+1},\dots,z_n$ son libres; deshaciendo el cambio, esas direcciones libres
+son $\bi{v}_{r+1},\dots,\bi{v}_n$, que generan $N(A)$. Hay unicidad cuando no
+sobra ninguna, o sea cuando $r=n$.
+(c) Si $r=m$ no hay ecuaciones del segundo tipo y (a) no pide nada; si $r<m$,
+basta tomar $\bi{b}=\bi{u}_m$ para que $c_m=1\ne0$.
+\end{proof}
+
+El ítem (c) merece un comentario, porque se lee directamente en la forma de
+$\Sigma$ y decide el caso según las dimensiones.
+
+\begin{remark}[Los tres casos]\label{mc-obs:tres-casos}
+Como $r\le\min(m,n)$:
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item Si $m>n$ (más ecuaciones que incógnitas), entonces $r\le n<m$ y nunca
+puede ser $r=m$: \emph{ninguna} matriz con más filas que columnas resuelve
+$A\bi{x}=\bi{b}$ para todo $\bi{b}$. Siempre hay lados derechos inalcanzables,
+y éste es el caso de los datos: el que motiva todo el capítulo.
+\item Si $m=n$, la condición $r=m=n$ es que $A$ sea invertible, o sea que
+todos los $\sigma_i$ sean positivos; la solución es entonces única.
+\item Si $m<n$ (sistema subdeterminado), $r=m$ sí es posible, y entonces hay
+solución para todo $\bi{b}$, pero nunca es única: sobran $n-m\ge1$ direcciones
+libres. Éste es el caso que hará falta la Sección~\ref{mc-sec:pseudo} para
+elegir una.
+\end{itemize}
+En los tres casos la condición $r=m$ equivale a que las filas de $A$ sean
+linealmente independientes, por el teorema de la dimensión
+(Teorema~\ref{teo:rango-nulidad}) aplicado a $A\transp$.
+\end{remark}
+
+\begin{example}\label{mc-ej:incompatible}
+Sea
+\[
+A=\begin{bmatrix}1&0\\ 0&1\\ 0&0\end{bmatrix},\qquad
+\bi{b}=\begin{pmatrix}1\\ 2\\ 3\end{pmatrix}.
+\]
+Acá $U=V=I$ y $\Sigma=A$, de modo que $\bi{c}=\bi{b}$ y el sistema
+desacoplado es $z_1=1$, $z_2=2$, $0=3$. La tercera ecuación es imposible:
+$\bi{b}\notin C(A)$. Lo que sobra es exactamente la tercera coordenada, y su
+tamaño ---el $3$--- va a ser el error mínimo que podremos conseguir.
+\end{example}
+
+El Ejemplo~\ref{mc-ej:incompatible} ya sugiere qué hacer cuando el sistema es
+incompatible: las ecuaciones $0=c_i$ no se pueden arreglar, pero tampoco
+dependen de $\bi{x}$. Si en vez de exigir igualdad medimos el error, esas
+componentes aportan una constante y todo lo demás se puede anular.
+
+% =====================================================================
+\section{El problema de mínimos cuadrados}\label{mc-sec:mc}
+
+\subsection{De dónde viene}\label{mc-sec:regresion-motiv}
+
+En un modelo de \textbf{regresión lineal} se observan $m$ individuos, de cada
+uno se miden $n$ predictores y una respuesta, y se quiere explicar la
+respuesta como combinación lineal de los predictores:
+\[
+\bi{y}\approx X\bi{\beta},\qquad X\in\R^{m\times n},\quad
+\bi{\beta}\in\R^n,\quad \bi{y}\in\R^m .
+\]
+La matriz $X$ se llama \textbf{matriz de diseño} y tiene en su fila $i$ los
+predictores del individuo $i$; el vector $\bi{\beta}$ son los coeficientes que
+se quieren estimar. Como hay muchos más individuos que predictores, estamos en
+el caso $m>n$ de la Observación~\ref{mc-obs:tres-casos}: el sistema
+$X\bi{\beta}=\bi{y}$ es incompatible salvo casualidad. En lugar de resolverlo
+se busca el $\bi{\beta}$ que deje el \textbf{residuo}
+$\bi{r}=\bi{y}-X\bi{\beta}$ lo más chico posible.
+
+\begin{definition}[Problema de mínimos cuadrados]\label{mc-def:mc}
+Dados $A\in\R^{m\times n}$ y $\bi{b}\in\R^m$, una \textbf{solución de mínimos
+cuadrados} es cualquier $\hat{\bi{x}}\in\R^n$ que realice
+\[
+\min_{\bi{x}\in\R^n}\ \normdos{A\bi{x}-\bi{b}} .
+\]
+\end{definition}
+
+Medimos con la norma euclídea y no con otra por dos razones que conviene tener
+presentes: porque es la única que viene de un producto interno
+---así que minimizar es proyectar, y hay fórmula cerrada--- y porque es
+invariante por matrices ortogonales (Corolario~\ref{coro:tres-invariantes}),
+que es lo que permite el cambio de variables de~\eqref{mc-eq:cambio}. Con
+$\normdos{\cdot}$ reemplazada por $\|\cdot\|_1$ o $\|\cdot\|_\infty$ el
+problema sigue teniendo sentido, pero deja de ser una proyección y se resuelve
+con otras herramientas.
+
+\subsection{Existencia, y todas las soluciones}\label{mc-sec:existencia}
+
+El mismo cambio de variables de la sección anterior resuelve el problema de un
+saque. No hace falta ningún argumento de compacidad ni de convexidad: la
+solución se escribe.
+
+\begin{theorem}[Mínimos cuadrados con la SVD]\label{mc-teo:existencia}
+Sea $A=U\Sigma V\transp$ de rango $r$, sea $\bi{b}\in\R^m$ y sea
+$\bi{c}=U\transp\bi{b}$. Entonces, con $\bi{z}=V\transp\bi{x}$,
+\begin{equation}\label{mc-eq:descomp}
+\normdos{A\bi{x}-\bi{b}}^2
+=\sum_{i=1}^{r}\bigl(\sigma_iz_i-c_i\bigr)^2
+\ +\ \sum_{i=r+1}^{m}c_i^2 .
+\end{equation}
+En consecuencia:
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=*]
+\item El problema \emph{siempre} tiene solución, y el valor mínimo es
+$\bigl(\sum_{i>r}c_i^2\bigr)^{1/2}$, que no depende de $\bi{x}$.
+\item $\hat{\bi{x}}=V\hat{\bi{z}}$ es solución si y sólo si
+$\hat z_i=c_i/\sigma_i$ para $i\le r$, quedando
+$\hat z_{r+1},\dots,\hat z_n$ \emph{libres}.
+\item El conjunto de soluciones es un subespacio afín de dimensión $n-r$:
+dos soluciones difieren en un vector de $N(A)$. Hay una sola exactamente
+cuando $r=n$.
+\item Todas las soluciones dan el mismo vector ajustado $A\hat{\bi{x}}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Como $U$ es ortogonal, $\normdos{A\bi{x}-\bi{b}}=\normdos{U\transp(A\bi{x}-\bi{b})}
+=\normdos{\Sigma\bi{z}-\bi{c}}$. El vector $\Sigma\bi{z}$ tiene
+$\sigma_iz_i$ en las primeras $r$ coordenadas y ceros en las últimas $m-r$,
+de donde sale~\eqref{mc-eq:descomp} sumando coordenada a coordenada.
+
+La segunda suma de~\eqref{mc-eq:descomp} es una constante: no hay nada que
+hacer con ella. La primera es una suma de cuadrados independientes, cada uno
+anulable eligiendo $z_i=c_i/\sigma_i$, lo cual prueba (a) y (b). Para (c),
+deshaciendo el cambio, las direcciones libres son
+$\bi{v}_{r+1},\dots,\bi{v}_n$, que generan $N(A)$
+(Teorema~\ref{mc-teo:consistencia}(b)). Para (d), si $\hat{\bi{x}}$ y
+$\hat{\bi{x}}'$ son soluciones, su diferencia está en $N(A)$ y entonces
+$A\hat{\bi{x}}=A\hat{\bi{x}}'$.
+\end{proof}
+
+\begin{remark}[Dónde falla el argumento ``la función crece''\,]\label{mc-obs:coerciva}
+Es tentador probar la existencia diciendo que $f(\bi{x})=\normdos{A\bi{x}-\bi{b}}^2$
+es continua y tiende a $+\infty$ cuando $\normdos{\bi{x}}\to\infty$, y que por
+lo tanto alcanza un mínimo. El argumento es correcto \emph{sólo} si
+$N(A)=\{\bi{0}\}$. Si hay núcleo, $f$ no crece: es \textbf{constante} en
+cada dirección del núcleo, porque $A(\bi{x}+t\bi{v})=A\bi{x}$ para
+$\bi{v}\in N(A)$. Por ejemplo, con
+$A=\begin{bsmallmatrix}1&1\\ 1&1\end{bsmallmatrix}$ y $\bi{b}=(1,0)\transp$,
+la función $f$ vale $1$ sobre toda la recta $t\,(1,-1)\transp$. El mínimo
+igual existe ---lo dice el Teorema~\ref{mc-teo:existencia}--- pero por otra
+razón, y es justamente el caso de núcleo no trivial el que nos va a ocupar de
+acá en adelante.
+\end{remark}
+
+\subsection{La lectura geométrica}\label{mc-sec:geometria}
+
+El Teorema~\ref{mc-teo:existencia} dice qué es $A\hat{\bi{x}}$ sin nombrarlo:
+reconstruyendo, $A\hat{\bi{x}}=U\Sigma\hat{\bi{z}}$ tiene coordenadas
+$c_1,\dots,c_r,0,\dots,0$ en la base $\bi{u}_1,\dots,\bi{u}_m$, o sea que es la
+proyección ortogonal de $\bi{b}$ sobre $C(A)=\gen(\bi{u}_1,\dots,\bi{u}_r)$.
+
+\begin{corollary}[Mínimos cuadrados es proyectar]\label{mc-cor:proyeccion}
+Con la notación anterior,
+\[
+A\hat{\bi{x}}=P_{C(A)}\,\bi{b}=U_rU_r\transp\,\bi{b},
+\qquad
+\bi{r}=\bi{b}-A\hat{\bi{x}}\ \perp\ C(A),
+\]
+donde $U_r=[\,\bi{u}_1\ \cdots\ \bi{u}_r\,]$. El residuo $\bi{r}$ es la
+componente de $\bi{b}$ en $N(A\transp)$, y su longitud es el mínimo
+$\bigl(\sum_{i>r}c_i^2\bigr)^{1/2}$.
+\end{corollary}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.05]
+  \fill[fiqclaro] (-2.7,-1.0) -- (2.5,-1.0) -- (3.7,1.0) -- (-1.5,1.0) -- cycle;
+  \draw[fiqlinea]  (-2.7,-1.0) -- (2.5,-1.0) -- (3.7,1.0) -- (-1.5,1.0) -- cycle;
+  \node[fiqgris,anchor=west,font=\small] at (2.55,-0.55) {$C(A)$};
+  \coordinate (O) at (-0.8,-0.35);
+  \coordinate (P) at (1.2,0.05);
+  \coordinate (B) at (1.7,1.95);
+  \fill (O) circle (1.6pt);
+  \draw[-{Stealth},very thick,fiqrojo] (O) -- (B)
+        node[anchor=south west,font=\small] {$\bi{b}$};
+  \draw[-{Stealth},very thick,fiqtexto] (O) -- (P)
+        node[anchor=north,font=\small,yshift=-2pt] {$A\hat{\bi{x}}=P_{C(A)}\bi{b}$};
+  \draw[dashed,very thick,fiqgris] (P) -- (B)
+        node[midway,anchor=west,font=\small] {$\bi{r}=\bi{b}-A\hat{\bi{x}}$};
+  \draw[fiqgris] ($(P)+(0.245,0.049)$) -- ($(P)+(0.310,0.290)$) -- ($(P)+(0.065,0.241)$);
+  \draw[-{Stealth},fiqgris,thin] (O) ++(0,0) -- ++(-1.4,0.28);
+  \node[fiqgris,font=\small,anchor=east] at (-2.2,-0.07) {$A\bi{x}$};
+\end{tikzpicture}
+\caption{Mínimos cuadrados en $\R^m$. Los vectores $A\bi{x}$ barren el plano
+$C(A)$. El más cercano a $\bi{b}$ es el pie de la perpendicular, $A\hat{\bi{x}}$,
+y el residuo $\bi{r}$ queda ortogonal a todo el plano. El mínimo
+$\normdos{\bi{r}}$ es la distancia de $\bi{b}$ a $C(A)$.}
+\label{mc-fig:proyeccion}
+\end{figure}
+
+% =====================================================================
+\section{Las ecuaciones normales}\label{mc-sec:normales}
+
+La Figura~\ref{mc-fig:proyeccion} da una caracterización que no menciona la
+SVD y que es la que se usa para calcular: que el residuo sea ortogonal a
+$C(A)$ equivale a que sea ortogonal a cada columna de $A$, y apilando esas $n$
+condiciones en una sola ecuación matricial ---como en la
+Sección~\ref{sec:cuatro}--- queda $A\transp(\bi{b}-A\hat{\bi{x}})=\bi{0}$.
+
+\begin{theorem}[Ecuaciones normales]\label{mc-teo:normales}
+$\hat{\bi{x}}$ es solución de mínimos cuadrados si y sólo si
+\begin{equation}\label{mc-eq:normales}
+\boxed{\ A\transp A\,\hat{\bi{x}}=A\transp\bi{b}\ }
+\end{equation}
+Además este sistema \emph{siempre} es compatible, aunque $A\bi{x}=\bi{b}$ no lo
+sea.
+\end{theorem}
+
+\begin{proof}
+Para cualquier $\bi{x}$ escribimos $A\bi{x}-\bi{b}=A(\bi{x}-\hat{\bi{x}})
+-(\bi{b}-A\hat{\bi{x}})$. Si vale~\eqref{mc-eq:normales}, el segundo sumando
+es ortogonal a $C(A)$ y el primero está en $C(A)$, así que por Pitágoras
+\[
+\normdos{A\bi{x}-\bi{b}}^2
+=\normdos{A(\bi{x}-\hat{\bi{x}})}^2+\normdos{\bi{b}-A\hat{\bi{x}}}^2
+\ \ge\ \normdos{\bi{b}-A\hat{\bi{x}}}^2 ,
+\]
+con igualdad si y sólo si $A\bi{x}=A\hat{\bi{x}}$: luego $\hat{\bi{x}}$ es
+mínimo. Recíprocamente, si $\hat{\bi{x}}$ es mínimo, el
+Corolario~\ref{mc-cor:proyeccion} dice que $\bi{b}-A\hat{\bi{x}}\perp C(A)$, que
+es~\eqref{mc-eq:normales}.
+
+Para la compatibilidad, por~\eqref{mc-eq:consistencia} hay que ver que
+$A\transp\bi{b}\in C(A\transp A)$. Con la SVD,
+$A\transp A=V\Sigma\transp\Sigma V\transp$ y
+$\Sigma\transp\Sigma=\diag(\sigma_1^2,\dots,\sigma_r^2,0,\dots,0)$, de donde
+$C(A\transp A)=\gen(\bi{v}_1,\dots,\bi{v}_r)=C(A\transp)$; y
+$A\transp\bi{b}\in C(A\transp)$ siempre.
+\end{proof}
+
+\begin{proposition}[El núcleo no cambia]\label{mc-prop:nucleos}
+$N(A\transp A)=N(A)$ y, por lo tanto, $\rango(A\transp A)=\rango(A)$.
+\end{proposition}
+
+\begin{proof}
+Si $A\bi{v}=\bi{0}$ entonces $A\transp A\bi{v}=\bi{0}$. Recíprocamente, si
+$A\transp A\bi{v}=\bi{0}$, multiplicando por $\bi{v}\transp$ a izquierda queda
+$0=\bi{v}\transp A\transp A\bi{v}=\normdos{A\bi{v}}^2$, así que $A\bi{v}=\bi{0}$.
+Los rangos coinciden por el Teorema~\ref{teo:rango-nulidad}, porque las dos
+matrices tienen $n$ columnas.
+\end{proof}
+
+\begin{corollary}[El caso de rango completo por columnas]\label{mc-cor:rango-completo}
+Son equivalentes: las columnas de $A$ son linealmente independientes;
+$\rango(A)=n$; $A\transp A$ es invertible; la solución de mínimos cuadrados es
+única. En ese caso
+\[
+\hat{\bi{x}}=(A\transp A)\inv A\transp\bi{b},
+\qquad
+P_{C(A)}=A(A\transp A)\inv A\transp .
+\]
+\end{corollary}
+
+\begin{proof}
+Las tres primeras equivalen por la Proposición~\ref{mc-prop:nucleos}
+($A\transp A$ es cuadrada de $n\times n$ e invertible exactamente cuando su
+núcleo es trivial), y la cuarta por el
+Teorema~\ref{mc-teo:existencia}(c). La fórmula de $\hat{\bi{x}}$ sale de
+despejar en~\eqref{mc-eq:normales}, y la de la proyección de
+$A\hat{\bi{x}}=P_{C(A)}\bi{b}$ para todo $\bi{b}$. Que $P_{C(A)}$ así escrita es
+simétrica e idempotente se verifica directamente, y su traza es $n$
+(Corolario~\ref{cor:traza-proyeccion}).
+\end{proof}
+
+\begin{remark}\label{mc-obs:compatible}
+Si $A\bi{x}=\bi{b}$ \emph{sí} tiene solución, esa solución también
+cumple~\eqref{mc-eq:normales} y el residuo es nulo: mínimos cuadrados no
+estropea nada, extiende. Por eso~\eqref{mc-eq:normales} se puede usar siempre,
+sin preguntarse antes si el sistema era compatible.
+\end{remark}
+
+% =====================================================================
+\section{Mínimos cuadrados con \texorpdfstring{$QR$}{QR}}\label{mc-sec:QR}
+
+Las ecuaciones normales son correctas pero no son la manera de calcular. La
+factorización $QR$ del Capítulo~\ref{cap:ortogonalidad} resuelve el problema
+sin formar nunca $A\transp A$.
+
+\begin{proposition}[Mínimos cuadrados por $QR$]\label{mc-prop:QR}
+Sea $A\in\R^{m\times n}$ con $\rango(A)=n$ y sea $A=QR$ una factorización
+reducida, con $Q\in\R^{m\times n}$ de columnas ortonormales
+($Q\transp Q=I_n$) y $R\in\R^{n\times n}$ triangular superior e invertible.
+Entonces la solución de mínimos cuadrados es la del sistema triangular
+\begin{equation}\label{mc-eq:QR}
+\boxed{\ R\,\hat{\bi{x}}=Q\transp\bi{b}\ }
+\end{equation}
+y la proyección sobre $C(A)$ es $P_{C(A)}=QQ\transp$.
+\end{proposition}
+
+\begin{proof}
+Reemplazando $A=QR$ en~\eqref{mc-eq:normales} y usando $Q\transp Q=I_n$,
+\[
+A\transp A=R\transp Q\transp QR=R\transp R ,
+\qquad A\transp\bi{b}=R\transp Q\transp\bi{b} ,
+\]
+así que las ecuaciones normales son $R\transp R\hat{\bi{x}}=R\transp Q\transp\bi{b}$.
+Como $R$ es invertible, $R\transp$ también, y se la puede cancelar: queda
+\eqref{mc-eq:QR}. Para la proyección, $A(A\transp A)\inv A\transp
+=QR(R\transp R)\inv R\transp Q\transp=QRR\inv R^{-\mathsf T}R\transp Q\transp=QQ\transp$.
+\end{proof}
+
+Dos ventajas, una práctica y otra conceptual. La práctica es que
+$R\hat{\bi{x}}=Q\transp\bi{b}$ se resuelve por sustitución hacia atrás, sin
+invertir nada. La conceptual es que $P_{C(A)}=QQ\transp$ hace evidente lo que
+la fórmula $A(A\transp A)\inv A\transp$ esconde: proyectar sobre $C(A)$ es
+escribir $\bi{b}$ en una base ortonormal de $C(A)$ y tirar lo que sobra. Son la
+misma matriz, pero sólo una de las dos se ve.
+
+% =====================================================================
+\section{Por qué no se usan las ecuaciones normales}\label{mc-sec:condicion}
+
+Hay además una razón de fondo para preferir $QR$, y es un corolario inmediato
+de lo que vimos en el Capítulo~\ref{cap:normas-matrices}.
+
+\begin{proposition}[Formar \texorpdfstring{$A\transp A$}{AtA} eleva al cuadrado el número de condición]\label{mc-prop:condicion}
+Sea $A\in\R^{m\times n}$ con $\rango(A)=n$ y valores singulares
+$\sigma_1\ge\cdots\ge\sigma_n>0$. Entonces los valores singulares de
+$A\transp A$ son $\sigma_1^2\ge\cdots\ge\sigma_n^2$ y
+\[
+\boxed{\ \kappa_2(A\transp A)=\kappa_2(A)^2\ }
+\]
+\end{proposition}
+
+\begin{proof}
+De $A=U\Sigma V\transp$ sale $A\transp A=V(\Sigma\transp\Sigma)V\transp$ con
+$\Sigma\transp\Sigma=\diag(\sigma_1^2,\dots,\sigma_n^2)$, y como $V$ es
+ortogonal eso es una diagonalización ortogonal y a la vez una SVD de
+$A\transp A$. Por el Lema~\ref{L:condicion-svd},
+$\kappa_2(A\transp A)=\sigma_1^2/\sigma_n^2=(\sigma_1/\sigma_n)^2=\kappa_2(A)^2$.
+\end{proof}
+
+El número de condición mide cuántos dígitos se pueden perder
+(Capítulo~\ref{cap:normas-matrices}): elevarlo al cuadrado
+significa perder el \emph{doble} de dígitos. Y no es un peligro teórico.
+
+\begin{example}[Una matriz sana que se arruina al multiplicar]\label{mc-ej:eps}
+Sea, con $\varepsilon>0$ chico,
+\[
+A=\begin{bmatrix}1&1\\ \varepsilon&0\\ 0&\varepsilon\end{bmatrix},
+\qquad
+A\transp A=\begin{bmatrix}1+\varepsilon^2&1\\ 1&1+\varepsilon^2\end{bmatrix}.
+\]
+Los autovalores de $A\transp A$ son $2+\varepsilon^2$ y $\varepsilon^2$, de
+modo que $\sigma_1(A)=\sqrt{2+\varepsilon^2}$, $\sigma_2(A)=\varepsilon$ y
+\[
+\kappa_2(A)=\frac{\sqrt{2+\varepsilon^2}}{\varepsilon}\approx\frac{\sqrt2}{\varepsilon},
+\qquad
+\kappa_2(A\transp A)\approx\frac{2}{\varepsilon^2}.
+\]
+Con $\varepsilon=10^{-3}$: $\kappa_2(A)\approx1{,}4\cdot10^{3}$, que en doble
+precisión no es ningún problema, mientras que
+$\kappa_2(A\transp A)\approx2\cdot10^{6}$. Peor todavía: si $\varepsilon^2$
+cae por debajo de la precisión de la máquina, al calcular $1+\varepsilon^2$ se
+redondea a $1$, la matriz $A\transp A$ \emph{se vuelve exactamente singular} y
+el método falla por completo ---aunque las columnas de $A$ sean,
+perfectamente, independientes. La factorización $QR$ trabaja con $A$ y no con
+$A\transp A$, y no sufre nada de esto.
+\end{example}
+
+% =====================================================================
+\section{La pseudoinversa}\label{mc-sec:pseudo}
+
+Falta el caso $\rango(A)=r<n$, donde el Teorema~\ref{mc-teo:existencia} dice
+que hay infinitas soluciones. Para quedarse con una hay que dar un criterio, y
+el natural es pedir la más corta. La SVD la señala sola: en el
+Teorema~\ref{mc-teo:existencia}(b) las coordenadas $\hat z_{r+1},\dots,\hat z_n$
+quedaban libres, y como el cambio de variables conserva normas,
+$\normdos{\hat{\bi{x}}}=\normdos{\hat{\bi{z}}}$ se minimiza poniéndolas en
+cero.
+
+\begin{definition}[Pseudoinversa de Moore--Penrose]\label{mc-def:pseudo}
+Sea $A=U\Sigma V\transp$ con $\Sigma=\begin{bsmallmatrix}D&0\\ 0&0\end{bsmallmatrix}$
+y $D=\diag(\sigma_1,\dots,\sigma_r)$. La \textbf{pseudoinversa} de $A$ es
+\[
+A^{+}=V\,\Sigma^{+}\,U\transp\in\R^{n\times m},
+\qquad
+\Sigma^{+}=\begin{bmatrix}D\inv&0\\ 0&0\end{bmatrix}\in\R^{n\times m} .
+\]
+Equivalentemente, agrupando como en~\eqref{eq:suma-rango1},
+\begin{equation}\label{mc-eq:pseudo-rango1}
+A=\sum_{i=1}^{r}\sigma_i\,\bi{u}_i\bi{v}_i\transp
+\qquad\Longleftrightarrow\qquad
+A^{+}=\sum_{i=1}^{r}\frac{1}{\sigma_i}\,\bi{v}_i\bi{u}_i\transp .
+\end{equation}
+\end{definition}
+
+La forma~\eqref{mc-eq:pseudo-rango1} dice en una línea qué hace $A^{+}$:
+invierte lo que $A$ estira, en las mismas direcciones y al revés, y no toca
+nada de lo que $A$ aplastó. Los $\sigma_i$ nulos no se invierten ---se dejan
+en cero--- y ahí está toda la diferencia con una inversa.
+
+\begin{theorem}[La pseudoinversa resuelve mínimos cuadrados]\label{mc-teo:pseudo}
+Para todo $A\in\R^{m\times n}$ y todo $\bi{b}\in\R^m$:
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=*]
+\item $A^{+}\bi{b}$ es solución de mínimos cuadrados, y el conjunto de todas
+las soluciones es
+\[
+\mathcal S=A^{+}\bi{b}+N(A)=\bigl\{A^{+}\bi{b}+(I-A^{+}A)\bi{z}\ :\ \bi{z}\in\R^n\bigr\} .
+\]
+\item $A^{+}\bi{b}$ es la \emph{única} solución de norma mínima, y es la única
+que está en $C(A\transp)$, es decir la única ortogonal a $N(A)$.
+\item $AA^{+}=P_{C(A)}$ y $A^{+}A=P_{C(A\transp)}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Con $\bi{c}=U\transp\bi{b}$, el vector $\Sigma^{+}\bi{c}$ tiene coordenadas
+$c_i/\sigma_i$ para $i\le r$ y $0$ para $i>r$. Por el
+Teorema~\ref{mc-teo:existencia}(b) eso es exactamente una solución, la que
+elige libres $=0$; y $A^{+}\bi{b}=V\Sigma^{+}\bi{c}$. Las demás se obtienen
+moviendo las coordenadas libres, que es sumar un elemento de $N(A)$: eso es (a).
+
+Para (b), si $\hat{\bi{z}}$ es cualquier solución,
+$\normdos{\hat{\bi{x}}}^2=\normdos{\hat{\bi{z}}}^2
+=\sum_{i\le r}(c_i/\sigma_i)^2+\sum_{i>r}\hat z_i^2$, donde la primera suma es
+la misma para todas: el mínimo se alcanza, y sólo se alcanza, anulando las
+coordenadas libres. Esa elección deja $\hat{\bi{x}}\in\gen(\bi{v}_1,\dots,\bi{v}_r)
+=C(A\transp)$, que es $N(A)^{\perp}$.
+
+Para (c), $AA^{+}=U\Sigma\Sigma^{+}U\transp=U\begin{bsmallmatrix}I_r&0\\0&0\end{bsmallmatrix}U\transp
+=U_rU_r\transp$, que es la proyección sobre $C(A)$ por el
+Corolario~\ref{mc-cor:proyeccion}; y análogamente
+$A^{+}A=V_rV_r\transp$.
+\end{proof}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.0, font=\small]
+  \draw[fiqlinea,rounded corners=3pt] (-0.2,-2.5) rectangle (3.2,2.5);
+  \draw[fiqlinea,rounded corners=3pt] (6.3,-2.5) rectangle (9.7,2.5);
+  \node[fiqgris,anchor=south] at (1.5,2.55) {$\R^n$};
+  \node[fiqgris,anchor=south] at (8.0,2.55) {$\R^m$};
+  \fill[fiqclaro] (0.1,0.45) rectangle (2.9,2.2);
+  \draw[fiqlinea] (0.1,0.45) rectangle (2.9,2.2);
+  \node at (1.5,1.33) {$C(A\transp)$};
+  \node[fiqgris,font=\scriptsize] at (1.5,0.72) {dimensión $r$};
+  \fill[fiqclaro] (0.1,-2.2) rectangle (2.9,-0.45);
+  \draw[fiqlinea] (0.1,-2.2) rectangle (2.9,-0.45);
+  \node at (1.5,-1.1) {$N(A)$};
+  \node[fiqgris,font=\scriptsize] at (1.5,-1.72) {dimensión $n-r$};
+  \fill[fiqclaro] (6.6,0.45) rectangle (9.4,2.2);
+  \draw[fiqlinea] (6.6,0.45) rectangle (9.4,2.2);
+  \node at (8.0,1.33) {$C(A)$};
+  \node[fiqgris,font=\scriptsize] at (8.0,0.72) {dimensión $r$};
+  \fill[fiqclaro] (6.6,-2.2) rectangle (9.4,-0.45);
+  \draw[fiqlinea] (6.6,-2.2) rectangle (9.4,-0.45);
+  \node at (8.0,-1.1) {$N(A\transp)$};
+  \node[fiqgris,font=\scriptsize] at (8.0,-1.72) {dimensión $m-r$};
+  \draw[-{Stealth},very thick,fiqrojo] (3.0,1.63) to[out=20,in=160] (6.5,1.63);
+  \node[fiqrojo,anchor=south] at (4.75,1.95) {$A$};
+  \draw[-{Stealth},very thick,fiqtexto] (6.5,0.95) to[out=-160,in=-20] (3.0,0.95);
+  \node[fiqtexto,anchor=north] at (4.75,0.63) {$A^{+}$};
+  \node[fiqgris,font=\scriptsize,anchor=north] at (4.75,0.35) {biyección, una la inversa de la otra};
+  \draw[-{Stealth},thick,fiqgris] (3.0,-0.80) to[out=12,in=168] (6.45,-0.80);
+  \node[fiqgris,anchor=south,font=\scriptsize] at (4.75,-0.72) {$A$};
+  \node[fiqgris,font=\scriptsize,align=center] at (4.75,-1.35)
+       {ambos n\'ucleos\\ van a $\bi{0}$};
+  \draw[-{Stealth},thick,fiqgris] (6.45,-1.95) to[out=192,in=-12] (3.0,-1.95);
+  \node[fiqgris,anchor=north,font=\scriptsize] at (4.75,-2.03) {$A^{+}$};
+\end{tikzpicture}
+\caption{La pseudoinversa en el dibujo de los cuatro subespacios de la
+Sección~\ref{sec:cuatro}. Restringida al espacio fila $C(A\transp)$, la matriz
+$A$ es una biyección sobre el espacio columna $C(A)$; $A^{+}$ es exactamente
+su inversa. Los dos núcleos van a cero. Por eso $A^{+}\bi{b}$ cae en
+$C(A\transp)$ ---y es, entre todas las soluciones, la de norma mínima--- y por
+eso $A^{+}A$ y $AA^{+}$ son proyecciones y no la identidad.}
+\label{mc-fig:cuatro}
+\end{figure}
+
+\begin{proposition}[Las cuatro ecuaciones de Penrose]\label{mc-prop:penrose}
+La matriz $A^{+}$ de la Definición~\ref{mc-def:pseudo} verifica
+\[
+\textup{(P1)}\ AA^{+}A=A,
+\qquad\qquad
+\textup{(P2)}\ A^{+}AA^{+}=A^{+},
+\]
+\[
+\textup{(P3)}\ (AA^{+})\transp=AA^{+},
+\qquad\qquad
+\textup{(P4)}\ (A^{+}A)\transp=A^{+}A,
+\]
+y es la \emph{única} matriz que las verifica a la vez.
+\end{proposition}
+
+\begin{proof}
+Escribamos $J=\Sigma\Sigma^{+}=\begin{bsmallmatrix}I_r&0\\0&0\end{bsmallmatrix}$
+de $m\times m$ y $K=\Sigma^{+}\Sigma$ de $n\times n$, análoga. Las dos son
+simétricas, idempotentes, y cumplen $\Sigma K=\Sigma=J\Sigma$ y
+$\Sigma^{+}J=\Sigma^{+}=K\Sigma^{+}$, como se ve multiplicando por bloques.
+Entonces
+\[
+AA^{+}A=U\Sigma K V\transp=U\Sigma V\transp=A,
+\qquad
+A^{+}AA^{+}=V\Sigma^{+}JU\transp=V\Sigma^{+}U\transp=A^{+},
+\]
+y $AA^{+}=UJU\transp$, $A^{+}A=VKV\transp$ son simétricas por serlo $J$ y $K$.
+La unicidad es el Ejercicio~\ref{mc-ej:unicidad}.
+\end{proof}
+
+\begin{remark}[Casos particulares]\label{mc-obs:casos-pseudo}
+La pseudoinversa generaliza a la inversa en todos los sentidos razonables:
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item Si $A$ es cuadrada e invertible, $A^{+}=A\inv$ (todos los
+$\sigma_i>0$ y $\Sigma^{+}=\Sigma\inv$).
+\item Si $\rango(A)=n$ (columnas independientes), $A^{+}=(A\transp A)\inv A\transp$
+y se recupera el Corolario~\ref{mc-cor:rango-completo}.
+\item Si $\rango(A)=m$ (filas independientes), $A^{+}=A\transp(AA\transp)\inv$,
+y $A^{+}\bi{b}$ es la solución de norma mínima del sistema compatible
+$A\bi{x}=\bi{b}$ ---el caso subdeterminado de la
+Observación~\ref{mc-obs:tres-casos}.
+\item Si $A=\bi{u}\bi{v}\transp$ tiene rango uno, entonces
+$A^{+}=\dfrac{1}{\normdos{\bi{u}}^2\normdos{\bi{v}}^2}\,\bi{v}\bi{u}\transp$.
+\end{itemize}
+\end{remark}
+
+\begin{remark}[Cuando $\sigma_r$ es chico: truncar]\label{mc-obs:truncar}
+La fórmula~\eqref{mc-eq:pseudo-rango1} tiene un $1/\sigma_i$ adentro, así que
+un valor singular chiquito amplifica por $1/\sigma_r$ todo el ruido que
+$\bi{b}$ tenga en la dirección $\bi{u}_r$. Formalmente la cuenta es correcta;
+numéricamente la solución de norma mínima puede ser enorme y no significar
+nada. Lo que se hace es cortar la suma:
+\[
+A_k^{+}=\sum_{i=1}^{k}\frac1{\sigma_i}\,\bi{v}_i\bi{u}_i\transp ,
+\qquad k<r ,
+\]
+que es la pseudoinversa de la SVD truncada $A_k$ del
+Corolario~\ref{pca-cor:truncada}. Se resigna algo de ajuste
+---por Eckart--Young (Teorema~\ref{pca-teo:EY}), exactamente lo que miden los
+$\sigma_i$ descartados--- a cambio de una solución estable. Es la misma idea
+que estuvo detrás de todo el Capítulo~\ref{cap:pca}: quedarse con las
+direcciones que los datos determinan bien y descartar las que no.
+\end{remark}
+
+% =====================================================================
+\section{Regresión lineal}\label{mc-sec:regresion}
+
+Volvemos al principio, con $A=X$, $\bi{b}=\bi{y}$ y $\bi{x}=\bi{\beta}$. El
+estimador de mínimos cuadrados resuelve
+$X\transp X\hat{\bi{\beta}}=X\transp\bi{y}$, y es único exactamente cuando los
+predictores no tienen colinealidad exacta.
+
+\begin{example}[Ajustar una recta a tres puntos]\label{mc-ej:recta}
+Queremos $y\approx\beta_0+\beta_1x$ para $(0,1)$, $(1,2)$, $(2,2)$. La matriz
+de diseño lleva una columna de unos para el término independiente:
+\[
+X=\begin{bmatrix}1&0\\ 1&1\\ 1&2\end{bmatrix},
+\qquad
+\bi{y}=\begin{pmatrix}1\\ 2\\ 2\end{pmatrix}.
+\]
+Los tres puntos no están alineados, así que $X\bi{\beta}=\bi{y}$ es
+incompatible. Las ecuaciones normales son
+\[
+X\transp X=\begin{bmatrix}3&3\\ 3&5\end{bmatrix},
+\qquad
+X\transp\bi{y}=\begin{pmatrix}5\\ 6\end{pmatrix},
+\qquad
+\det(X\transp X)=6\ne0 ,
+\]
+y resolviendo el sistema de $2\times2$,
+\[
+\hat{\bi{\beta}}=\frac16\begin{bmatrix}5&-3\\ -3&3\end{bmatrix}
+\begin{pmatrix}5\\ 6\end{pmatrix}
+=\frac16\begin{pmatrix}7\\ 3\end{pmatrix}
+=\begin{pmatrix}7/6\\ 1/2\end{pmatrix}.
+\]
+La recta ajustada es $\hat y=\tfrac76+\tfrac12x$. El residuo es
+\[
+\bi{r}=\bi{y}-X\hat{\bi{\beta}}
+=\Bigl(-\tfrac16,\ \tfrac13,\ -\tfrac16\Bigr)\transp ,
+\qquad \normdos{\bi{r}}^2=\tfrac16 ,
+\]
+y se verifica $X\transp\bi{r}=\bi{0}$: la primera coordenada dice que los
+residuos suman cero ---porque $X$ tiene la columna de unos--- y la segunda,
+que no están correlacionados con $x$. Geométricamente, $\bi{y}\in\R^3$ se
+proyectó sobre el plano $C(X)$, que es la Figura~\ref{mc-fig:proyeccion} con
+$m=3$ y $n=2$.
+\end{example}
+
+\begin{remark}[Colinealidad]\label{mc-obs:colinealidad}
+Si dos predictores son combinación lineal de los otros, $\rango(X)<n$ y hay
+infinitos $\hat{\bi{\beta}}$. Todos dan \emph{el mismo} ajuste
+$X\hat{\bi{\beta}}$ y los mismos residuos ---el
+Teorema~\ref{mc-teo:existencia}(d)---, pero coeficientes distintos, que se
+mueven a lo largo de $N(X)$. Es decir: el modelo predice igual de bien y los
+coeficientes individuales dejan de tener sentido por separado. La convención
+habitual es reportar $\hat{\bi{\beta}}=X^{+}\bi{y}$, la de norma mínima; en la
+práctica es más frecuente eliminar predictores redundantes, o pasar a las
+componentes principales del Capítulo~\ref{cap:pca}, que por construcción no
+están correlacionadas.
+\end{remark}
+
+% =====================================================================
+\section*{Ejercicios}
+\addcontentsline{toc}{section}{Ejercicios}
+
+\begin{enumerate}[leftmargin=*,label=\textbf{\thechapter.\arabic*},ref=\thechapter.\arabic*,itemsep=4pt]
+
+\item\label{mc-ej:a-mano} \emph{(A mano.)} Para
+\[
+A=\begin{bmatrix}1&0\\ 1&1\\ 1&2\end{bmatrix},
+\qquad
+\bi{b}=\begin{pmatrix}1\\ 2\\ 2\end{pmatrix}
+\]
+calcular $\hat{\bi{x}}$ por las ecuaciones normales, el residuo $\bi{r}$, la
+matriz de proyección $P=A(A\transp A)\inv A\transp$ y verificar que
+$P\transp=P=P^2$ y $\tr(P)=2$.
+
+\item\label{mc-ej:desacoplado} Resolver ``a ojo'', usando sólo
+\eqref{mc-eq:desacoplado}, los problemas de mínimos cuadrados con
+\[
+\Sigma=\begin{bmatrix}3&0\\ 0&1\\ 0&0\end{bmatrix},\ \bi{c}=(6,2,5)\transp;
+\qquad
+\Sigma=\begin{bmatrix}2&0&0\\ 0&0&0\end{bmatrix},\ \bi{c}=(4,7)\transp .
+\]
+En cada caso dar todas las soluciones, la de norma mínima y el valor del
+mínimo.
+
+\item\label{mc-ej:pseudo-mano} Calcular $A^{+}$ para
+\[
+A=\begin{bmatrix}1&2\\ 2&4\end{bmatrix},\quad
+A=\diag(2,0),\quad
+A=\begin{bmatrix}1&1\\ 1&1\end{bmatrix},\quad
+A=\begin{bmatrix}0&2\\ 0&0\end{bmatrix},
+\]
+y verificar en cada caso las cuatro ecuaciones de Penrose. \emph{Sugerencia:}
+las cuatro tienen rango uno; usar la última fórmula de la
+Observación~\ref{mc-obs:casos-pseudo}. (Deberían dar, respectivamente,
+$\tfrac1{25}\begin{bsmallmatrix}1&2\\2&4\end{bsmallmatrix}$,
+$\diag(\tfrac12,0)$,
+$\tfrac14\begin{bsmallmatrix}1&1\\1&1\end{bsmallmatrix}$ y
+$\begin{bsmallmatrix}0&0\\ 1/2&0\end{bsmallmatrix}$.)
+
+\item\label{mc-ej:unicidad} \emph{(Unicidad de la pseudoinversa.)} Supongamos
+que $X$ e $Y$ verifican las cuatro ecuaciones de Penrose para la misma $A$.
+Probar que $X=Y$. \emph{Sugerencia:} empezar por
+$X=XAX=X(AX)\transp=XX\transp A\transp$ y, usando $A\transp=(AYA)\transp$,
+llegar a $X=XAY$; hacer lo simétrico para $Y=XAY$.
+
+\item\label{mc-ej:minima-norma} Sea $A=[\,1\ \ 1\ \ 1\,]$ y $b=3$. Describir
+todas las soluciones de $A\bi{x}=b$, calcular $A^{+}$ y verificar que
+$A^{+}b=(1,1,1)\transp$ es la de norma mínima, comparándola con
+$(3,0,0)\transp$. ¿Cuál es la interpretación geométrica?
+
+\item\label{mc-ej:propiedades} Probar que, para toda $A$:
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item $(A^{+})^{+}=A$ y $(A\transp)^{+}=(A^{+})\transp$.
+\item $(\alpha A)^{+}=\alpha\inv A^{+}$ si $\alpha\ne0$.
+\item Si $Q$ y $P$ son ortogonales, $(QAP)^{+}=P\transp A^{+}Q\transp$.
+\item En cambio, $(AB)^{+}\ne B^{+}A^{+}$ en general: dar un contraejemplo de
+$2\times2$. \emph{Sugerencia:} probar con dos matrices de rango uno.
+\end{enumerate}
+
+\item\label{mc-ej:QR} Para la matriz del Ejercicio~\ref{mc-ej:a-mano},
+construir una factorización $QR$ reducida por Gram--Schmidt
+(Sección~\ref{sec:QR}), resolver $R\hat{\bi{x}}=Q\transp\bi{b}$ por sustitución
+hacia atrás y comprobar que da lo mismo que las ecuaciones normales.
+Verificar además que $QQ\transp$ coincide con la matriz $P$ del primer
+ejercicio.
+
+\item\label{mc-ej:condicion} Con $A=\begin{bsmallmatrix}1&1\\ \varepsilon&0\\
+0&\varepsilon\end{bsmallmatrix}$ del Ejemplo~\ref{mc-ej:eps}:
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Calcular $\sigma_1$, $\sigma_2$, $\kappa_2(A)$ y $\kappa_2(A\transp A)$
+exactamente, y verificar la Proposición~\ref{mc-prop:condicion}.
+\item ¿A partir de qué $\varepsilon$ la matriz $A\transp A$ se vuelve
+numéricamente singular en una máquina que distingue números hasta
+$10^{-16}$? ¿Y a partir de qué $\varepsilon$ se arruina $A$?
+\item Comprobarlo en la computadora, resolviendo el mismo problema de mínimos
+cuadrados por ecuaciones normales y por $QR$ para
+$\varepsilon=10^{-3},10^{-6},10^{-9}$.
+\end{enumerate}
+
+\item\label{mc-ej:proyecciones} Probar que $AA^{+}$ y $A^{+}A$ son
+proyecciones ortogonales y que $\tr(AA^{+})=\tr(A^{+}A)=\rango(A)$
+(Corolario~\ref{cor:traza-proyeccion}). Deducir que $I-A^{+}A$ es la
+proyección sobre $N(A)$, lo cual explica la parametrización
+$\mathcal S=A^{+}\bi{b}+(I-A^{+}A)\bi{z}$ del
+Teorema~\ref{mc-teo:pseudo}(a).
+
+\item\label{mc-ej:residuo} Sea $\hat{\bi{x}}$ cualquier solución de mínimos
+cuadrados y $\bi{r}=\bi{b}-A\hat{\bi{x}}$. Probar que
+\[
+\normdos{\bi{b}}^2=\normdos{A\hat{\bi{x}}}^2+\normdos{\bi{r}}^2 ,
+\]
+y que en regresión, si $X$ tiene una columna de unos, los residuos suman cero.
+¿Qué dice la primera identidad en términos de los $c_i$ del
+Teorema~\ref{mc-teo:existencia}?
+
+\item\label{mc-ej:datos} \emph{(Con datos.)} Tomar cualquiera de los conjuntos
+del Capítulo~\ref{cap:lda}, elegir una variable como respuesta y el resto como
+predictores, y ajustar por mínimos cuadrados. Comparar la solución por
+ecuaciones normales, por $QR$ y por \texttt{pinv}. Agregar después una columna
+que sea combinación lineal exacta de dos de las otras y repetir: ¿qué hace
+cada método? ¿Cambia el ajuste $X\hat{\bi{\beta}}$? ¿Y los coeficientes?
+
+\end{enumerate}

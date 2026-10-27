@@ -1,0 +1,1319 @@
+\chapter{Descomposición en valores singulares (SVD)}\label{cap:SVD}
+
+Las matrices simétricas son cómodas: tienen autovalores reales y una base
+ortonormal de autovectores, y eso es todo el Capítulo~\ref{cap:schur}. Las
+matrices cuadradas generales ya no: los autovalores pueden ser complejos y
+los autovectores pueden no ser ortogonales, o no alcanzar para formar una
+base. Y si $A$ no es cuadrada, la ecuación $A\bx=\lambda\bx$ ni siquiera tiene
+sentido, porque el miembro izquierdo vive en $\R^m$ y el derecho en $\R^n$.
+
+Hace falta una idea que funcione para \emph{cualquier} matriz, y la
+descomposición en valores singulares la provee de una manera que resulta
+perfecta. El precio a pagar es abandonar la idea de una sola base: en lugar de
+una familia de autovectores necesitaremos \textbf{dos} familias ortonormales,
+una en $\R^n$ y otra en $\R^m$, relacionadas no por $A\bx=\lambda\bx$ sino por
+\[
+A\bv_k=\sigma_k\bu_k .
+\]
+La matriz manda cada $\bv_k$ a un múltiplo de $\bu_k$: no conserva la
+dirección --- no puede, si cambia de espacio --- pero manda una base
+ortonormal a otra base ortonormal, estirando cada eje por su propio factor.
+
+El capítulo se organiza así. En la Sección~\ref{sec:sigma1} definimos los
+valores singulares \emph{antes} de tener la SVD, a partir de la matriz
+simétrica $A^TA$, y probamos que el primero de ellos es la norma que mide
+cuánto estira $A$. Recién después (Secciones~\ref{sec:SVD}
+y~\ref{sec:prueba-SVD}) enunciamos y probamos la descomposición. El resto del
+capítulo es leer lo que la SVD dice: bases ortonormales de los cuatro
+subespacios fundamentales, la imagen de la esfera unitaria, y la
+descomposición polar.
+
+Dos resultados centrales quedan para después. El \textbf{teorema de
+Eckart-Young} --- que truncar la SVD da la mejor aproximación de rango bajo
+--- se prueba en el capítulo de PCA, que es donde se usa. Y la
+\textbf{pseudoinversa}, que la SVD permite definir para cualquier matriz, se
+trata en el capítulo final junto con los cuadrados mínimos.
+
+% ===================================================================
+\section{Valores singulares y la norma espectral}
+\label{sec:sigma1}
+
+Sea $A\in\R^{m\times n}$, de rango $r$. Aunque $A$ no sea cuadrada, la matriz
+$A^TA\in\R^{n\times n}$ siempre es simétrica y semidefinida positiva:
+\[
+(A^TA)^T=A^TA,
+\qquad
+\bx^T(A^TA)\bx=\|A\bx\|^2\ge0 .
+\]
+Por el teorema espectral (Teorema~\ref{teo:espectral-real}) tiene autovalores
+reales, y por la Entrega~\ref{ent:semidefinidas} todos son $\ge0$. Además,
+por la Observación~\ref{obs:ATA} sabemos que $N(A^TA)=N(A)$, de modo que
+$\rg(A^TA)=\rg(A)=r$: exactamente $r$ de esos autovalores son positivos.
+
+\begin{definition}[Valores singulares]\label{def:valores-singulares}
+Sean $\lambda_1\ge\lambda_2\ge\cdots\ge\lambda_n\ge0$ los autovalores de
+$A^TA$, y sean $\bv_1,\dots,\bv_n$ autovectores ortonormales
+correspondientes. Los \textbf{valores singulares} de $A$ son
+\[
+\sigma_k=\sqrt{\lambda_k},\qquad k=1,\dots,n,
+\]
+de modo que $\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_r>0$ y
+$\sigma_{r+1}=\cdots=\sigma_n=0$. Los $\bv_k$ se llaman \textbf{vectores
+singulares a derecha}.
+\end{definition}
+
+Conviene subrayar que esto es una \emph{definición}, no un teorema: no
+necesitamos la SVD para hablar de los $\sigma_k$. Lo que sigue tampoco.
+
+\begin{theorem}[El primer valor singular]\label{teo:sigma1}
+Sea $A\in\R^{m\times n}$ no nula. Entonces
+\[
+\max_{\|\bx\|=1}\|A\bx\| = \sigma_1 ,
+\qquad\text{equivalentemente}\qquad
+\max_{\bx\neq0}\frac{\|A\bx\|}{\|\bx\|}=\sigma_1 ,
+\]
+y el máximo se alcanza exactamente en los autovectores unitarios de $A^TA$
+asociados a $\lambda_1$; en particular en $\bx=\bv_1$.
+\end{theorem}
+
+\begin{proof}
+Conviene normalizar primero y elevar al cuadrado después. Si $\|\bx\|=1$,
+\[
+\|A\bx\|^2=(A\bx)^T(A\bx)=\bx^T(A^TA)\bx ,
+\]
+de modo que maximizar $\|A\bx\|$ sobre los vectores unitarios es maximizar la
+\emph{energía} de la matriz simétrica $S=A^TA$ sobre la esfera. Por el
+Teorema~\ref{teo:rayleigh}, ese máximo vale $\lambda_1$ ---el mayor autovalor
+de $A^TA$--- y se alcanza exactamente en los autovectores unitarios asociados
+a $\lambda_1$. Tomando raíz cuadrada,
+$\max_{\|\bx\|=1}\|A\bx\|=\sqrt{\lambda_1}=\sigma_1$.
+
+La versión con cociente es la misma, por el
+Corolario~\ref{coro:rayleigh-cociente}: para $\bx\neq0$ cualquiera,
+$\|A\bx\|/\|\bx\|=\|A\bu\|$ con $\bu=\bx/\|\bx\|$ unitario.
+\end{proof}
+
+El teorema dice que el cociente $\|A\bx\|/\|\bx\|$ --- cuánto estira $A$ al
+vector $\bx$ --- está acotado, y que $\sigma_1$ es el estiramiento máximo. Eso
+es exactamente lo que hace falta para medir una matriz.
+
+\begin{definition}[Norma espectral]\label{def:norma-espectral}
+La \textbf{norma espectral} de $A\in\R^{m\times n}$ es
+\[
+\boxed{\ \|A\|_2=\max_{\bx\neq0}\frac{\|A\bx\|}{\|\bx\|}
+=\max_{\|\bx\|=1}\|A\bx\|=\sigma_1(A)\ }
+\]
+\end{definition}
+
+\begin{proposition}\label{prop:espectral-norma}
+$\|\cdot\|_2$ es una norma en $\R^{m\times n}$, y para todo $\bx\in\R^n$ vale
+\[
+\|A\bx\|\le\|A\|_2\,\|\bx\| .
+\]
+\end{proposition}
+
+\begin{proof}
+La desigualdad es la definición del máximo. Para los axiomas de norma
+(Sección~\ref{sec:normas}):
+
+\emph{(n2)} Claramente $\|A\|_2\ge0$. Si $\|A\|_2=0$ entonces $A\bx=0$ para
+todo $\bx$, en particular para los $\bi{e}_j$, así que todas las columnas de $A$
+son nulas y $A=0$.
+
+\emph{(n1)} $\|cA\|_2=\max_{\|\bx\|=1}\|cA\bx\|=|c|\max_{\|\bx\|=1}\|A\bx\|
+=|c|\,\|A\|_2$.
+
+\emph{(n3)} Para $\|\bx\|=1$, usando la desigualdad triangular de la norma de
+vectores,
+\[
+\|(A+B)\bx\|\le\|A\bx\|+\|B\bx\|\le\|A\|_2+\|B\|_2 ,
+\]
+y tomando el máximo sobre esos $\bx$ queda $\|A+B\|_2\le\|A\|_2+\|B\|_2$.
+\end{proof}
+
+\begin{remark}[Dos normas de matrices, dos ideas distintas]
+Ya tenemos dos maneras de medir una matriz. La de Frobenius
+(Sección~\ref{sec:frobenius}) se olvida de que $A$ es una matriz y la mide
+como al vector largo de sus $mn$ entradas; viene de un producto interno. La
+espectral la mide \emph{como transformación}: cuánto estira en el peor caso.
+Son distintas y las dos se usan. En el capítulo de PCA se verá cómo se
+relacionan con los $\sigma_k$ y entre sí; en el
+capítulo de normas de matrices estudiaremos la familia general de normas
+definidas por un máximo como el de arriba, y qué se gana al pedirle a una
+norma de matrices que se lleve bien con el producto.
+\end{remark}
+
+\begin{corollary}[Los autovalores no superan a $\sigma_1$]\label{coro:lambda-sigma}
+Si $A\in\R^{n\times n}$ y $\lambda$ es un autovalor real de $A$, entonces
+$|\lambda|\le\sigma_1$.
+\end{corollary}
+
+\begin{proof}
+Si $A\bx=\lambda\bx$ con $\bx\neq0$, entonces
+$|\lambda|\,\|\bx\|=\|A\bx\|\le\sigma_1\|\bx\|$.
+\end{proof}
+
+\begin{example}\label{ej:rango1-sigma}
+Para una matriz de rango uno $A=\bx\by^T$ (con $\bx,\by$ no nulos), la
+desigualdad anterior es Cauchy-Schwarz disfrazada. En efecto, $A^TA
+=\by\bx^T\bx\by^T=\|\bx\|^2\,\by\by^T$ tiene autovalor no nulo
+$\|\bx\|^2\|\by\|^2$, de modo que
+\[
+\sigma_1=\|\bx\|\,\|\by\| ,
+\qquad
+\bv_1=\frac{\by}{\|\by\|},
+\qquad
+\bu_1=\frac{\bx}{\|\bx\|} .
+\]
+Por otro lado, el único autovalor no nulo de $A$ es $\lambda=\by^T\bx$, con
+autovector $\bx$, porque $(\bx\by^T)\bx=\bx(\by^T\bx)$. El
+Corolario~\ref{coro:lambda-sigma} dice entonces
+$|\by^T\bx|\le\|\bx\|\,\|\by\|$.
+\end{example}
+
+Necesitaremos también la versión del Teorema~\ref{teo:sigma1} para los
+valores singulares siguientes, que se obtiene restringiendo el máximo.
+
+\begin{corollary}[Los $\sigma_k$ siguientes]\label{coro:sigma-k}
+Con las notaciones de la Definición~\ref{def:valores-singulares}, para cada
+$k=1,\dots,n$,
+\[
+\max\bigl\{\|A\bx\| : \|\bx\|=1,\ \bx\perp\bv_1,\dots,\bv_{k-1}\bigr\}=\sigma_k ,
+\]
+y el máximo se alcanza en $\bx=\bv_k$.
+\end{corollary}
+
+\begin{proof}
+Escribamos $\bx=\sum_i c_i\bv_i$ en la base ortonormal de autovectores. La
+condición $\bx\perp\bv_1,\dots,\bv_{k-1}$ dice $c_1=\cdots=c_{k-1}=0$, y
+$\|\bx\|=1$ dice $\sum_i c_i^2=1$. Entonces
+\[
+\|A\bx\|^2=\bx^T(A^TA)\bx=\sum_{i\ge k}\lambda_i c_i^2
+\le\lambda_k\sum_{i\ge k}c_i^2=\lambda_k ,
+\]
+con igualdad cuando $c_k=1$ y el resto cero, es decir en $\bx=\bv_k$.
+\end{proof}
+
+Este corolario es la manera de entender los vectores singulares \textbf{uno
+por uno} en lugar de todos juntos: $\bv_1$ es la dirección que más se estira;
+$\bv_2$ es la que más se estira entre las perpendiculares a $\bv_1$; y así
+sucesivamente. Es también el punto de partida del capítulo de PCA, donde este
+argumento se generaliza a $d$ direcciones a la vez.
+
+% ===================================================================
+\section{La descomposición en valores singulares}
+\label{sec:SVD}
+
+Ya tenemos la mitad de los ingredientes: los $\sigma_k$ y los $\bv_k$. Los
+vectores singulares a izquierda salen ahora de la relación que queremos que
+valga.
+
+\begin{definition}[Vectores singulares a izquierda]\label{def:u}
+Para $k=1,\dots,r$ definimos
+\[
+\bu_k=\frac{A\bv_k}{\sigma_k}\in\R^m .
+\]
+\end{definition}
+
+Con esa definición, $A\bv_k=\sigma_k\bu_k$ vale por construcción para
+$k\le r$; y para $k>r$ es $\|A\bv_k\|^2=\lambda_k=0$, o sea $A\bv_k=\bi 0$.
+Es decir:
+\begin{equation}\label{eq:Av-sigma-u}
+\boxed{\ A\bv_1=\sigma_1\bu_1,\ \ \dots,\ \ A\bv_r=\sigma_r\bu_r\ }
+\qquad
+\boxed{\ A\bv_{r+1}=\bi 0,\ \ \dots,\ \ A\bv_n=\bi 0\ }
+\end{equation}
+Los últimos $n-r$ vectores $\bv$ están en el espacio nulo de $A$.
+
+Falta ver que los $\bu_k$ son ortonormales --- lo haremos en la sección
+siguiente --- y completar la lista hasta $\bu_m$. Aceptándolo por un momento,
+pasemos~\eqref{eq:Av-sigma-u} a forma matricial. Son $n$ ecuaciones, una por
+cada $\bv_k$, y lo que queremos es escribirlas como \emph{una sola} igualdad
+entre matrices. La herramienta es la fórmula de las columnas de un producto
+del Capítulo~\ref{cap:algebra-lineal}.
+
+Pongamos los $\bv$ como columnas de $V\in\R^{n\times n}$ y los $\bu$ como
+columnas de $U\in\R^{m\times m}$, ambas ortogonales, y llamemos
+$\Sigma\in\R^{m\times n}$ a la matriz con $\sigma_1,\dots,\sigma_r$ en las
+primeras posiciones diagonales y ceros en todo lo demás. Ahora comparemos las
+columnas de $AV$ con las de $U\Sigma$, una por una.
+
+\medskip
+\noindent\textbf{La columna $j$ de $AV$.} Por~\eqref{eq:cols},
+\[
+\col_j(AV)=A\,\col_j(V)=A\bv_j .
+\]
+
+\noindent\textbf{La columna $j$ de $U\Sigma$.} Otra vez por~\eqref{eq:cols},
+$\col_j(U\Sigma)=U\,\col_j(\Sigma)$. Y las columnas de $\Sigma$ son fáciles:
+$\col_j(\Sigma)=\sigma_j\bi{e}_j$ si $j\le r$, y $\col_j(\Sigma)=\bi 0$ si
+$j>r$. Usando ahora la fórmula del producto matriz por vector
+\eqref{eq:mat-vec-col}, que dice que $U\bx$ es la combinación de las columnas
+de $U$ con coeficientes las entradas de $\bx$,
+\[
+\col_j(U\Sigma)=U(\sigma_j\bi{e}_j)=\sigma_j\,\col_j(U)=\sigma_j\bu_j
+\quad (j\le r),
+\qquad
+\col_j(U\Sigma)=U\bi 0=\bi 0\quad (j>r).
+\]
+
+\medskip
+Comparando las dos listas con~\eqref{eq:Av-sigma-u}: para $j\le r$ las dos
+columnas valen $\sigma_j\bu_j$, y para $j>r$ las dos valen $\bi 0$. Dos
+matrices con las mismas columnas son la misma matriz, así que
+\begin{equation}\label{eq:AV-USigma}
+\boxed{\ AV=U\Sigma\ }
+\end{equation}
+Las $n$ ecuaciones de~\eqref{eq:Av-sigma-u} quedaron empaquetadas en una. La
+Figura~\ref{fig:esquema-SVD} muestra los tamaños y qué hay en cada factor.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.52, every node/.style={font=\footnotesize}]
+  \def\m{6} \def\n{4} \def\r{2.4}
+  % ---------------- A (m x n) ----------------
+  \draw[fill=bleu!8,draw=bleu!70!black,thick] (0,0) rectangle (\n,\m);
+  \node at (\n/2,\m/2) {$A$};
+  \node[below] at (\n/2,-0.2) {$m\times n$};
+  \node at (4.75,\m/2) {$\cdot$};
+  % ---------------- V (n x n) ----------------
+  \begin{scope}[xshift=5.5cm]
+    \draw[fill=gray!8,draw=black!65,thick] (0,\m-\n) rectangle (\n,\m);
+    \draw[draw=black!40] (\r,\m-\n)--(\r,\m);
+    \node at (\r/2,\m-\n/2) {$V_r$};
+    \node at ({(\r+\n)/2},\m-\n/2) {$V_0$};
+    \node[below,align=center] at (\n/2,\m-\n-0.2) {$n\times n$\\ ortogonal};
+  \end{scope}
+  \node[scale=1.5] at (10.6,\m/2) {$=$};
+  % ---------------- U (m x m) ----------------
+  \begin{scope}[xshift=11.7cm]
+    \draw[fill=gray!8,draw=black!65,thick] (0,0) rectangle (\m,\m);
+    \draw[draw=black!40] (\r,0)--(\r,\m);
+    \node at (\r/2,\m/2) {$U_r$};
+    \node at ({(\r+\m)/2},\m/2) {$U_0$};
+    \node[below,align=center] at (\m/2,-0.2) {$m\times m$\\ ortogonal};
+  \end{scope}
+  \node at (18.4,\m/2) {$\cdot$};
+  % ---------------- Sigma (m x n) ----------------
+  \begin{scope}[xshift=19.2cm]
+    \draw[fill=gray!14,draw=black!65,thick] (0,0) rectangle (\n,\m);
+    \fill[orange!20] (0,\m-\r) rectangle (\r,\m);
+    \draw[orange!70!black,thick] (0,\m-\r) rectangle (\r,\m);
+    \draw[orange!70!black] (0.15,\m-0.15)--({\r-0.15},{\m-\r+0.15});
+    \node[orange!45!black,scale=0.8] at (0.92,\m-0.62) {$\sigma_1$};
+    \node[orange!45!black,scale=0.8] at (1.92,\m-1.68) {$\sigma_r$};
+    \node[black!50] at ({(\r+\n)/2},\m-\r/2) {$0$};
+    \node[black!50] at (\n/2,{(\m-\r)/2}) {$0$};
+    \node[below] at (\n/2,-0.2) {$m\times n$};
+  \end{scope}
+\end{tikzpicture}
+\caption{La igualdad $AV=U\Sigma$ en tamaños. Las columnas de $V$ y de $U$
+vienen partidas en dos grupos: $V_r$ son las primeras $r$ columnas de $V$
+---una base ortonormal del espacio fila $C(A^T)$--- y $V_0$ las restantes,
+que son una base de $N(A)$; $U_r$ es una base de $C(A)$ y $U_0$ una de
+$N(A^T)$. La matriz $\Sigma$ tiene los $\sigma_k$ en el bloque $r\times r$ de
+arriba a la izquierda y ceros en todo lo demás: es la que ``recorta'', y la
+que explica por qué de $U$ sólo llegan a usarse las primeras $r$ columnas.}
+\label{fig:esquema-SVD}
+\end{figure}
+
+Y como $V$ es ortogonal, $V^{-1}=V^T$, y multiplicando~\eqref{eq:AV-USigma} a
+derecha por $V^T$:
+
+\begin{theorem}[Descomposición en valores singulares]\label{teo:SVD}
+Toda matriz $A\in\R^{m\times n}$ se puede escribir como
+\[
+\boxed{\ A=U\,\Sigma\,V^T\ }
+\]
+con $U\in\R^{m\times m}$ y $V\in\R^{n\times n}$ ortogonales y
+$\Sigma\in\R^{m\times n}$ ``diagonal'' con entradas
+$\sigma_1\ge\cdots\ge\sigma_r>0$ y el resto ceros.
+\end{theorem}
+
+Para ver qué hay adentro de ese producto volvemos al Capítulo~\ref{cap:algebra-lineal},
+esta vez a la fórmula~\eqref{eq:suma-rango1}, que escribe un producto de
+matrices como suma de matrices de rango uno. Agrupemos $A=(U\Sigma)\,V^T$ y
+apliquémosla al par $U\Sigma$ (de $m\times n$) y $V^T$ (de $n\times n$):
+\[
+A=\sum_{p=1}^{n}\col_p(U\Sigma)\ \fila_p(V^T) .
+\]
+Los dos factores de cada sumando ya los calculamos: $\col_p(U\Sigma)$ vale
+$\sigma_p\bu_p$ si $p\le r$ y $\bi 0$ si $p>r$, y $\fila_p(V^T)=\bv_p^T$. Los
+$n-r$ últimos sumandos son nulos, y queda
+\begin{equation}\label{eq:sumandos}
+\boxed{\ A=U\Sigma V^T
+=\sigma_1\bu_1\bv_1^T+\sigma_2\bu_2\bv_2^T+\cdots+\sigma_r\bu_r\bv_r^T\ }
+\end{equation}
+
+\begin{remark}[Por qué importa esta forma]
+Como $A=LU$, como $A=QR$ y como $S=Q\Lambda Q^T$, la SVD separa la matriz en
+sumandos de rango uno. Lo que la distingue es que \emph{los sumandos vienen
+ordenados por importancia}: $\sigma_1\bu_1\bv_1^T$ es la matriz de rango uno
+más cercana a $A$, y más en general, la suma de los primeros $d$ sumandos es
+la mejor aproximación de rango $d$ que existe. Ése es el teorema de
+Eckart-Young, y es el motivo por el que la SVD es la factorización central en
+ciencia de datos. Lo enunciaremos con precisión en la
+Sección~\ref{sec:lo-que-viene} y se prueba en el capítulo de PCA.
+\end{remark}
+
+\subsection{La forma reducida}
+
+En~\eqref{eq:sumandos} se ve que los últimos $n-r$ sumandos no aportan nada:
+el corazón de la SVD está en los primeros $r$ vectores. Eso sugiere quedarse
+sólo con ellos. Llamemos
+\[
+U_r=[\,\bu_1\ \cdots\ \bu_r\,]\in\R^{m\times r},
+\qquad
+V_r=[\,\bv_1\ \cdots\ \bv_r\,]\in\R^{n\times r},
+\qquad
+\Sigma_r=\diag(\sigma_1,\dots,\sigma_r) .
+\]
+
+Lo interesante es que para llegar a la forma reducida no hace falta ninguna
+cuenta nueva: alcanza con leer~\eqref{eq:suma-rango1} \emph{al revés}. Esa
+fórmula dice que una suma de productos externos es un producto de matrices,
+con los vectores de la izquierda como columnas del primer factor y los de la
+derecha como filas del segundo. Y en~\eqref{eq:sumandos} tenemos justamente
+una suma de $r$ productos externos:
+\[
+A=\sum_{p=1}^{r}(\sigma_p\bu_p)\,\bv_p^T
+=\sum_{p=1}^{r}\col_p(U_r\Sigma_r)\ \fila_p(V_r^T) ,
+\]
+donde usamos que $\col_p(U_r\Sigma_r)=\sigma_p\bu_p$ ---la misma cuenta de
+antes, ahora con $\Sigma_r$ cuadrada--- y que $\fila_p(V_r^T)=\bv_p^T$.
+Aplicando~\eqref{eq:suma-rango1} de derecha a izquierda:
+\[
+\boxed{\ A=U_r\,\Sigma_r\,V_r^T\ }\qquad\text{(\textbf{SVD reducida}).}
+\]
+La Figura~\ref{fig:esquema-SVD-reducida} la muestra al lado de la completa.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.52, every node/.style={font=\footnotesize}]
+  \def\m{6} \def\n{4} \def\r{2.4}
+  % --------- A ---------
+  \draw[fill=bleu!8,draw=bleu!70!black,thick] (0,0) rectangle (\n,\m);
+  \node at (\n/2,\m/2) {$A$};
+  \node[below] at (\n/2,-0.15) {$m\times n$};
+  \node[scale=1.6] at (5.1,\m/2) {$=$};
+  % --------- U_r (m x r) ---------
+  \begin{scope}[xshift=6.3cm]
+    \draw[fill=gray!6,draw=black!65,thick] (0,0) rectangle (\r,\m);
+    \node at (\r/2,\m/2) {$U_r$};
+    \node[below] at (\r/2,-0.15) {$m\times r$};
+    \node[above,align=center] at (\r/2,\m+0.2) {base de $C(A)$};
+  \end{scope}
+  \node at (9.3,\m/2) {$\cdot$};
+  % --------- Sigma_r (r x r) ---------
+  \begin{scope}[xshift=10.1cm]
+    \fill[orange!22,draw=orange!70!black,thick] (0,\m-\r) rectangle (\r,\m);
+    \draw[orange!70!black] (0.15,\m-0.15)--({\r-0.15},{\m-\r+0.15});
+    \node[orange!45!black,scale=0.8] at (0.92,\m-0.62) {$\sigma_1$};
+    \node[orange!45!black,scale=0.8] at (1.92,\m-1.68) {$\sigma_r$};
+    \node[below,align=center] at (\r/2,\m-\r-0.2) {$r\times r$\\ diagonal};
+  \end{scope}
+  \node at (13.1,\m/2) {$\cdot$};
+  % --------- V_r^T (r x n) ---------
+  \begin{scope}[xshift=13.9cm]
+    \draw[fill=gray!6,draw=black!65,thick] (0,\m-\r) rectangle (\n,\m);
+    \node at (\n/2,\m-\r/2) {$V_r^T$};
+    \node[below] at (\n/2,\m-\r-0.15) {$r\times n$};
+    \node[above,align=center] at (\n/2,\m+0.2) {base de $C(A^T)$, por filas};
+  \end{scope}
+\end{tikzpicture}
+\caption{La SVD reducida $A=U_r\Sigma_r V_r^T$. Comparada con la
+Figura~\ref{fig:esquema-SVD}, desaparecieron las columnas de $U$ y de $V$ que
+$\Sigma$ multiplicaba por cero, y $\Sigma_r$ quedó cuadrada e invertible.
+Guardar $A$ cuesta $mn$ números; guardar los tres factores de la derecha,
+$r(m+n+1)$. Cuando $r$ es chico frente a $m$ y $n$, la diferencia es enorme:
+es la idea que explota el capítulo de PCA.}
+\label{fig:esquema-SVD-reducida}
+\end{figure}
+
+También se puede llegar por el otro lado, que es el camino del
+Ejercicio~\ref{ej:reducida}: las ecuaciones~\eqref{eq:Av-sigma-u} que no son
+triviales son las $r$ columnas de
+\begin{equation}\label{eq:SVD-reducida}
+A\,\underbrace{[\,\bv_1\ \cdots\ \bv_r\,]}_{\text{base del espacio fila}}
+=\underbrace{[\,\bu_1\ \cdots\ \bu_r\,]}_{\text{base del espacio columna}}
+\Sigma_r ,
+\qquad\text{es decir}\qquad
+AV_r=U_r\Sigma_r ,
+\end{equation}
+y de ahí se multiplica por $V_r^T$. Pero atención: acá $V_r$ \emph{no} es
+cuadrada, así que $V_r^T$ no es su inversa y el paso necesita un argumento
+---es justamente lo que pide ese ejercicio---, mientras que por el camino de
+los productos externos la igualdad sale sin invertir nada.
+
+Sigue valiendo $V_r^TV_r=I_r$ y $U_r^TU_r=I_r$, porque las columnas son
+ortonormales. Pero cuando $V_r$ y $U_r$ no son cuadradas ya no hay inversa de
+los dos lados: en general $V_rV_r^T\neq I$ y $U_rU_r^T\neq I$.
+
+\begin{example}
+Con $V_r=\begin{bsmallmatrix}1/3\\ 2/3\\ 2/3\end{bsmallmatrix}$ es
+$V_r^TV_r=[1]$, pero
+\[
+V_rV_r^T=\frac19\begin{bmatrix}1&2&2\\ 2&4&4\\ 2&4&4\end{bmatrix}
+\]
+tiene rango $1$. (Lo que sí es cierto, y lo veremos en la
+Sección~\ref{sec:cuatro-SVD}, es que $V_rV_r^T$ es la proyección ortogonal
+sobre el espacio fila de $A$.)
+\end{example}
+
+\subsection{Un ejemplo completo}
+
+\begin{example}\label{ej:svd-completo}
+Calculemos $U$, $\Sigma$ y $V$ para
+$A=\begin{bsmallmatrix}3&0\\ 4&5\end{bsmallmatrix}$.
+
+El rango es $2$, así que habrá dos valores singulares positivos. Empezamos por
+las dos matrices simétricas:
+\[
+A^TA=\begin{bmatrix}25&20\\ 20&25\end{bmatrix},
+\qquad
+AA^T=\begin{bmatrix}9&12\\ 12&41\end{bmatrix} .
+\]
+Tienen la misma traza ($50$) y los mismos autovalores, $\lambda_1=45$ y
+$\lambda_2=5$; luego $\sigma_1=\sqrt{45}=3\sqrt5$ y $\sigma_2=\sqrt5$.
+Observemos de paso que $\sigma_1\sigma_2=3\sqrt5\cdot\sqrt5=15=\det A$, y que
+$\sigma_1>5=\lambda_{\max}(A)$ mientras que $\sigma_2<3=\lambda_{\min}(A)$:
+los valores singulares \emph{no} son los autovalores.
+
+Los autovectores de $A^TA$ son inmediatos:
+\[
+\begin{bmatrix}25&20\\ 20&25\end{bmatrix}\begin{pmatrix}1\\ 1\end{pmatrix}
+=45\begin{pmatrix}1\\ 1\end{pmatrix},
+\qquad
+\begin{bmatrix}25&20\\ 20&25\end{bmatrix}\begin{pmatrix}-1\\ 1\end{pmatrix}
+=5\begin{pmatrix}-1\\ 1\end{pmatrix},
+\]
+y normalizando,
+$\bv_1=\frac1{\sqrt2}(1,1)^T$, $\bv_2=\frac1{\sqrt2}(-1,1)^T$.
+Los $\bu$ salen de la Definición~\ref{def:u}:
+\[
+A\bv_1=\frac{3}{\sqrt2}\begin{pmatrix}1\\ 3\end{pmatrix}
+=\sqrt{45}\cdot\frac1{\sqrt{10}}\begin{pmatrix}1\\ 3\end{pmatrix}
+=\sigma_1\bu_1,
+\qquad
+A\bv_2=\frac1{\sqrt2}\begin{pmatrix}-3\\ 1\end{pmatrix}
+=\sqrt{5}\cdot\frac1{\sqrt{10}}\begin{pmatrix}-3\\ 1\end{pmatrix}
+=\sigma_2\bu_2 .
+\]
+La división por $\sqrt{10}$ deja a $\bu_1$ y $\bu_2$ ortonormales. En
+resumen,
+\[
+U=\frac1{\sqrt{10}}\begin{bmatrix}1&-3\\ 3&1\end{bmatrix},
+\qquad
+\Sigma=\begin{bmatrix}\sqrt{45}&\\ &\sqrt5\end{bmatrix},
+\qquad
+V=\frac1{\sqrt2}\begin{bmatrix}1&-1\\ 1&1\end{bmatrix} .
+\]
+Y la descomposición en sumandos de rango uno, con
+$\sqrt2\sqrt{10}=\sqrt{20}$:
+\[
+\sigma_1\bu_1\bv_1^T+\sigma_2\bu_2\bv_2^T
+=\frac{\sqrt{45}}{\sqrt{20}}\begin{bmatrix}1&1\\ 3&3\end{bmatrix}
++\frac{\sqrt{5}}{\sqrt{20}}\begin{bmatrix}3&-3\\ -1&1\end{bmatrix}
+=\frac32\begin{bmatrix}1&1\\ 3&3\end{bmatrix}
++\frac12\begin{bmatrix}3&-3\\ -1&1\end{bmatrix}
+=\begin{bmatrix}3&0\\ 4&5\end{bmatrix}=A .
+\]
+\end{example}
+
+\subsection{Algunos casos particulares}
+
+\begin{example}[Una matriz sdp]
+Si $S=Q\Lambda Q^T$ es simétrica y definida positiva, su SVD es esa misma
+descomposición: $U=V=Q$ y $\Sigma=\Lambda$. Para una matriz sdp, valores
+singulares y autovalores coinciden.
+\end{example}
+
+\begin{example}[Una simétrica con autovalores negativos]
+Si $S=Q\Lambda Q^T$ es simétrica y $S\bx=-\alpha\bx$ con $\alpha>0$, el valor
+singular correspondiente es $\sigma=+\alpha$, y uno de los dos vectores
+singulares (el $\bu$ o el $\bv$) hay que tomarlo con el signo cambiado: con
+$\bv=\bx$ y $\bu=-\bx$, la igualdad $S\bx=-\alpha\bx$ es exactamente
+$S\bv=\sigma\bu$. En general, para $S$ simétrica,
+$\sigma_k=|\lambda_k|$ reordenados de mayor a menor.
+\end{example}
+
+\begin{example}[Una matriz ortogonal]
+Si $A=Q$ es ortogonal, $A^TA=I$ y todos los valores singulares valen $1$,
+o sea $\Sigma=I$. Los vectores singulares no son únicos: $Q=QII^T$ sirve,
+pero también $Q=(QQ_1)IQ_1^T$ para cualquier $Q_1$ ortogonal. Esto es
+coherente con $\|Q\|_2=1$: una matriz ortogonal no estira nada.
+\end{example}
+
+% ===================================================================
+\section{Demostración de la SVD}
+\label{sec:prueba-SVD}
+
+Queda por verificar lo que dimos por sentado: que los $\bu_k$ de la
+Definición~\ref{def:u} son ortonormales, y que se los puede completar hasta
+una base ortonormal de $\R^m$.
+
+\begin{proof}[Demostración del Teorema~\ref{teo:SVD}]
+\emph{Los $\bu_k$ son ortonormales.} Para $j,k\le r$,
+\[
+\bu_j^T\bu_k
+=\Bigl(\frac{A\bv_j}{\sigma_j}\Bigr)^T\Bigl(\frac{A\bv_k}{\sigma_k}\Bigr)
+=\frac{\bv_j^T(A^TA\,\bv_k)}{\sigma_j\sigma_k}
+=\frac{\lambda_k}{\sigma_j\sigma_k}\,\bv_j^T\bv_k
+=\frac{\sigma_k}{\sigma_j}\,\bv_j^T\bv_k
+=\begin{cases}1&\text{si }j=k,\\ 0&\text{si }j\neq k,\end{cases}
+\]
+usando que los $\bv$ son ortonormales y que $\lambda_k=\sigma_k^2$.
+
+\emph{Los $\bu_k$ son autovectores de $AA^T$.} No hace falta para la prueba,
+pero lo confirma:
+\[
+AA^T\bu_k=AA^T\Bigl(\frac{A\bv_k}{\sigma_k}\Bigr)
+=A\Bigl(\frac{A^TA\,\bv_k}{\sigma_k}\Bigr)
+=A\,\frac{\sigma_k^2\bv_k}{\sigma_k}=\sigma_k^2\bu_k .
+\]
+El paso decisivo fue $(AA^T)A=A(A^TA)$: mover los paréntesis, que es la ley
+asociativa y es la clave de una cantidad enorme de pruebas del álgebra lineal.
+
+\emph{Completar las bases.} Los $\bu_1,\dots,\bu_r$ están en $C(A)$ y son $r$
+vectores ortonormales, así que son una base ortonormal de $C(A)$, que tiene
+dimensión $r$. Elegimos $\bu_{r+1},\dots,\bu_m$ como cualquier base
+ortonormal de $N(A^T)$. Por el Corolario~\ref{coro:cuatro},
+$C(A)\perp N(A^T)$ y las dimensiones suman $m$, así que la lista completa es
+una base ortonormal de $\R^m$ y $U$ es ortogonal. Lo mismo ya estaba hecho del
+lado de $V$: los $\bv_{r+1},\dots,\bv_n$ generan $N(A)$, que es ortogonal a
+$C(A^T)=\gen(\bv_1,\dots,\bv_r)$.
+
+Con eso, $AV=U\Sigma$ columna por columna es exactamente
+\eqref{eq:Av-sigma-u}, y multiplicando por $V^T$ queda $A=U\Sigma V^T$.
+\end{proof}
+
+\begin{remark}[Por qué los $\bu$ se definen y no se eligen]
+Podría parecer más simétrico tomar los $\bv$ como autovectores ortonormales
+de $A^TA$ y los $\bu$ como autovectores ortonormales de $AA^T$, por separado.
+No funciona, por dos razones. Primero, los signos: si $\bu$ es autovector,
+$-\bu$ también, y la SVD exige el signo que hace $A\bv_k=\sigma_k\bu_k$ con
+$\sigma_k>0$. Segundo, y más serio: cuando un $\sigma$ está repetido hay un
+plano entero (o más) de autovectores donde elegir, y una elección
+independiente de los dos lados no tiene por qué ser compatible. Definir
+$\bu_k=A\bv_k/\sigma_k$ resuelve las dos cosas de un saque. Es exactamente el
+punto que hace fallar a la ``prueba rápida'' del Ejercicio~\ref{ej:prueba-rapida}.
+\end{remark}
+
+\begin{entrega}{Una construcción de la SVD}\label{ent:construccion-SVD}
+La demostración anterior parte de los autovectores de $A^TA$ y construye los
+$\bu$. Esta entrega hace el camino inverso --- parte de $AA^T$ y construye los
+$\bv$ --- y arma la factorización paso a paso.
+
+Sea $A\in\R^{m\times n}$.
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Probar que $A^TA$ y $AA^T$ son simétricas, semidefinidas positivas, y
+que tienen los mismos autovalores no nulos. \emph{Sugerencia:} para lo último,
+si $A^TA\,\bv=\lambda\bv$ con $\lambda\neq0$, ver que $A\bv$ es autovector de
+$AA^T$ con el mismo autovalor, y verificar que $A\bv\neq\bi 0$.
+\end{enumerate}
+
+\medskip
+\noindent Sean $\sigma_1\ge\cdots\ge\sigma_r>0$ tales que
+$\sigma_1^2,\dots,\sigma_r^2$ son los autovalores no nulos de $AA^T$, con
+$r=\rg(A)$. Sea $U=[\,\bu_1\ \cdots\ \bu_m\,]$ ortogonal con columnas
+autovectores de $AA^T$, y $U_r=[\,\bu_1\ \cdots\ \bu_r\,]$. Definimos
+$\Sigma_r=\diag(\sigma_1,\dots,\sigma_r)$ y
+\[
+V_r=A^TU_r\Sigma_r^{-1}\in\R^{n\times r} .
+\]
+Elegimos además $V_{-r}=[\,\bv_{r+1}\ \cdots\ \bv_n\,]$ una base ortonormal de
+$N(A)$, y ponemos $V=[\,V_r\ \ V_{-r}\,]$, $U=[\,U_r\ \ U_{-r}\,]$ y
+\[
+\Sigma=\begin{bmatrix}\Sigma_r&0\\ 0&0\end{bmatrix}\in\R^{m\times n} .
+\]
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt,start=2]
+\item Probar que $AV_r=U_r\Sigma_r$.
+\item Probar que $AV_{-r}=0$.
+\item Concluir que $AV=[\,U_r\Sigma_r\ \ 0\,]=U\Sigma$.
+\item Probar que $V^TV=I_n$. \emph{Sugerencia:} verificar por separado
+$V_r^TV_r=I_r$, $V_r^TV_{-r}=0$ y $V_{-r}^TV_{-r}=I_{n-r}$.
+\item Deducir, por ser $V$ cuadrada, que $VV^T=I_n$ y $V^T=V^{-1}$.
+\item Concluir que $A=U\Sigma V^T$.
+\item Comparar con la construcción de la Sección~\ref{sec:prueba-SVD}: ¿en
+qué punto exacto de esta construcción se usa que los $\bu$ ya estaban
+elegidos, y por qué eso determina los signos de los $\bv$?
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (a) es el que se
+usa en todo el capítulo; el (h) es la contracara de la observación anterior
+sobre por qué una de las dos familias se define a partir de la otra.}}
+\end{entrega}
+
+% ===================================================================
+\section{Lo que se lee en la SVD}
+\label{sec:cuatro-SVD}
+
+\subsection{Los cuatro subespacios fundamentales}
+
+El Capítulo~\ref{cap:algebra-lineal} presentó los cuatro subespacios
+fundamentales y el Capítulo~\ref{cap:ortogonalidad} probó cómo se aparean
+ortogonalmente. La SVD hace algo más: da bases \emph{ortonormales} de los
+cuatro al mismo tiempo.
+
+\begin{proposition}\label{prop:cuatro-SVD}
+Sea $A=U\Sigma V^T$ con $\rg(A)=r$. Entonces
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}lll@{}}
+\hline
+subespacio & base ortonormal & dimensión\\
+\hline
+espacio fila $C(A^T)$ & $\bv_1,\dots,\bv_r$ & $r$\\
+espacio nulo $N(A)$ & $\bv_{r+1},\dots,\bv_n$ & $n-r$\\
+espacio columna $C(A)$ & $\bu_1,\dots,\bu_r$ & $r$\\
+espacio nulo a izquierda $N(A^T)$ & $\bu_{r+1},\dots,\bu_m$ & $m-r$\\
+\hline
+\end{tabular}
+\end{center}
+Además, las proyecciones ortogonales sobre esos subespacios son
+\[
+P_{C(A)}=U_rU_r^T,
+\qquad
+P_{C(A^T)}=V_rV_r^T,
+\]
+y $P_{N(A^T)}=I-U_rU_r^T$, $P_{N(A)}=I-V_rV_r^T$.
+\end{proposition}
+
+\begin{proof}
+De \eqref{eq:Av-sigma-u}, $A\bv_k=\bi 0$ para $k>r$, así que
+$\bv_{r+1},\dots,\bv_n$ son $n-r$ vectores ortonormales de $N(A)$, que tiene
+dimensión $n-r$: son una base. Los $\bv_1,\dots,\bv_r$ son ortonormales y
+ortogonales a $N(A)$, luego están en $N(A)^\perp=C(A^T)$
+(Corolario~\ref{coro:cuatro}), y son $r$: base. Del lado de $U$, los
+$\bu_k=A\bv_k/\sigma_k$ con $k\le r$ están en $C(A)$ y son $r$ ortonormales:
+base de $C(A)$; los restantes completan y están en $C(A)^\perp=N(A^T)$.
+
+Para las proyecciones: $U_r$ tiene columnas ortonormales que generan $C(A)$,
+y ya vimos en la Sección~\ref{sec:proyecciones} que la proyección ortogonal
+sobre el espacio generado por columnas ortonormales es $QQ^T$.
+\end{proof}
+
+\begin{remark}
+Vale la pena leer la tabla junto con \eqref{eq:Av-sigma-u}: la SVD dice que
+$A$ manda una base ortonormal del espacio fila a una base ortogonal del
+espacio columna, estirando cada dirección por su $\sigma_k$, y aplasta el
+espacio nulo a cero. Ésa es toda la información que hay en una matriz.
+\end{remark}
+
+\subsection{Los vectores singulares de $A^T$}
+
+Trasponiendo $A=U\Sigma V^T$ se obtiene $A^T=V\Sigma^TU^T$, que recorre el
+camino inverso: de los $\bu$ a los $\bv$.
+
+\begin{proposition}\label{prop:AT}
+$A^T\bu_k=\sigma_k\bv_k$ para $k=1,\dots,r$, y $A^T\bu_k=\bi 0$ para
+$k=r+1,\dots,m$. En particular $A$ y $A^T$ tienen los mismos valores
+singulares no nulos, y $\|A\|_2=\|A^T\|_2$.
+\end{proposition}
+
+\begin{proof}
+Multiplicando $A\bv_k=\sigma_k\bu_k$ por $A^T$ y usando
+$A^TA\bv_k=\sigma_k^2\bv_k$ queda $\sigma_k^2\bv_k=\sigma_kA^T\bu_k$;
+dividiendo por $\sigma_k\neq0$ sale la igualdad. Para $k>r$, $\bu_k\in N(A^T)$
+por la Proposición~\ref{prop:cuatro-SVD}.
+\end{proof}
+
+\subsection{Una matriz simétrica que también da la SVD}
+
+Construimos la SVD a partir de $A^TA$ y $AA^T$. Hay otra manera, que usa una
+sola matriz simétrica de tamaño $m+n$ y tiene $r$ pares de autovalores
+opuestos:
+\[
+S=\begin{bmatrix}0&A\\ A^T&0\end{bmatrix}
+\qquad\text{tiene autovectores}\qquad
+\begin{pmatrix}\bu_k\\ \bv_k\end{pmatrix}
+\quad\text{y}\quad
+\begin{pmatrix}-\bu_k\\ \bv_k\end{pmatrix} .
+\]
+En efecto, usando $A\bv_k=\sigma_k\bu_k$ y $A^T\bu_k=\sigma_k\bv_k$,
+\begin{equation}\label{eq:bloques-SVD}
+\begin{bmatrix}0&A\\ A^T&0\end{bmatrix}
+\begin{pmatrix}\pm\bu_k\\ \bv_k\end{pmatrix}
+=\begin{pmatrix}A\bv_k\\ \pm A^T\bu_k\end{pmatrix}
+=\sigma_k\begin{pmatrix}\bu_k\\ \bv_k\end{pmatrix}
+\quad\text{y}\quad
+-\sigma_k\begin{pmatrix}-\bu_k\\ \bv_k\end{pmatrix} .
+\end{equation}
+Eso da $2r$ autovalores, $\pm\sigma_1,\dots,\pm\sigma_r$. Los autovectores son
+ortogonales: $(-\bu_k)^T\bu_k+\bv_k^T\bv_k=-1+1=0$. Los otros
+$(m-r)+(n-r)$ autovectores, correspondientes a $\lambda=0$, se arman con los
+$\bu$ y $\bv$ que quedaron en $N(A^T)$ y $N(A)$
+(Ejercicio~\ref{ej:bloques}).
+
+\subsection{$A^TA$ y $AA^T$: los mismos valores singulares}
+
+La construcción partió de $A^TA$, pero podríamos haber empezado por $AA^T$ y
+nada habría cambiado. La razón es un hecho general sobre autovalores, que no
+tiene nada que ver con la SVD y que por eso probamos en su lugar: la
+Proposición~\ref{prop:AB-BA} del Capítulo~\ref{cap:autovalores} dice que $AB$
+y $BA$ tienen los mismos autovalores no nulos, aun siendo rectangulares.
+
+Con $B=A^T$ eso dice que $A^TA$ y $AA^T$ tienen los mismos autovalores no
+nulos, o sea que $A$ tiene \emph{los mismos valores singulares} se los calcule
+como se los calcule. Lo que cambia es sólo el tamaño: si $m>n$, la matriz
+$AA^T$ es de $m\times m$ y tiene $m-n$ autovalores \emph{cero} de más respecto
+de $A^TA$, que es de $n\times n$. Eso explica la asimetría de la
+Figura~\ref{fig:esquema-SVD}: sobran columnas en $U$, no en $V$. En la
+práctica conviene diagonalizar la más chica de las dos, y es exactamente lo
+que hace el truco de la matriz de Gram del capítulo de PCA.
+
+% ===================================================================
+\section{La geometría: de la esfera al elipsoide}
+\label{sec:geometria-SVD}
+
+La SVD factoriza $A$ como (ortogonal) $\times$ (diagonal) $\times$
+(ortogonal), y esos tres factores tienen una lectura geométrica inmediata:
+$V^T$ y $U$ rotan (posiblemente con una reflexión) y $\Sigma$ estira a lo
+largo de los ejes. En dos dimensiones se puede dibujar todo el proceso
+(Figura~\ref{fig:svd-geometria}): un vector $\bx$ de la circunferencia
+unitaria se rota a $V^T\bx$, se estira a $\Sigma V^T\bx$ y se vuelve a rotar
+hasta $A\bx=U\Sigma V^T\bx$, que recorre una elipse.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=0.98]
+\draw (1cm,3cm) circle (0.7cm);%first circle
+\draw (0cm,3cm)--(2cm,3cm);
+\draw (1cm,4cm)--(1cm,2cm);
+\draw[very thick,->] (1cm,3cm)--(1.3cm,3.64cm);
+\node at (1.4cm,3.8cm) {${\bv_2}$};
+\draw[very thick,->] (1cm,3cm)--(1.64cm,2.7cm);
+\node at (1.9cm,2.7cm) {${\bv_1}$};
+\draw [<-](2.8cm,4.0cm) arc [radius=1cm, start angle=50, end angle=125];
+\node at (2.2cm,4.5cm) {\color{bleu}${V^T}$};
+\draw [<-](1.5cm,2.0cm) arc [radius=1cm, start angle=230, end angle=310];
+\node at (2.15cm,1.55cm) {${V}$};
+\node at(1.5cm,4.9cm){$\bx$};
+\node at(10.6cm,4.9cm){$A\bx$};
+\draw (3.5cm,3cm) circle (0.7cm);%second circle
+\draw (2.5cm,3cm)--(4.5cm,3cm);
+\draw (3.5cm,4cm)--(3.5cm,2cm);
+\draw [very thick,->] (3.5cm,3cm)--(3.5cm,3.7cm);
+\draw [very thick,->] (3.5cm,3cm)--(4.2cm,3cm);
+\draw [<-](5.5,4.0cm) arc [radius=1cm, start angle=50, end angle=125];
+\node at (4.9,4.5cm) {\color{bleu}${\Sigma}$};
+\draw[rotate=0] (7cm, 3cm) ellipse (1.6cm and 0.4cm);
+\draw (5.1cm,3cm)--(8.9cm,3cm);
+\draw [very thick,->] (7cm,3cm)--(8.6cm,3cm);
+\node at (8.8cm,3.2cm) {${\sigma_1}$};
+\draw (7cm, 4.2cm)--(7cm, 1.8cm);
+\draw [very thick,->] (7cm, 3cm)--(7cm, 3.4cm);
+\node at (7.3cm, 3.6cm) {${\sigma_2}$};
+\draw[rotate=135] (-5.8cm, -10.04cm) ellipse (1.6cm and 0.4cm);
+\draw (9.6cm,3cm)--(12.9cm,3cm);
+\draw (11.2cm, 4.2cm)--(11.2cm, 1.8cm);
+\draw [very thick,->] (11.2cm, 3cm)--(12.33,1.87);
+\draw [dash pattern=on 2pt off 2pt] (11.2cm,3cm)--(9.9cm,4.3cm);
+\draw [very thick,->] (11.2cm,3cm)--(11.48cm,3.28cm);
+\draw [dash pattern=on 2pt off 2pt] (11.2cm,3cm)--(10.7cm,2.5cm);
+\draw [<-](9.5,4.0cm) arc [radius=1cm, start angle=50, end angle=125];
+\node at (8.9,4.5cm) {\color{bleu}${U}$};
+\node at (12.43,1.6) {${\sigma_1\bu_1}$};
+\node at (11.98cm,3.3cm) {${\sigma_2\bu_2}$};
+\draw [<-,dash pattern=on 2pt off 2pt](10.2,4.9cm) arc [radius=10cm, start angle=65, end angle=115];
+\node at (5.78cm,6.1cm) {\color{bleu}${A}$};
+\end{tikzpicture}
+\caption{Rotación, estiramiento y rotación. $V^T$ y $U$ son rotaciones
+(posiblemente con reflexión) y $\Sigma$ estira los ejes por $\sigma_1$ y
+$\sigma_2$. La circunferencia unitaria va a parar a una elipse de semiejes
+$\sigma_1$ y $\sigma_2$ en las direcciones $\bu_1$ y $\bu_2$.}
+\label{fig:svd-geometria}
+\end{figure}
+
+El enunciado preciso es el siguiente, y conecta con la
+Sección~\ref{sec:elipses}, donde estudiamos las elipses asociadas a una
+matriz sdp.
+
+\begin{theorem}[La imagen de la esfera]\label{teo:elipsoide}
+Sea $A\in\R^{n\times n}$ invertible, con valores singulares
+$\sigma_1\ge\cdots\ge\sigma_n>0$. Entonces la imagen de la esfera unitaria,
+\[
+\{A\bx : \|\bx\|=1\} ,
+\]
+es el elipsoide de semiejes $\sigma_1,\dots,\sigma_n$ en las direcciones
+$\bu_1,\dots,\bu_n$. En particular, $\sigma_1$ y $\sigma_n$ son el semieje
+mayor y el semieje menor: $A$ estira a lo sumo $\sigma_1$ y a lo menos
+$\sigma_n$.
+\end{theorem}
+
+\begin{proof}
+Sea $\by=A\bx$ con $\|\bx\|=1$. Escribiendo $\bx=\sum_k c_k\bv_k$, es
+$\by=\sum_k c_k\sigma_k\bu_k$, y las coordenadas de $\by$ en la base
+ortonormal $\{\bu_k\}$ son $y'_k=\bu_k^T\by=\sigma_kc_k$. La condición
+$\|\bx\|^2=\sum c_k^2=1$ se traduce entonces en
+\[
+\sum_{k=1}^n\frac{(y'_k)^2}{\sigma_k^2}=1 ,
+\]
+que es la ecuación de un elipsoide de semiejes $\sigma_k$ en las direcciones
+$\bu_k$. Recíprocamente, todo punto que cumple esa ecuación es la imagen del
+$\bx$ correspondiente.
+\end{proof}
+
+\begin{remark}[Es la elipse del Capítulo~\ref{cap:sdp}]
+El elipsoide del teorema es exactamente el conjunto
+$\{\by : \by^T(AA^T)^{-1}\by=1\}$, o sea la elipse asociada a la matriz sdp
+$(AA^T)^{-1}$ en el sentido de la Sección~\ref{sec:elipses}: sus ejes son los
+autovectores $\bu_k$ de $AA^T$ y sus semiejes son
+$1/\sqrt{\lambda_k((AA^T)^{-1})}=\sqrt{\lambda_k(AA^T)}=\sigma_k$. La SVD es,
+leída así, el teorema que dice que \emph{toda} matriz manda esferas a
+elipsoides, y que los ejes de llegada son los $\bu_k$ y los de partida los
+$\bv_k$.
+\end{remark}
+
+\begin{remark}[Contar parámetros]
+La factorización ordena la información de una matriz de $2\times2$: los cuatro
+números $a,b,c,d$ se corresponden con dos ángulos $\theta$, $\phi$ y dos
+valores singulares,
+\[
+\begin{bmatrix}a&b\\ c&d\end{bmatrix}
+=\begin{bmatrix}\cos\theta&-\sen\theta\\ \sen\theta&\cos\theta\end{bmatrix}
+\begin{bmatrix}\sigma_1&\\ &\sigma_2\end{bmatrix}
+\begin{bmatrix}\cos\phi&\sen\phi\\ -\sen\phi&\cos\phi\end{bmatrix} .
+\]
+Si la matriz es simétrica hay sólo tres parámetros independientes: ¿cómo se
+reducen entonces los cuatro? El Ejercicio~\ref{ej:parametros} sigue esta
+cuenta en dimensiones más altas.
+\end{remark}
+
+% ===================================================================
+\section{La descomposición polar}
+\label{sec:polar}
+
+Todo número complejo se escribe en forma polar como $z=re^{i\theta}$, con
+$r\ge0$ y $|e^{i\theta}|=1$. Pensando a los números como matrices de
+$1\times1$, el factor $e^{i\theta}$ hace de matriz ortogonal y $r$ de matriz
+semidefinida positiva. La SVD dice que esa descomposición existe en cualquier
+dimensión.
+
+\begin{theorem}[Descomposición polar]\label{teo:polar}
+Toda $A\in\R^{n\times n}$ se factoriza como
+\[
+\boxed{\ A=QS\ }
+\]
+con $Q$ ortogonal y $S$ simétrica semidefinida positiva. Si $A$ es
+invertible, $S$ es definida positiva y $S=(A^TA)^{1/2}$ es la raíz cuadrada
+de la Sección~\ref{sec:raiz}.
+\end{theorem}
+
+\begin{proof}
+Sea $A=U\Sigma V^T$. Intercalando $V^TV=I$,
+\[
+A=U\Sigma V^T=(UV^T)(V\Sigma V^T)=QS,
+\qquad Q:=UV^T,\quad S:=V\Sigma V^T .
+\]
+$Q$ es ortogonal por ser producto de ortogonales. $S$ es simétrica y sus
+autovalores son los $\sigma_k\ge0$, luego es semidefinida positiva, y
+definida positiva si todos los $\sigma_k>0$, es decir si $A$ es invertible.
+Finalmente $S^2=V\Sigma^2V^T=V\Sigma^TU^TU\Sigma V^T=A^TA$, y como $S$ es
+sdp, es \emph{la} raíz cuadrada de $A^TA$ por la unicidad probada en la
+Entrega~\ref{ent:raiz}.
+\end{proof}
+
+También vale la versión con los factores al revés, $A=S_1Q$ con
+$S_1=U\Sigma U^T=(AA^T)^{1/2}$ y el mismo $Q=UV^T$.
+
+\begin{example}
+Para $A=\begin{bsmallmatrix}3&0\\ 4&5\end{bsmallmatrix}$, con la SVD del
+Ejemplo~\ref{ej:svd-completo},
+\[
+Q=UV^T=\frac1{\sqrt5}\begin{bmatrix}2&-1\\ 1&2\end{bmatrix},
+\qquad
+S=V\Sigma V^T=\sqrt5\begin{bmatrix}2&1\\ 1&2\end{bmatrix} .
+\]
+\end{example}
+
+\begin{remark}[Rotación y deformación]
+En mecánica del continuo la descomposición polar separa la \emph{rotación} de
+un cuerpo (el factor $Q$) de su \emph{deformación} (el factor $S$): los
+autovalores de $S$ son los factores de estiramiento y sus autovectores, las
+direcciones principales de deformación. Es la misma lectura que la del
+Teorema~\ref{teo:elipsoide}, reagrupada.
+\end{remark}
+
+% ===================================================================
+\section{Las tres normas de la SVD}
+\label{sec:tres-normas}
+
+La norma de Frobenius apareció en la Sección~\ref{sec:frobenius} y la
+espectral en la Sección~\ref{sec:sigma1}. Hasta ahora no tenían nada que ver
+una con otra: la primera lee la matriz como un vector largo y la segunda mide
+cuánto estira. La SVD las pone a las dos ---y a una tercera--- en el mismo
+idioma: \emph{todas se leen de los valores singulares}. Esta sección es corta
+y es la que van a citar los dos capítulos siguientes.
+
+El ingrediente es que multiplicar por una matriz de columnas ortonormales no
+cambia la norma de Frobenius: si $Q^TQ=I$, entonces
+\[
+\|QA\|_F^2=\tr\bigl((QA)^T(QA)\bigr)=\tr(A^TQ^TQA)=\tr(A^TA)=\|A\|_F^2 ,
+\]
+y lo mismo del otro lado, porque $\|AP\|_F^2=\tr(APP^TA^T)$ y
+$\|A\|_F^2=\tr(AA^T)$ también.
+
+\begin{proposition}[Frobenius cuenta todos los valores singulares]
+\label{prop:frobenius-sigmas}
+Sea $A\in\R^{m\times n}$ con valores singulares
+$\sigma_1\ge\cdots\ge\sigma_r>0$. Entonces
+\[
+\boxed{\ \|A\|_F^2=\sigma_1^2+\sigma_2^2+\cdots+\sigma_r^2\ }
+\]
+\end{proposition}
+
+\begin{proof}
+Con la SVD reducida $A=U_r\Sigma_rV_r^T$ de~\eqref{eq:SVD-reducida}, las
+columnas de $U_r$ y las de $V_r$ son ortonormales, así que
+\[
+\|A\|_F=\|U_r\Sigma_rV_r^T\|_F=\|\Sigma_rV_r^T\|_F=\|\Sigma_r\|_F ,
+\]
+y $\Sigma_r=\diag(\sigma_1,\dots,\sigma_r)$ tiene norma de Frobenius
+$\bigl(\sum_k\sigma_k^2\bigr)^{1/2}$.
+\end{proof}
+
+Comparando con $\|A\|_2=\sigma_1$ (Teorema~\ref{teo:sigma1}) sale de una
+\[
+\|A\|_2\ \le\ \|A\|_F\ \le\ \sqrt{r}\,\|A\|_2 ,
+\]
+con la primera igualdad exactamente cuando $A$ tiene rango uno y la segunda
+cuando todos los valores singulares no nulos coinciden.
+
+Hay una tercera manera obvia de resumir los $\sigma_k$ en un número, y
+también es una norma.
+
+\begin{definition}[Norma nuclear]\label{def:norma-nuclear}
+La \textbf{norma nuclear} (o \emph{norma de traza}) de $A$ es la suma de sus
+valores singulares,
+\[
+\|A\|_*=\sigma_1+\sigma_2+\cdots+\sigma_r .
+\]
+\end{definition}
+
+Que sea una norma no es evidente desde esta definición ---la desigualdad
+triangular dice que los valores singulares de $A+B$ suman menos que los de
+$A$ más los de $B$, y eso hay que probarlo--- y lo dejamos para el capítulo
+de normas de matrices. Las tres juntas:
+\[
+\|A\|_2=\sigma_1,\qquad
+\|A\|_F=\bigl(\sigma_1^2+\cdots+\sigma_r^2\bigr)^{1/2},\qquad
+\|A\|_*=\sigma_1+\cdots+\sigma_r ,
+\]
+y son genuinamente distintas, ya que para la identidad de $n\times n$ dan
+$1$, $\sqrt n$ y $n$.
+
+Lo que tienen en común es más importante que lo que las diferencia.
+
+\begin{definition}[Norma ortogonalmente invariante]\label{def:ortog-invariante}
+Una norma $\|\cdot\|$ en $\R^{m\times n}$ es \textbf{ortogonalmente
+invariante} si
+\[
+\|QAP\|=\|A\| \qquad\text{para toda } A
+\]
+y todas las matrices ortogonales $Q\in\R^{m\times m}$, $P\in\R^{n\times n}$.
+\end{definition}
+
+\begin{corollary}\label{coro:tres-invariantes}
+Las normas espectral, de Frobenius y nuclear son ortogonalmente invariantes.
+\end{corollary}
+
+\begin{proof}
+Si $A=U\Sigma V^T$, entonces $QAP=(QU)\Sigma(P^TV)^T$ es una SVD de $QAP$,
+porque $QU$ y $P^TV$ son ortogonales. Luego $QAP$ tiene \emph{los mismos
+valores singulares} que $A$, y las tres normas se calculan con ellos.
+\end{proof}
+
+Esa es la propiedad que hace que la SVD sea la herramienta correcta para
+medir distancias entre matrices: si una norma no ve más que los valores
+singulares, la SVD ya la calculó. El capítulo de PCA se apoya exactamente en
+esto para probar que la SVD truncada es la mejor aproximación de rango bajo.
+
+\begin{remark}[Cuál es cuál]
+Conviene quedarse con una imagen de cada una. La espectral mide el
+\emph{peor caso}: cuánto puede estirar $A$ a un vector. La de Frobenius mide
+la \emph{energía total}, repartida entre todas las direcciones. La nuclear
+es la que mejor detecta el \emph{rango}: es la suma de los $\sigma_k$, así
+que penaliza tener muchos valores singulares chicos y no solo uno grande ---por
+eso aparece cuando se quiere forzar que una matriz tenga rango bajo.
+\end{remark}
+
+% ===================================================================
+\section{Lo que viene}
+\label{sec:lo-que-viene}
+
+Cerramos enunciando, sin demostrar, los dos resultados que esta factorización
+hace posibles y que se tratan en los capítulos siguientes.
+
+\medskip
+\noindent\textbf{Aproximación de rango bajo.} Truncar la
+suma~\eqref{eq:sumandos} en el término $d$-ésimo,
+\[
+A_d=\sigma_1\bu_1\bv_1^T+\cdots+\sigma_d\bu_d\bv_d^T ,
+\]
+da una matriz de rango $d$. El \textbf{teorema de Eckart-Young} afirma que es
+la mejor posible:
+\[
+\text{si } \rg(B)\le d, \text{ entonces } \|A-A_d\|\le\|A-B\| ,
+\]
+tanto en la norma de Frobenius como en la espectral. Ésa es la razón por la
+que la SVD truncada se usa para comprimir imágenes y para reducir la
+dimensión de un conjunto de datos. El enunciado preciso, la demostración y la
+lectura estadística son el contenido del capítulo de PCA.
+
+\medskip
+\noindent\textbf{La pseudoinversa.} Si $A$ no es invertible --- o ni siquiera
+cuadrada --- no hay $A^{-1}$, pero la SVD permite hacer lo más parecido
+posible: invertir lo que se puede invertir y dejar en cero el resto. Con
+$\Sigma^+\in\R^{n\times m}$ la matriz que tiene $1/\sigma_1,\dots,1/\sigma_r$
+en la diagonal y ceros en el resto, se define
+\[
+A^+=V\,\Sigma^+\,U^T .
+\]
+Se verá que $AA^+$ y $A^+A$ son las proyecciones ortogonales sobre $C(A)$ y
+$C(A^T)$ --- comparar con la Proposición~\ref{prop:cuatro-SVD} ---, que
+$A^+=(A^TA)^{-1}A^T$ cuando las columnas de $A$ son independientes, y que
+$A^+\bb$ es la solución de cuadrados mínimos de norma mínima. Es el contenido
+del capítulo final.
+
+% ===================================================================
+\section*{Ejercicios de desarrollo}
+
+\begin{entrega}{La norma espectral}\label{ent:norma-espectral}
+Todo este ejercicio se apoya en la Definición~\ref{def:norma-espectral} y en
+el Teorema~\ref{teo:sigma1}; casi nada necesita la SVD.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Verificar directamente sobre la definición que
+\[
+\|A\|_2=\max_{\|\bx\|=1}\|A\bx\|=\max_{0<\|\bx\|\le1}\|A\bx\| ,
+\]
+es decir, que las tres expresiones dan el mismo número. (Que el máximo se
+alcance, y no haya que escribir supremo, ya lo sabemos: el
+Teorema~\ref{teo:sigma1} exhibe el vector donde se alcanza.)
+
+\item Calcular $\|A\|_2$ para
+$A=\begin{bsmallmatrix}1&0\\ 0&3\end{bsmallmatrix}$,
+$A=\begin{bsmallmatrix}0&2\\ 0&0\end{bsmallmatrix}$ y
+$A=\begin{bsmallmatrix}1&1\\ 0&1\end{bsmallmatrix}$. En el último caso,
+comparar $\|A\|_2$ con $\max_i|\lambda_i(A)|$ y observar que la desigualdad
+del Corolario~\ref{coro:lambda-sigma} es estricta.
+
+\item Probar que $\|A\|_2=\|A^T\|_2$. \emph{Sugerencia:} $A^TA$ y $AA^T$
+tienen los mismos autovalores no nulos
+(Proposición~\ref{prop:AB-BA}). Mostrar en cambio con un ejemplo que
+\emph{no} es cierto que $\|A\bx\|=\|A^T\bx\|$ para todo $\bx$, y probar que
+sí lo es cuando $A$ conmuta con su traspuesta.
+
+\item Probar que $\|QA\|_2=\|A\|_2=\|AQ'\|_2$ si $Q$ y $Q'$ son ortogonales
+de tamaños compatibles. \emph{Sugerencia:} las ortogonales no cambian la
+norma de los vectores.
+
+\item \emph{(Una submatriz no puede estirar más que la matriz entera.)} Sea
+$B$ la submatriz de $A$ formada por algunas de sus filas y algunas de sus
+columnas. Probar que $\sigma_1(B)\le\sigma_1(A)$, es decir
+$\|B\|_2\le\|A\|_2$, de las dos maneras siguientes.
+\begin{enumerate}[label=(\roman*)]
+\item \emph{A mano.} Si $C$ se obtiene de $A$ quedándose con algunas
+columnas y $\by$ es un vector del tamaño correspondiente, sea $\bx\in\R^n$ el
+vector que resulta de rellenar con ceros las posiciones eliminadas: verificar
+que $A\bx=C\by$ y $\|\bx\|=\|\by\|$, y concluir $\|C\|_2\le\|A\|_2$. Después,
+si $D$ sale de $C$ quedándose con algunas filas, observar que $D\by$ es
+$C\by$ con coordenadas borradas, así que $\|D\by\|\le\|C\by\|$. Encadenar las
+dos operaciones.
+\item \emph{En forma matricial.} Escribir $B=R\,A\,C^T$ con $R$ y $C$
+matrices de ceros y unos que seleccionan filas y columnas, verificar que $R$ y
+$C$ tienen filas ortonormales y deducir la desigualdad del ítem (d).
+\end{enumerate}
+
+\item Sea $A$ con valores singulares $\sigma_1,\dots,\sigma_r$. Determinar
+los valores singulares de $A^T$, de $A^TA$, de $AA^TA$, y de $A^{-1}$ cuando
+$A$ es cuadrada e invertible. ¿Cuánto vale $\|A^{-1}\|_2$?
+
+\item \emph{(La norma espectral no viene de un producto interno.)} Tomar
+$A=\begin{bsmallmatrix}1&0\\ 0&0\end{bsmallmatrix}$ y
+$B=\begin{bsmallmatrix}0&0\\ 0&1\end{bsmallmatrix}$. Calcular
+$\|A+B\|_2$, $\|A-B\|_2$, $\|A\|_2$, $\|B\|_2$ y verificar que falla la ley
+del paralelogramo. Concluir, por el Teorema~\ref{teo-normaPI-carac}, que
+$\|\cdot\|_2$ no proviene de ningún producto interno. Repetir la cuenta con
+$\|\cdot\|_F$ y las mismas dos matrices, y explicar por qué esta vez la ley
+\emph{tiene} que cumplirse.
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (b) muestra que
+$\sigma_1$ y $|\lambda|_{\max}$ son cosas distintas incluso para matrices
+cuadradas; el (g) es la diferencia de fondo entre las dos normas de matrices
+que manejamos.}}
+\end{entrega}
+
+\begin{entrega}{La SVD y los cuatro subespacios}\label{ent:cuatro-SVD}
+Sea $A\in\R^{m\times n}$ de rango $r$, con SVD $A=U\Sigma V^T$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Calcular la SVD completa de
+$A=\begin{bmatrix}0&2&0\\ 0&0&3\\ 0&0&0\end{bmatrix}$
+y exhibir las bases ortonormales de los cuatro subespacios que da la
+Proposición~\ref{prop:cuatro-SVD}. (Acá $U$ y $V$ son matrices de
+permutación.)
+
+\item Verificar sobre esa matriz que $U_rU_r^T$ y $V_rV_r^T$ son las
+proyecciones ortogonales sobre $C(A)$ y $C(A^T)$: comprobar $P^2=P=P^T$ y
+$\tr(P)=r$.
+
+\item Probar en general que $U_rU_r^TA=A$ y $AV_rV_r^T=A$, e interpretar
+las dos igualdades en palabras.
+
+\item Probar que $\sigma_1(A)\ge\sigma_1(A_d)$ y, más precisamente, que los
+valores singulares de $A_d=\sum_{k\le d}\sigma_k\bu_k\bv_k^T$ son
+$\sigma_1,\dots,\sigma_d$, y los de $A-A_d$ son
+$\sigma_{d+1},\dots,\sigma_r$. Deducir $\|A-A_d\|_2=\sigma_{d+1}$.
+
+\item \emph{(La esfera y el elipsoide.)} Para
+$A=\begin{bsmallmatrix}3&0\\ 4&5\end{bsmallmatrix}$ del
+Ejemplo~\ref{ej:svd-completo}, dibujar la circunferencia unitaria, marcar
+$\bv_1$ y $\bv_2$, y dibujar su imagen $\{A\bx:\|\bx\|=1\}$ marcando
+$\sigma_1\bu_1$ y $\sigma_2\bu_2$. Verificar sobre el dibujo que
+$\bv_1\perp\bv_2$ y que $\bu_1\perp\bu_2$, y observar que $A$ \emph{no}
+preserva los ángulos entre otros pares de vectores.
+
+\item Probar que $\{A\bx:\|\bx\|\le1\}$ es el elipsoide \emph{lleno}, y que
+su volumen es $|\det A|$ veces el de la bola unitaria. \emph{Sugerencia:}
+$|\det A|=\sigma_1\cdots\sigma_n$ (probarlo también).
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (d) es el que se
+usa en el capítulo de PCA para medir el error de la SVD truncada; el (f)
+explica por qué el determinante mide volúmenes.}}
+\end{entrega}
+
+% ===================================================================
+\section*{Ejercicios}
+
+\begin{enumerate}
+
+\item Una matriz simétrica $S$ tiene autovectores ortonormales
+$\bv_1,\dots,\bv_n$, así que todo $\bx$ se escribe
+$\bx=c_1\bv_1+\cdots+c_n\bv_n$. Explicar estas dos fórmulas:
+\[
+\bx^T\bx=c_1^2+\cdots+c_n^2,
+\qquad
+\bx^TS\bx=\lambda_1c_1^2+\cdots+\lambda_nc_n^2 .
+\]
+
+\item El ejercicio anterior da una forma clara del cociente de Rayleigh:
+\[
+R(\bx)=\frac{\bx^TS\bx}{\bx^T\bx}
+=\frac{\lambda_1c_1^2+\cdots+\lambda_nc_n^2}{c_1^2+\cdots+c_n^2} .
+\]
+¿Por qué el valor máximo de este cociente es $\lambda_1$? ¿Y por qué se
+alcanza cuando $c_1=1$ y $c_2=\cdots=c_n=0$? Ésta es la forma más simple de
+entender el Teorema~\ref{teo:sigma1}.
+
+\item Siguiendo el ejercicio anterior: maximizar $R(\bx)$ con la condición
+$\bx^T\bv_1=0$. ¿Qué significa esa condición para $c_1$? ¿Por qué el máximo
+es ahora $\lambda_2$? ¿Y sujeto a qué dos condiciones sobre $\bx$ el máximo
+vale $\lambda_3$?
+
+\item Para maximizar $\bx^TS\bx$ con la restricción $\bx^T\bx=1$, el método
+de Lagrange trabaja con $L(\bx)=\bx^TS\bx-\lambda(\bx^T\bx-1)$. Mostrar que
+$\nabla L=\bi 0$ es exactamente $S\bx=\lambda\bx$, de modo que otra vez
+$\max R(\bx)=\lambda_1$.
+
+\item Encontrar los $\sigma$, los $\bv$ y los $\bu$ en la SVD de
+$A=\begin{bsmallmatrix}3&4\\ 0&5\end{bsmallmatrix}$.
+
+\item Encontrar la SVD de la matriz de rango uno
+$A=\begin{bsmallmatrix}2&4\\ 1&2\end{bsmallmatrix}$, y factorizar $A^TA$
+como $Q\Lambda Q^T$.
+
+\item Sea $A$ con valores singulares $\sigma_1\ge\cdots\ge\sigma_r>0$ y sea
+$B=A-\sigma_1\bu_1\bv_1^T$ la matriz que queda al quitarle a $A$ su
+sumando de rango uno más grande. ¿Cuáles son los valores singulares de $B$?
+¿Cuánto vale $\|B\|_2$? ¿Cuál es el rango de $B$?
+
+\item\label{ej:bloques} Verificar que la traza de
+$S=\begin{bsmallmatrix}0&A\\ A^T&0\end{bsmallmatrix}$, sumando sus elementos
+diagonales, coincide con la suma de los autovalores de
+\eqref{eq:bloques-SVD}. Si $A$ es diagonal de $n\times n$ con elementos
+$1,2,\dots,n$, ¿cuáles son los $2n$ autovalores y autovectores de $S$?
+Describir además los autovectores correspondientes a $\lambda=0$ en el caso
+general.
+
+\item\label{ej:reducida} La ecuación \eqref{eq:SVD-reducida} es
+$AV_r=U_r\Sigma_r$. Multiplicando por $V_r^T$ se obtiene
+$A=U_r\Sigma_rV_r^T$. Para ese paso \emph{no} se puede usar $V_rV_r^T=I$
+(que es falso cuando $r<n$). Mostrar en cambio que la matriz
+$U_r\Sigma_rV_r^T$ satisface \eqref{eq:Av-sigma-u}, y concluir que es $A$.
+
+\item\label{ej:prueba-rapida} He aquí una prueba rápida de la SVD. El paso 2
+usa las factorizaciones $A^TA=V\Lambda V^T$ y $AA^T=U\Lambda U^T$ (con los
+mismos autovalores en $\Lambda$):
+\begin{center}
+\begin{tabular}{ll@{\quad}l}
+\hline
+1 & $A(A^TA)$ & $=(AA^T)A$\\
+2 & $AV\Lambda V^T$ & $=U\Lambda U^TA$\\
+3 & $(U^TAV)\Lambda$ & $=\Lambda(U^TAV)$\\
+4 & \multicolumn{2}{l}{$U^TAV$ debe ser diagonal}\\
+\hline
+\end{tabular}
+\end{center}
+El paso 3 multiplica el paso 2 por $U^T$ a izquierda y por $V$ a derecha.
+Entonces $U^TAV$ conmuta con la matriz diagonal $\Lambda$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Probar, en el caso $3\times3$, que si $\Sigma\Lambda=\Lambda\Sigma$ con
+$\Lambda$ diagonal de elementos \emph{distintos}, entonces $\Sigma$ es
+diagonal. Comparar las primeras filas de los dos productos.
+\item Identificar dónde falla el argumento si $\Lambda$ tiene autovalores
+repetidos, y relacionarlo con la observación de la
+Sección~\ref{sec:prueba-SVD} sobre por qué los $\bu$ hay que definirlos como
+$A\bv/\sigma$.
+\item El mismo problema aparece en las pruebas simples del teorema espectral
+$S=Q\Lambda Q^T$. ¿Dónde?
+\end{enumerate}
+
+\item\label{ej:parametros} Una matriz de $2\times2$ tiene cuatro elementos y
+su SVD, cuatro parámetros: $\theta$, $\phi$, $\sigma_1$, $\sigma_2$. Pasemos
+a una de $2\times3$, con seis elementos. ¿Cuántos valores singulares tiene?
+La matriz $U$ ($2\times2$) necesita un solo ángulo; ¿cuántos ángulos
+determinan entonces a $V$ ($3\times3$)? \emph{Ayuda:} el espacio fila de $A$
+es un plano en $\R^3$; hacen falta ciertos ángulos para ubicar ese plano y
+uno más para elegir $\bv_1$ y $\bv_2$ dentro de él.
+
+\item Cada matriz de $3\times3$ tiene nueve elementos, así que
+$U\Sigma V^T$ debe tener nueve parámetros. ¿Cuántos hay en $U$, en $\Sigma$ y
+en $V$? Responder lo mismo para $4\times4$. ¿Cuántos parámetros describen una
+rotación del espacio de dimensión $4$?
+
+\item ¿Cuántos números hacen falta para dar la dirección de un vector
+unitario $\bv_1$ de $\R^5$? ¿Y la de un unitario $\bv_2$ ortogonal a él? ¿Y
+para $\bv_3$, $\bv_4$, $\bv_5$? ¿Cuántos en total?
+
+\item Mostrar que una matriz de $m\times n$ y rango $r$ tiene
+$r(m+n-r)$ parámetros libres en su SVD $A=U_r\Sigma_rV_r^T$. ¿Por qué $r$
+vectores ortonormales $\bu_1,\dots,\bu_r$ de $\R^m$ tienen
+$(m-1)+(m-2)+\cdots+(m-r)$ parámetros? \emph{Otro camino:} usar
+$A=CR$ del Capítulo~\ref{cap:algebra-lineal}, donde $R$ contiene una
+identidad de $r\times r$ y eso quita $r^2$ parámetros de los $rm+rn$.
+
+\item Si $\bv$ es autovector de $A^TA$ con autovalor $\lambda\neq0$,
+¿de qué matriz es autovector $A\bv$, y con qué autovalor?
+
+\item Si $A=U\Sigma V^T$ es cuadrada e invertible, escribir $A^{-1}$ en
+términos de $U$, $\Sigma$ y $V$. ¿Cuáles son los valores singulares de
+$A^TA$ (no los de $A$)?
+
+\item Si $A=A^T$ tiene columnas ortogonales $\bx_1,\bx_2,\bx_3$ de $\R^3$
+con normas $2$, $3$ y $4$, encontrar su SVD.
+
+\item Las razones del éxito de los autovalores están en
+$A^k=X\Lambda^kX^{-1}$: (a) los autovalores de $A^k$ son $\lambda_1^k,\dots,
+\lambda_n^k$; (b) un autovector de $A$ también lo es de $A^k$. Mostrar que
+(a) y (b) son \emph{falsas} para valores y vectores singulares, con
+$A=\begin{bsmallmatrix}-2&-6\\ 6&2\end{bsmallmatrix}$.
+
+\end{enumerate}

@@ -1,0 +1,532 @@
+\documentclass[12pt,a4paper,openany]{book}
+% detecta si main.tex está dentro de version-actual/ o un nivel arriba
+\makeatletter
+\IfFileExists{cuatrosubespacios.tex}{\def\VA{}}{\def\VA{version-actual/}}
+\makeatother
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{mathtools}   % bsmallmatrix, etc.
+\usepackage{enumerate}
+\usepackage{enumitem}
+ 
+
+\usepackage{mdframed}
+\newmdenv[linewidth=0.8pt,linecolor=gray,backgroundcolor=gray!6,
+  innertopmargin=6pt,innerbottommargin=6pt]{ideas}
+\newmdenv[linewidth=0.9pt,linecolor=black,backgroundcolor=white,
+  innertopmargin=5pt,innerbottommargin=5pt]{caja}
+
+
+
+
+\AtBeginDocument{%
+  
+  
+  \renewcommand{\figurename}{Figura}%
+  \renewcommand{\chaptername}{Capítulo}%
+  \renewcommand{\proofname}{Demostración}%
+}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{capt-of}
+
+% --- Macros (compatibles con 2023/2025.tex y con I1_I2_mejorado.tex) ---
+\newcommand{\bi}[1]{\boldsymbol{#1}}
+
+\newcommand{\R}{\mathbf{R}}
+\newcommand{\Cx}{\mathbf{C}}
+\newcommand{\rank}{\operatorname{rango}}
+ 
+\newcommand{\bu}{\bi{u}}
+\newcommand{\bv}{\bi{v}}
+\newcommand{\bw}{\bi{w}}
+\newcommand{\bq}{\bi{q}}
+\newcommand{\bx}{\bi{x}}
+\newcommand{\by}{\bi{y}}
+\newcommand{\bb}{\bi{b}}
+\newcommand{\ba}{\bi{a}}
+
+% --- Etiquetas de tipo de ejercicio ---
+\newcommand{\tipo}[1]{{\small\textsc{[#1]}}\ }
+
+\newcommand{\embf}[1]{\emph{\bfseries{#1}}}
+
+\usepackage[spanish,es-nolists,es-sloppy]{babel}
+\usepackage{todonotes}
+  % las opciones es-nolists y es-sloppy permiten
+  % el enumerate con (i), (ii), ...
+\usepackage{pdfpages}
+\usepackage{graphicx,psfrag}
+\usepackage{tikz}
+\usetikzlibrary{calc,arrows.meta,positioning,decorations.pathreplacing}
+% \usepackage{pgfplots}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{array}
+\usepackage{booktabs}   % \toprule, \midrule, \bottomrule (tabla PCA/LDA del cap. 11)
+\usepackage{color}
+\usepackage{xspace}
+\definecolor{lili}{RGB}{182, 102, 210} 
+
+\newcommand{\XX}{\mathbb{X}}
+\newcommand{\RR}{\mathbb{R}}
+
+\newcommand{\VV}{\mathbb{V}}
+\newcommand{\vertiii}[1]{{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert #1 
+    \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}
+\newcommand{\var}{\operatorname{var}}
+\newcommand{\cov}{\operatorname{cov}}
+\newcommand{\lili}[1]{{\color{lili}#1}}
+\usepackage{srcltx}
+%\usepackage{listings}
+ 
+
+   \graphicspath{{graficos/}}
+%\newcounter{savectr}
+%\newcommand{\savectr}[1]{\setcounter{savectr}{\value{#1}}}
+%\newcommand{\backctr}[1]{\setcounter{#1}{\value{savectr}}}
+\newcounter{contadorejemplo}
+%\newcommand{\ejemplo}{\medskip\textbf{Ejemplo \arabic{contadorejemplo}:} \addtocounter{contadorejemplo}{1}}
+%\setcounter{contadorejemplo}{1}
+%\DeclareGraphicsExtensions{eps}
+
+
+\newcommand{\note}[1]%
+{\noindent\centerline{\fbox{\parbox{.9\textwidth}{\textbf{#1}}}}}
+\newcommand{\snote}[1]%
+{\fbox{\textbf{#1}}}
+\newcommand{\ML}{\textsf{MATLAB}\xspace}
+
+%%% ---- Identidad visual FIQ (portada, títulos, cajas, colores) ------
+\input{\VA estilo-apunte}
+%%% --------------------------------------------------------------------
+
+\theoremstyle{plain}
+   \newtheorem{theorem}{Teorema}[chapter]
+   \newtheorem{lemma}[theorem]{Lema}
+   \newtheorem{corollary}[theorem]{Corolario}
+   \newtheorem{proposition}[theorem]{Proposición}
+
+\theoremstyle{definition}
+   \newtheorem{remark}[theorem]{Observación}
+   \newtheorem*{matlab}{En {MATLAB}}
+   \newtheorem{example}[theorem]{Ejemplo}
+   \newtheorem{definition}[theorem]{Definición}
+   \newtheorem{pb}{ }[chapter]
+   \newtheorem{pbstar}[pb]{*}
+   \newtheorem{pbo}[pb]{**}
+   \newtheorem{thm}[theorem]{Teorema}
+\newtheorem{prop}[theorem]{Proposici\'on}
+\newtheorem{coro}[theorem]{Corolario}
+\newtheorem{lema}[theorem]{Lema}
+\newtheorem{defn}[theorem]{Definici\'on}
+
+\usepackage{attachfile2}
+%\usepackage{matlab-prettifier}
+\usepackage{listings}
+\lstset{
+	basicstyle=\ttfamily,
+	columns=fixed,
+	fontadjust=true,
+	basewidth=0.5em,
+	frame=single,
+	float=h!
+}
+%\lstset{language=Octave,basicstyle=\ttfamily}
+
+\newcommand{\includescript}[2]{{\small\lstinputlisting[title={Script \texttt{#2}. \attachfile{#1/#2}}]{#1/#2}}}
+
+\newcommand{\includefunction}[2]{{\small\lstinputlisting[title={Función \texttt{#2}. \attachfile{#1/#2}}]{#1/#2}}}
+
+
+\newcommand{\recuadro}[1]%
+{\medskip\noindent\centerline{\fbox{\parbox{.97\textwidth}{\medskip\centerline{\parbox{.95\textwidth}{#1}}\medskip}}}\medskip}
+
+\begin{comment}
+%%%% ============== Fancy Headings =============
+% From the latex companion, page 99.
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+%\addtolength{\headwidth}{\marginparsep}
+%\addtolength{\headwidth}{\marginparwidth}
+%   remember chapter title
+\renewcommand{\chaptermark}[1]%
+                    {\markboth{#1}{}}
+%   section number and title
+\renewcommand{\sectionmark}[1]%
+                    {\markright{\thesection\ #1}}
+\lhead[\fancyplain{}{\bfseries\thepage}]%
+      {\fancyplain{}{\bfseries\rightmark}}
+\rhead[\fancyplain{}{\bfseries\leftmark}]%
+      {\fancyplain{}{\bfseries\thepage}}
+\cfoot{}
+
+%%%% ===========End Fancy Headings ============
+\end{comment}
+
+
+
+
+\DeclareMathOperator{\re}{Re}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\TOL}{TOL}
+\DeclareMathOperator{\tol}{tol}
+\DeclareMathOperator{\gen}{span}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\length}{longitud}
+\newcommand{\area}{\mathrm{\protect\acute{a}rea}}
+\newcommand{\dvol}{\,d\mathrm{vol}}
+\newcommand{\dA}{\,dA}
+\newcommand{\dx}{\,dx}
+\newcommand{\dy}{\,dy}
+\newcommand{\dz}{\,dz}
+\newcommand{\ds}{\,ds}
+\newcommand{\dr}{\,dr}
+\newcommand{\dtheta}{\,d\theta}
+\newcommand{\dsv}{\cdot d\ol{s}}
+\newcommand{\dS}{\,d\sigma}
+\newcommand{\dt}{\,dt}
+\newcommand{\du}{\,du}
+\newcommand{\dv}{\,dv}
+\newcommand{\LL}{\mathcal{L}}
+\DeclareMathOperator{\di}{div}
+\DeclareMathOperator{\proy}{Proy}
+\DeclareMathOperator{\Circ}{Circ}
+%\usepackage[notcite,notref]{showkeys}
+\newcommand{\Chi}{\raise2pt\hbox{$\chi$}}
+
+\newcommand{\ejer}{\textsc{ejercicio}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\F}{\mathcal{F}}
+
+\newcommand{\M}{\mathbb{M}}
+\newcommand{\Rn}{\R^n}
+\newcommand{\Rm}{\R^m}
+\newcommand{\Rnn}{\R^{n\times n}}
+\newcommand{\Rnm}{\R^{n\times m}}
+\newcommand{\Rmm}{\R^{m\times m}}
+\newcommand{\Rnk}{\R^{n\times k}}
+\newcommand{\Rkk}{\R^{k\times k}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Cn}{\C^n}
+\newcommand{\Cm}{\C^m}
+\newcommand{\Cnn}{\C^{n\times n}}
+\newcommand{\Cnm}{\C^{n\times m}}
+\newcommand{\Cmm}{\C^{m\times m}}
+\newcommand{\Cnk}{\C^{n\times k}}
+\newcommand{\Ckk}{\C^{k\times k}}
+ \newcommand{\D}{\displaystyle}
+\newcommand{\gr}{^{\text{o}}}
+\newcommand{\ux}{\D\frac{\partial u}{\partial x}}
+\newcommand{\uy}{\D\frac{\partial u}{\partial y}}
+\newcommand{\uxx}{\D\frac{\partial^2 u}{\partial x^2}}
+\newcommand{\uyy}{\D\frac{\partial^2 u}{\partial y^2}}
+\newcommand{\uzz}{\D\frac{\partial^2 u}{\partial z^2}}
+\newcommand{\phixx}{\phi_{xx}}
+\newcommand{\phiyy}{\phi_{yy}}
+\newcommand{\phizz}{\phi_{zz}}
+\newcommand{\phin}{\phi_n}
+\newcommand{\phinm}{\phi_{n\,m}}
+\newcommand{\phikl}{\phi_{k\,\ell}}
+\newcommand{\lambdanm}{\lambda_{n\,m}}
+\newcommand{\znm}{z_{n\,m}}
+\newcommand{\anm}{a_{n\,m}}
+\newcommand{\bnm}{b_{n\,m}}
+\newcommand{\fnm}[1][]{f_{n\,m_{#1}}}
+\newcommand{\ut}{\D\frac{\partial u}{\partial t}}
+\newcommand{\vphi}{\boldsymbol{\phi}}
+\newcommand{\enf}{\textbf}
+\newcommand{\nn}{\ol{n}}
+\newcommand{\pd}[3][]{\D\frac{\partial^{#1} {#2}}{\partial #3^{#1}}}
+\newcommand{\dd}[3][]{\frac{d^{#1} {#2}}{d #3^{#1}}}
+\newcommand{\grad}{\nabla}
+\newcommand{\ii}{\ol{i}}
+\newcommand{\jj}{\ol{j}}
+\newcommand{\kk}{\ol{k}}
+\newcommand{\Dt}{\Delta t}
+\DeclareMathOperator{\sop}{sop}
+\ifdefined\sen
+%
+\else
+\DeclareMathOperator{\sen}{sen}
+\fi
+
+\newcommand{\norma}[1]{{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left \vert#1\right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}
+\newcommand{\bec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\ol}{\overline}
+\newcommand{\ul}{\underline}
+\newcommand{\inv}{^{-1}}
+\newcommand{\ml}{\textsc{matlab}\xspace}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\fila}{fila}
+\DeclareMathOperator{\col}{col}
+\DeclareMathOperator{\diag}{diag}
+\newcommand{\xk}[1][k]{x_{#1}}
+\newcommand{\rk}[1][k]{r_{#1}}
+\newcommand{\dk}[1][k]{d_{#1}}
+\newcommand{\ek}[1][k]{e_{#1}}
+\newcommand{\yk}[1][k]{y_{#1}}
+\newcommand{\uk}[1][k]{u_{#1}}
+\newcommand{\vk}[1][k]{v_{#1}}
+\newcommand{\trk}[1][k]{\tilde{r}_{#1}}
+\newcommand{\tdk}[1][k]{\tilde{d}_{#1}}
+\newcommand{\Ak}[1][k]{A_{#1}}
+\newcommand{\Qk}[1][k]{Q_{#1}}
+\newcommand{\Rk}[1][k]{R_{#1}}
+
+\newcommand{\pol}[1][k]{\mathcal{P}_{#1}}
+\newcommand{\polres}[1][k]{\overline{\mathcal{P}}_{#1}}
+\newcommand{\Krylov}[1][k]{\mathcal{K}_{#1}}
+\newcommand{\tc}[2]{\textcolor{#1}{#2}}
+\newcommand{\opt}{\text{opt}}
+\DeclareMathOperator*{\argmin}{argmin}
+
+
+\newcommand{\bfx}{\boldsymbol{x}}
+\newcommand{\bfy}{\boldsymbol{y}}
+\newcommand{\xx}{\boldsymbol{x}^*}
+\newcommand{\xo}{\boldsymbol{x}^0}
+\newcommand{\bfxk}{\boldsymbol{x}^{k}}
+\newcommand{\bfxki}{\boldsymbol{x}^{k+1}}
+\newcommand{\bfz}{\boldsymbol{z}}
+\newcommand{\n}[1]{\mathbf{#1}}
+ 
+
+%%% =====================================================================
+%%% COMPATIBILIDAD  (agregado 2026-09: macros/paquetes que faltaban y
+%%% hacían que el fuente no compilara fuera de Overleaf)
+%%% =====================================================================
+\usepackage{bm}
+\usepackage{imakeidx}
+\makeindex
+\makeindex[name=smbl,    title={Índice de símbolos}]
+\makeindex[name=indx,    title={Índice alfabético}]
+\makeindex[name=authors, title={Índice de autores}]
+
+% color usado en las figuras TikZ de SVD.tex
+\definecolor{bleu}{RGB}{0,84,166}
+
+% --- macros heredadas del fuente original (Strang) ---
+\providecommand{\la}{\lambda}            % \la  -> \lambda
+\providecommand{\trans}{\mathsf{T}}      % A^{\trans}
+\providecommand{\transp}{^{\mathsf{T}}}  % \bi{y}\transp
+\providecommand{\bfcdot}{\boldsymbol{\cdot}}
+\providecommand{\ph}{\phantom{-}}        % alineación de signos
+\providecommand{\hitem}{\item}           % \hitem[(b)] ...
+\providecommand{\wll}[1]{#1}             % envoltorio de matrices
+\providecommand{\OG}{\qquad}             % separador entre matrices
+\providecommand{\sm}{}                   % resto de una macro del original
+% \1 : espacio en blanco "para completar" en los ejercicios
+\def\1{\rule[-0.45ex]{2.2em}{0.4pt}}
+
+% buscar figuras en los lugares habituales
+\graphicspath{{figuras/}{graficos/}{../figuras/}{../graficos/}{graficos/}{./}}
+%%% =====================================================================
+
+
+%%% ---- Notación unificada (2026) ------------------------------------
+% R y C: una sola forma en todo el apunte (antes convivían \mathbf y \mathbb).
+\renewcommand{\R}{\mathbb{R}}
+\renewcommand{\Cx}{\mathbb{C}}
+% Vectores en negrita: \n{} (cap. 1) y \bi{} (resto) son la misma cosa.
+% Para pasar todo el apunte a negrita recta basta cambiar la línea siguiente
+% por  \renewcommand{\bi}[1]{\mathbf{#1}}
+\renewcommand{\n}[1]{\boldsymbol{#1}}
+\DeclareMathOperator{\rg}{rg}          % rango
+\DeclareMathOperator{\rref}{rref}      % escalonada reducida por filas
+% que hyperref no se atragante con las macros con argumento en los títulos
+\pdfstringdefDisableCommands{%
+  \def\n#1{#1}\def\bi#1{#1}\def\rg{rg}\def\tr{tr}\def\rref{rref}%
+  \def\gen{span}\def\fila{fila}\def\col{col}\def\diag{diag}%
+}
+%%% ---- Ejercicios de desarrollo: el entorno entrega está en estilo-apunte.tex
+%%% --------------------------------------------------------------------
+
+%%% ---- Macros de los capítulos de PCA, clasificación y LDA (2026) -----
+% Normas de matrices: se usan desde el final del capítulo de la SVD en
+% adelante.  La espectral comparte notación con la norma 2 de vectores, que
+% es justamente lo que se quiere.
+\newcommand{\normF}[1]{\left\|#1\right\|_{F}}
+\newcommand{\normdos}[1]{\left\|#1\right\|_{2}}
+\newcommand{\normnuc}[1]{\left\|#1\right\|_{\ast}}
+% rango: el apunte ya tiene \rg y \rank; \rango es el mismo operador con el
+% nombre largo, para que los capítulos nuevos no tengan que cambiar de forma.
+\DeclareMathOperator{\rango}{rango}
+\DeclareMathOperator{\vecop}{vec}
+\DeclareMathOperator{\PVE}{PVE}
+\DeclareMathOperator*{\argmax}{argmax}
+% colores de clases (paleta apta para daltonismo) de los capítulos 10 y 11
+\definecolor{claseuno}{HTML}{2A78D6}
+\definecolor{clasedos}{HTML}{EB6834}
+\definecolor{clasetres}{HTML}{1BAF7A}
+%%% --------------------------------------------------------------------
+
+\title{Análisis Matricial}
+\subtitulo{Apuntes de clase}
+\carreras{Licenciatura en Ciencia de Datos\\
+Licenciatura en Matemática Aplicada}
+\author{Liliana Forzani\\ Emilia Joerin\\ Pedro Morin\\ Pablo Quijano}
+% La fecha lleva el día exacto y se actualiza sola en cada compilación: es lo
+% que permite a los estudiantes saber qué versión del apunte tienen.
+\date{Facultad de Ingeniería Química -- UNL\\ Santa Fe, \today}
+
+
+% Las páginas que no cierran justo (hay muchas cajas indivisibles: ejercicios
+% de desarrollo, teoremas, tablas) terminan antes en lugar de estirarse.
+\raggedbottom
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \chapter*{Presentación}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Este apunte contiene las notas sobre algunos temas del curso \emph{Análisis Matricial}, curso regular de la Licenciatura en Matemática Aplicada (plan 2018) y de la Licenciatura en Ciencia de Datos (plan 2022), de la Facultad de Ingeniería Química de la Universidad Nacional del Litoral.
+
+% \bigskip
+
+% Este apunte fue escrito durante el dictado del curso en el segundo
+% cuatrimestre de 2023. Cualquier sugerencia u observación sobre errores será agradecida por los autores del apunte y también por los futuros alumnos del curso.
+
+
+
+% \bigskip
+
+% Agradecer a los alumnos especialmente a Carlos Antunes, David Rosa, Ana Emilia de Orellana, Itatí Zocola.
+% \bigskip
+% \bigskip
+
+% \hfil\hfil\hfil Santa Fe, agosto de 2023
+
+ 
+
+
+{\hypersetup{linkcolor=fiqtexto}\tableofcontents}
+
+
+\input{\VA cuatrosubespacios}
+
+\input{\VA LU-eliminacion}
+
+\input{\VA ortogonalidad}
+
+\input{\VA autovalores y autovectores}
+
+
+  
+\input{\VA schur}
+
+ \input{\VA simetricas}
+
+\input{\VA normas-25-pablo}
+
+
+\input{\VA SVD.tex}
+
+\input{\VA I9_pca}
+
+\input{\VA I10_pca_clasificacion}
+
+\input{\VA I11_lda}
+
+\input{\VA normas-matrices-25-pablo}
+
+%%% ------------------------------------------------------------------
+%%% Pendiente: el capítulo final sobre mínimos cuadrados y pseudoinversa.
+%%% ------------------------------------------------------------------
+\input{\VA minimoscuadrados}
+
+%\input{\VA extra1}
+% Estilo numerico: las citas salen como [12].  Con plainnat (autor-ano) salian
+% etiquetas larguisimas, porque natbib no esta cargado.
+\bibliographystyle{plain}
+\bibliography{\VA referencias} 
+\end{document}
+
+
+
+\section*{Bibliografía complementaria}
+
+\begin{description}
+\item[{[Atkinson]]}]
+  K.E.\ Atkinson,
+  \emph{An introduction to Numerical Analysis}, 2nd edition, John Wiley \& Sons, 1989.
+\end{description}
+
+\end{document}
+\includepdf[pages=1,pagecommand={\begin{tikzpicture}[remember picture, overlay] \node at (0.5, 1) {\large\bf
+     titulo pagina 1
+   };\end{tikzpicture}}]{archivo.pdf}
+
+\includepdf[pages=1,pagecommand={\begin{tikzpicture}[remember picture, overlay] \node at (6, 1) {\large\bf
+     titulo pagina 1
+   };\end{tikzpicture}}]{archivo.pdf}
+\end{document}
+
+\includepdf[pages=2-4]{archivo.pdf}
+
+\includepdf[pages=5,pagecommand={\begin{tikzpicture}[remember picture, overlay] \node at (0.5, 1) {\large\bf
+    titulo pagina 5
+  };\end{tikzpicture}}]{archivo.pdf}
+\includepdf[pages=6-7]{archivo.pdf}
+
+
+
+\end{document}
+
+
+
+
+\begin{pb}
+
+Determinar los valores de $L$ para los que el siguiente problema tiene (al menos) una solución no trivial:
+\begin{equation*}
+\begin{aligned}
+y''(x) + y(x) &= 0, \qquad & &0 \le x \le L, \\
+y(0) &= 0 , \\
+y(L) &= 0.
+\end{aligned}
+\end{equation*}
+Para dichos valores de $L$, ¿cuántas soluciones tiene?
+
+\end{pb}
+
+\begin{pbstar}
+ Sea $y(x)$ una autofunción del problema de Sturm-Liouville
+\begin{equation*}\tag{SL}
+\begin{aligned}
+\frac{d}{dx} \left[ K(x) \frac{dy}{dx} \right]
++ \left[ q(x) + \lambda g(x) \right] y &= 0
+\qquad & &a \le x \le b, \\
+c_1 \, y(a) + c_2 \, y'(a) &= 0 \qquad&  &c_1^2 + c_2^2 \neq 0 \\
+c_3 \, y(b) + c_4 \, y'(b) &= 0 \qquad&  &c_3^2 + c_4^2 \neq 0
+\end{aligned}
+\end{equation*}
+(suponiendo que $K'$, $g$, $q$ son continuas en $[a,b]$ con $K(x) > 0$ para todo $x \in [a,b]$).
+
+Demostrar que todos los ceros de $y(x)$ en $[a,b]$ son simples.
+
+\end{pbstar}
+
+\begin{pbstar}
+ Sea $y(x)$ una solución no-trivial de la ecuación de Sturm-Liouville
+\begin{equation*}
+\frac{d}{dx} \left[ K(x) \frac{dy}{dx} \right]
++ \left[ q(x) + \lambda g(x) \right] y = 0
+\qquad\qquad a \le x \le b,
+\end{equation*}
+(suponiendo que $K'$, $g$, $q$ son continuas en $[a,b]$ con $K(x) > 0$ para todo $x \in [a,b]$).
+
+Demostrar que $y(x)$ tiene a lo sumo un número finito de ceros en $[a,b]$.
+\end{pbstar}
+
+

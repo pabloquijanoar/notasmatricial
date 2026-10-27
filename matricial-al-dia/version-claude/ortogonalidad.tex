@@ -1,0 +1,2153 @@
+ % Nombres en castellano (sin depender de babel)
+
+% --- Caja de "Ideas clave" ---
+
+% --- Teoremas en castellano, numerados por capítulo ---
+\theoremstyle{plain}
+\newtheorem{teorema}[theorem]{Teorema}
+\newtheorem{proposicion}[theorem]{Proposición}
+\newtheorem{corolario}[theorem]{Corolario}
+\theoremstyle{definition}
+\newtheorem{definicion}[theorem]{Definición}
+\newtheorem{ejemplo}[theorem]{Ejemplo}
+\theoremstyle{remark}
+\newtheorem{observacion}[theorem]{Observación}
+
+\title{Análisis Matricial --- Capítulo 5: Ortogonalidad}
+\author{Sobre la base de Forzani, Joerin, Lovatto (2023/2025)\\
+y \emph{Linear Algebra and Learning from Data}, G.\ Strang (Sección I.5)}
+\date{2026}
+ 
+
+ 
+\chapter{Ortogonalidad}\label{cap:ortogonalidad}
+
+La palabra \textbf{ortogonal} significa \emph{perpendicular}, pero en álgebra
+lineal su alcance es mucho mayor que el ángulo entre dos flechas. Lo que hace
+este capítulo es seguir esa idea mientras crece, desde el caso más simple
+hasta la factorización que la resume.
+
+Se empieza por los \textbf{vectores}: dos vectores de $\R^n$ son ortogonales
+cuando su producto escalar $\bx^T\by$ es cero, y ese único test da, casi
+gratis, la desigualdad de Cauchy-Schwarz, la definición de ángulo y el teorema
+de Pitágoras. De ahí se pasa a las \textbf{bases}: una base en la que todos los
+vectores son perpendiculares entre sí y de longitud uno --- una base
+\emph{ortonormal} --- vuelve triviales cuentas que en general son un sistema de
+ecuaciones, porque cada coeficiente se obtiene con un producto escalar y sin
+mirar a los demás.
+
+El salto siguiente es de los vectores a los \textbf{subespacios}: dos
+subespacios son ortogonales cuando cada vector de uno es perpendicular a cada
+vector del otro. El ejemplo central ya lo teníamos sin saberlo, y es el que
+completa el cuadro de los cuatro subespacios fundamentales del
+Capítulo~\ref{cap:algebra-lineal}: el espacio fila de $A$ es ortogonal a su
+espacio nulo, y el espacio columna lo es al espacio nulo de $A^T$.
+
+Con subespacios ortogonales aparece la operación que domina el resto del
+apunte: \textbf{proyectar}. Dado un subespacio y un vector de afuera, la
+proyección es el punto del subespacio más cercano al vector, y resulta ser el
+único para el cual el error es perpendicular al subespacio. Esa operación se
+escribe como una matriz, y cuando el subespacio viene dado por una base
+ortonormal escrita en las columnas de $Q$ esa matriz es simplemente $P=QQ^T$.
+
+Las matrices $Q$ con columnas ortonormales, que cumplen $Q^TQ=I$, son las
+protagonistas de la segunda mitad. Cuando además son cuadradas se llaman
+\textbf{ortogonales} y satisfacen $Q^{-1}=Q^T$: multiplicar por ellas no
+cambia longitudes ni ángulos, que es la razón por la que el cálculo numérico
+las prefiere a cualquier otra. Veremos una colección de ejemplos --- rotaciones,
+reflexiones, permutaciones, reflexiones de Householder, rotaciones de Givens,
+matrices de Hadamard --- que reaparecen constantemente.
+
+Todo esto se junta al final en la \textbf{factorización $A=QR$}, que escribe
+cualquier matriz de columnas independientes como una matriz de columnas
+ortonormales por una triangular superior. La construiremos de dos maneras: con
+el proceso de Gram-Schmidt, que es el camino conceptual, y con reflexiones de
+Householder, que es el que se usa en la práctica. Los mínimos cuadrados, que
+son la gran aplicación de las proyecciones y de $QR$, tienen capítulo propio
+más adelante.
+
+% ===================================================================
+\section{Vectores ortogonales}
+
+Las dos operaciones con las que vamos a trabajar ya están definidas: el
+\textbf{producto escalar} y la \textbf{norma euclídea} de la
+Sección~\ref{sec:producto-escalar} del Capítulo~\ref{cap:algebra-lineal},
+\[
+\bx^T\by=x_1y_1+x_2y_2+\cdots+x_ny_n ,
+\qquad
+\|\bx\|=\sqrt{\bx^T\bx}=\sqrt{x_1^2+\cdots+x_n^2} ,
+\]
+junto con la noción de vectores \textbf{ortogonales}, que son los que cumplen
+$\bx^T\by=0$ y que anotamos $\bx\perp\by$. Un vector es \textbf{unitario} si
+$\|\bx\|=1$, y el vector nulo es ortogonal a todos.
+
+Allá dijimos que las propiedades quedaban para este capítulo, y de eso se
+trata esta sección: no de definir nada nuevo, sino de probar lo que esas dos
+operaciones cumplen. Dos propiedades son inmediatas desde la definición y
+conviene tenerlas a mano. Del producto escalar:
+\begin{enumerate}[label=\textup{(\arabic*)},itemsep=1pt,topsep=3pt]
+\item $\bx^T\bx\ge0$, y $\bx^T\bx=0$ si y sólo si $\bx=\bi{0}$;
+\item $\bx^T\by=\by^T\bx$ (es un número, luego igual a su traspuesta);
+\item $(a\bx+\by)^T\bu=a\,\bx^T\bu+\by^T\bu$ para todo $a\in\R$: el producto
+escalar es lineal en cada variable.
+\end{enumerate}
+Y de la norma, las dos primeras propiedades de las tres que la definen:
+$\|\bx\|\ge0$ con igualdad sólo en $\bx=\bi{0}$, y $\|a\bx\|=|a|\,\|\bx\|$.
+
+La tercera, la \textbf{desigualdad triangular}
+$\|\bx+\by\|\le\|\bx\|+\|\by\|$, no es inmediata: necesita la desigualdad de
+Cauchy-Schwarz, que probamos a continuación y que es además la que permite
+definir el \emph{ángulo} entre dos vectores. Después de eso viene el teorema
+de Pitágoras, y con esas tres herramientas queda armado todo lo que el resto
+del capítulo necesita.
+
+\begin{teorema}[Desigualdad de Cauchy-Schwarz]\label{teo:cauchy-schwarz}
+Para todos $\bx,\by\in\R^n$,
+\[
+|\bx^T\by|\le\|\bx\|\,\|\by\| ,
+\]
+con igualdad si y solo si $\bx$ e $\by$ son linealmente dependientes.
+\end{teorema}
+
+\begin{proof}
+Si $\bx=\bi{0}$ no hay nada que probar. Si no, miramos la función
+cuadrática en $t$
+\[
+p(t)=\|t\bx+\by\|^2=(t\bx+\by)^T(t\bx+\by)
+=t^2\,\|\bx\|^2+2t\,\bx^T\by+\|\by\|^2 .
+\]
+Como $p(t)\ge0$ para todo $t$ (¡es una norma al cuadrado!), la parábola no
+puede tener dos raíces reales distintas, así que su discriminante es
+$\le 0$:
+\[
+4(\bx^T\by)^2-4\,\|\bx\|^2\|\by\|^2\le 0 .
+\]
+Hay igualdad exactamente cuando $p$ tiene una raíz doble $t_0$, es decir
+cuando $\|t_0\bx+\by\|=0$: cuando $\by=-t_0\bx$ es múltiplo de $\bx$.
+\end{proof}
+
+\begin{proposicion}[Desigualdad triangular]
+$\|\bx+\by\|\le\|\bx\|+\|\by\|$ para todos $\bx,\by\in\R^n$.
+\end{proposicion}
+
+\begin{proof}
+$\|\bx+\by\|^2=\|\bx\|^2+2\,\bx^T\by+\|\by\|^2
+\le\|\bx\|^2+2\|\bx\|\|\by\|+\|\by\|^2=(\|\bx\|+\|\by\|)^2$,
+usando Cauchy-Schwarz en el término del medio.
+\end{proof}
+
+Cauchy-Schwarz dice que el cociente $\bx^T\by/(\|\bx\|\|\by\|)$
+siempre cae en $[-1,1]$ (para vectores no nulos): por lo tanto es el coseno
+de un ángulo. \emph{Definimos} el ángulo $\theta$ entre $\bx$ e $\by$ por
+\[
+\cos\theta=\frac{\bx^T\by}{\|\bx\|\,\|\by\|}\ ,
+\]
+que coincide con el ángulo geométrico en el plano que generan. Ser
+ortogonales es exactamente tener $\cos\theta=0$, es decir
+$\theta=90^{\circ}$.
+
+\begin{observacion}[Similitud coseno]
+En ciencia de datos, ese coseno se usa constantemente como medida de
+\emph{similitud} entre dos vectores (documentos representados por conteos
+de palabras, \emph{embeddings}, perfiles de usuarios): la
+\textbf{similitud coseno} compara direcciones ignorando las magnitudes.
+Dos vectores con las mismas proporciones tienen similitud $1$ aunque uno
+sea ``el doble de largo'' que el otro (ese es justo el caso de igualdad
+de Cauchy-Schwarz). Los ortogonales tienen similitud $0$: no comparten
+información direccional.
+\end{observacion}
+
+\begin{teorema}[Pitágoras]\label{teo:pitagoras}
+Si $\bx\perp\by$ entonces
+\[
+\|\bx-\by\|^2=\|\bx\|^2+\|\by\|^2
+\qquad\text{y también}\qquad
+\|\bx+\by\|^2=\|\bx\|^2+\|\by\|^2 .
+\]
+\end{teorema}
+
+\begin{proof}
+Desarrollamos el cuadrado usando que el producto interno es lineal:
+\[
+\|\bx-\by\|^2=(\bx-\by)^T(\bx-\by)
+=\bx^T\bx-\bx^T\by-\by^T\bx+\by^T\by
+=\|\bx\|^2+\|\by\|^2-2\,\bx^T\by .
+\]
+Si $\bx^T\by=0$, los dos términos cruzados desaparecen y queda
+Pitágoras. El mismo cálculo con $\bx+\by$ da el otro enunciado.
+\end{proof}
+
+\begin{ejemplo}
+$\bx=(1,2,2)^T$ y $\by=(2,1,-2)^T$ cumplen
+$\bx^T\by=2+2-4=0$. La hipotenusa es $\bx-\by=(-1,1,4)^T$ y
+Pitágoras dice $18=9+9$. \hfill$\square$
+\end{ejemplo}
+
+\begin{observacion}[Ley de cosenos]
+Sin suponer ortogonalidad, el cálculo de la demostración anterior da
+\[
+\|\bx-\by\|^2=\|\bx\|^2+\|\by\|^2-2\,\|\bx\|\,\|\by\|\cos\theta ,
+\]
+la ley de cosenos $c^2=a^2+b^2-2ab\cos\theta$. Los vectores ortogonales
+tienen $\cos\theta=0$ y ese último término desaparece.
+\end{observacion}
+
+
+\subsection*{El caso complejo}\label{sec:producto-interno-complejo}
+
+Para vectores complejos $\bx,\by\in\Cx^n$ el test cambia: hay que conjugar.
+El producto interno usual se define como
+\[
+\overline{\bx}^T\by=\overline{x}_1y_1+\cdots+\overline{x}_ny_n ,
+\qquad
+\|\bx\|^2=\overline{\bx}^T\bx=|x_1|^2+\cdots+|x_n|^2 ,
+\]
+y $\bx\perp\by$ significa $\overline{\bx}^T\by=0$.
+
+¿Por qué conjugar? Porque sin conjugar la norma deja de servir. Lo único que
+le pedimos a $\|\bx\|^2$ es que sea un número \emph{real y no negativo}, que
+valga cero sólo en el vector nulo; eso es lo que permite hablar de longitudes
+y de distancias. Si copiáramos la fórmula real sin cambios, tendríamos
+$\bx^T\bx=\sum_k x_k^2$, y los cuadrados de números complejos no tienen por qué
+ser positivos ni siquiera reales. El ejemplo más chico lo muestra: para
+$\bx=(1,i)^T$ es
+\[
+\bx^T\bx = 1^2+i^2 = 1-1 = 0 ,
+\]
+o sea un vector no nulo tendría longitud cero. En cambio, conjugando el
+primer factor cada término se vuelve
+$\overline{x}_k x_k=|x_k|^2\ge0$, y entonces
+\[
+\overline{\bx}^T\bx=|x_1|^2+\cdots+|x_n|^2\ \ge 0 ,
+\]
+que se anula sólo si todas las coordenadas son nulas. Para el mismo ejemplo,
+$\overline{\bx}^T\bx=|1|^2+|i|^2=2$ y $\|\bx\|=\sqrt2$, que es lo razonable.
+
+El precio es que el producto deja de ser simétrico: ahora
+$\overline{\by}^T\bx=\overline{\overline{\bx}^T\by}$, es decir, intercambiar
+los argumentos conjuga el resultado. Y la linealidad vale en la segunda
+variable pero en la primera aparece un conjugado:
+$\overline{(c\bx)}^T\by=\overline{c}\,\overline{\bx}^T\by$. Todo lo demás ---
+Cauchy-Schwarz, Pitágoras, la desigualdad triangular, las proyecciones ---
+sigue valiendo palabra por palabra, cambiando $\bx^T$ por $\overline{\bx}^T$.
+La matriz de Fourier de los ejercicios es el ejemplo estrella de ortogonalidad
+compleja.
+
+
+% ===================================================================
+\section{Bases ortogonales y ortonormales}
+
+\begin{definicion}
+Una base $\bv_1,\dots,\bv_r$ de un subespacio \textbf{de} $\R^n$ es una \textbf{base ortogonal}
+si $\bv_i^T\bv_j=0$ para todo $i\ne j$. Si además todos los vectores son
+unitarios ($\bv_i^T\bv_i=1$), es una \textbf{base ortonormal}. En ese
+caso escribimos $\bq_1,\dots,\bq_r$:
+\[
+\bq_i^T\bq_j=\begin{cases}0 & i\ne j\\ 1 & i=j.\end{cases}
+\]
+\end{definicion}
+
+De ortogonal a ortonormal se pasa dividiendo cada vector por su norma:
+$\bq_i=\bv_i/\|\bv_i\|$. El ejemplo más simple es la \textbf{base canónica}
+$\bi{e}_1,\dots,\bi{e}_n$ de $\R^n$, que es ortonormal: en $\R^3$,
+\[
+\bi{i}=\begin{bmatrix}1\\0\\0\end{bmatrix}\quad
+\bi{j}=\begin{bmatrix}0\\1\\0\end{bmatrix}\quad
+\bi{k}=\begin{bmatrix}0\\0\\1\end{bmatrix}.
+\]
+
+\begin{proposicion}\label{prop:ort-indep}
+Vectores ortogonales no nulos son linealmente independientes.
+\end{proposicion}
+
+\begin{proof}
+Supongamos $c_1\bv_1+\cdots+c_r\bv_r=\bi{0}$ con los $\bv_i$ ortogonales no
+nulos. Multiplicando por $\bv_k^T$ a la izquierda, todos los productos
+$\bv_k^T\bv_i$ con $i\ne k$ se anulan y queda
+$c_k\,\bv_k^T\bv_k=0$. Como $\bv_k\ne\bi{0}$, es $\|\bv_k\|^2>0$ y por
+lo tanto $c_k=0$, para cada $k$.
+\end{proof}
+
+?` Cu\'al es el an\'alogo en $\Cx^n$?
+
+\subsection*{Coeficientes en una base ortonormal}
+
+Aquí está la gran ventaja práctica de la ortonormalidad. Si
+$\bq_1,\dots,\bq_n$ es una base ortonormal de $\R^n$, todo vector se escribe
+\begin{equation}\label{eq:combinacion}
+\bv=c_1\bq_1+c_2\bq_2+\cdots+c_n\bq_n .
+\end{equation}
+En una base cualquiera, encontrar los $c_i$ exige resolver un sistema lineal.
+En una base ortonormal, \emph{cada coeficiente se obtiene por separado con un
+producto interno}:
+
+\begin{teorema}[Coeficientes en una base ortonormal]\label{teo:coeficientes}
+\[
+c_1=\bq_1^T\bv,\qquad c_2=\bq_2^T\bv,\qquad\dots\qquad
+c_n=\bq_n^T\bv .
+\]
+\end{teorema}
+
+\begin{proof}
+\emph{Demostración vectorial.} Multiplicamos \eqref{eq:combinacion} por
+$\bq_1^T$:
+\[
+\bq_1^T\bv=c_1\,\bq_1^T\bq_1+c_2\,\bq_1^T\bq_2+\cdots
++c_n\,\bq_1^T\bq_n=c_1 ,
+\]
+porque todos los términos se anulan salvo $c_1\bq_1^T\bq_1=c_1$. Lo
+mismo con cada $\bq_k$.
+
+\emph{Demostración matricial.} La ecuación \eqref{eq:combinacion} es
+$\bv=Q\bi{c}$ con $Q=[\bq_1\ \cdots\ \bq_n]$. Multiplicando por $Q^T$:
+\[
+Q^T\bv=Q^T Q\,\bi{c}=\bi{c},
+\]
+que da todos los coeficientes $c_k=\bq_k^T\bv$ de una sola vez.
+\end{proof}
+
+\begin{observacion}
+Esta es la aplicación clave de las bases ortonormales (por ejemplo, la base
+de las series de Fourier): cada coeficiente se calcula de manera
+independiente de los demás. Los términos $c_k\bq_k$ son las componentes de
+$\bv$ a lo largo de los ejes ortogonales definidos por la base: son las
+proyecciones de $\bv$ sobre esos ejes.
+\end{observacion}
+
+\
+
+?` Cu\'al es el an\'alogo en $\Cx^n$?
+
+\subsection*{Matrices de Hadamard}
+
+¿Existen bases ortogonales de $\R^n$ formadas solo por $1$ y $-1$? Para
+$n=2,4,8$ sí, y son las columnas de las \textbf{matrices de Hadamard}:
+\[
+H_2=\begin{bmatrix}1&1\\1&-1\end{bmatrix}\qquad
+H_4=\begin{bmatrix}1&1&1&1\\1&-1&1&-1\\1&1&-1&-1\\1&-1&-1&1\end{bmatrix}
+\qquad
+H_8=\begin{bmatrix}H_4&H_4\\ H_4&-H_4\end{bmatrix}.
+\]
+¿Son matrices ortogonales? \emph{No todavía}: sus columnas tienen normas
+$\sqrt2,\sqrt4,\sqrt8$. Dividiendo por esas normas obtenemos bases
+ortonormales de $\R^2,\R^4,\R^8$, y la construcción por bloques
+$H_{2n}=\left[\begin{smallmatrix}H_n&H_n\\H_n&-H_n\end{smallmatrix}\right]$
+continúa la lista para $n=16,32,\dots$
+
+\begin{observacion}[Conjetura de Hadamard]
+Si $H_n$ existe (con $n>2$), entonces $n$ debe ser múltiplo de $4$ (ver
+ejercicios). La \textbf{conjetura de Hadamard} propone la recíproca: que hay
+una matriz de $\pm1$ con columnas ortogonales siempre que $4$ divide a $n$.
+Sigue abierta; el tamaño más chico sin matriz de Hadamard conocida es
+$n=668$.
+\end{observacion}
+
+% ===================================================================
+\section{Subespacios ortogonales en $\R^n$ con el producto interno usual}\label{sec:cuatro-ort}
+
+\begin{definicion}
+Dos subespacios $\mathbf{V}$ y $\mathbf{W}$ de $\R^n$ son
+\textbf{ortogonales} si todo vector de $\mathbf{V}$ es ortogonal a todo
+vector de $\mathbf{W}$: $\bv^T\bw=0$ para todo
+$\bv\in\mathbf{V},\ \bw\in\mathbf{W}$.
+El \textbf{complemento ortogonal} de $\mathbf{V}$ es
+\[
+\mathbf{V}^{\perp}=\{\bw\in\R^n:\ \bw^T\bv=0
+\text{ para todo }\bv\in\mathbf{V}\}.
+\]
+\end{definicion}
+
+En $\R^3$, dos paredes perpendiculares \emph{no} son subespacios ortogonales:
+comparten la recta de intersección, y un vector no nulo nunca es ortogonal a
+sí mismo. Dos subespacios ortogonales solo se cortan en $\{\bi{0}\}$ (por
+Pitágoras, o por la Proposición~\ref{prop:ort-indep}).
+
+\begin{observacion}[Ortogonales no es lo mismo que complementos]
+Dos subespacios ortogonales no son necesariamente complementos ortogonales
+uno del otro. En $\R^3$, $\mathbf{U}=\hbox{span}\{(1,0,0)\}$ y
+$\mathbf{W}=\hbox{span}\{(0,1,0)\}$ son ortogonales, pero el complemento
+ortogonal de $\mathbf{U}$ es
+$\mathbf{U}^{\perp}=\hbox{span}\{(0,1,0),(0,0,1)\}$, que contiene
+\emph{estrictamente} a $\mathbf{W}$: falta una dimensión. Ser
+complementos exige más que ser ortogonales: las dimensiones tienen que
+sumar $n$.
+\end{observacion}
+
+\begin{proposicion}[Descomposición ortogonal]\label{prop:descomposicion}
+Sea $\mathbf{W}$ un subespacio de $\R^n$. Entonces:
+\begin{enumerate}[label=(\roman*),itemsep=1pt]
+\item $\mathbf{W}\cap\mathbf{W}^{\perp}=\{\bi{0}\}$;
+\item todo $\bv\in\R^n$ se escribe de manera \emph{única} como
+$\bv=\bw+\bi{z}$ con $\bw\in\mathbf{W}$ y $\bi{z}\in\mathbf{W}^{\perp}$
+(escribimos $\R^n=\mathbf{W}\oplus\mathbf{W}^{\perp}$);
+\item $\dim\mathbf{W}^{\perp}=n-\dim\mathbf{W}$;
+\item $(\mathbf{W}^{\perp})^{\perp}=\mathbf{W}$.
+\end{enumerate}
+\end{proposicion}
+
+\begin{proof}
+(i) Si $\bw$ está en ambos, es ortogonal a sí mismo: $\bw^T\bw=0$ y
+$\bw=\bi{0}$.
+
+(ii) \emph{Existencia:} tomemos una base ortonormal $\bq_1,\dots,\bq_r$ de
+$\mathbf{W}$ (existe por Gram-Schmidt, Sección~\ref{sec:gram-schmidt}, que
+no usa nada de esta proposición). Sea
+$\bw=\bq_1(\bq_1^T\bv)+\cdots+\bq_r(\bq_r^T\bv)\in\mathbf{W}$ y
+$\bi{z}=\bv-\bw$. Para cada $k$,
+$\bq_k^T\bi{z}=\bq_k^T\bv-\bq_k^T\bv=0$, y como todo
+elemento de $\mathbf{W}$ es combinación de los $\bq_k$, resulta
+$\bi{z}\perp\mathbf{W}$. \emph{Unicidad:} si
+$\bw_1+\bi{z}_1=\bw_2+\bi{z}_2$, entonces
+$\bw_1-\bw_2=\bi{z}_2-\bi{z}_1\in\mathbf{W}\cap\mathbf{W}^{\perp}
+=\{\bi{0}\}$.
+
+(iii) Juntando una base de $\mathbf{W}$ con una de $\mathbf{W}^{\perp}$ se
+obtiene, por (ii), un conjunto generador de $\R^n$ que es independiente
+(Proposición~\ref{prop:ort-indep} aplicada por bloques, o directamente por
+(i)): una base. Las dimensiones suman $n$.
+
+(iv) $\mathbf{W}\subseteq(\mathbf{W}^{\perp})^{\perp}$ es inmediato de la
+definición. Recíprocamente, si $\bv\in(\mathbf{W}^{\perp})^{\perp}$,
+escribimos $\bv=\bw+\bi{z}$ como en (ii); entonces
+$\bi{z}^T\bi{z}=\bi{z}^T(\bv-\bw)
+=\bi{z}^T\bv-\bi{z}^T\bw=0-0=0$
+(el primer término se anula porque $\bi{z}\in\mathbf{W}^{\perp}$ y $\bv$ es
+ortogonal a todo $\mathbf{W}^{\perp}$). Luego $\bi{z}=\bi{0}$ y
+$\bv=\bw\in\mathbf{W}$.
+\end{proof}
+
+El ejemplo que organiza todo el curso viene de $A\bx=\bi{0}$:
+
+\begin{teorema}[Espacio fila $\perp$ espacio nulo]\label{teo:fila-nulo}
+Para toda matriz $A$ de $m\times n$:
+\[
+C(A^T)\perp N(A)
+\qquad\text{y}\qquad
+C(A)\perp N(A^T).
+\]
+Más aún, $N(A)=C(A^T)^{\perp}$ y $N(A^T)=C(A)^{\perp}$.
+\end{teorema}
+
+\begin{proof}
+La definición del espacio nulo ya contiene la ortogonalidad. Que
+$A\bx=\bi{0}$ significa que \emph{cada fila} de $A$ multiplica a $\bx$ y da
+cero:
+\[
+A\bx=
+\begin{bmatrix}\text{fila }1\text{ de }A\\ \vdots\\ \text{fila }m\text{ de }A
+\end{bmatrix}
+\begin{bmatrix}\ \\ \bx\\ \ \end{bmatrix}
+=\begin{bmatrix}0\\\vdots\\0\end{bmatrix}.
+\]
+Entonces $\bx$ es ortogonal a cada fila, y por linealidad a cada combinación
+de filas: a todo el espacio fila $C(A^T)$. Recíprocamente, si $\bx$ es
+ortogonal a todas las filas, entonces $A\bx=\bi{0}$; por eso $N(A)$ es
+\emph{exactamente} el complemento ortogonal del espacio fila.
+
+Aplicando lo mismo a $A^T\by=\bi{0}$: las columnas de $A$ (filas de
+$A^T$) son todas ortogonales a $\by$, y también sus combinaciones. El
+espacio columna de $A$ es ortogonal al espacio nulo de $A^T$.
+\end{proof}
+
+\begin{observacion}[Las dimensiones encajan]
+Las dimensiones $r$ y $n-r$ suman $n$: una base del espacio fila ($r$
+vectores) junto con una base del espacio nulo ($n-r$ vectores) forma una base
+de todo $\R^n$. En consecuencia, \textbf{todo vector $\bv\in\R^n$ se
+descompone de manera única} como
+\[
+\bv=\bv_{\text{fila}}+\bv_{\text{nulo}},
+\qquad \bv_{\text{fila}}\in C(A^T),\quad \bv_{\text{nulo}}\in N(A),
+\]
+y las dos componentes son ortogonales entre sí. Lo mismo pasa en $\R^m$ con
+$C(A)$ y $N(A^T)$, de dimensiones $r$ y $m-r$.
+\end{observacion}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=0.9,>=stealth]
+% --- lado Rn ---
+\begin{scope}[shift={(0,0)}]
+\draw[thick,rotate=45] (-1.5,-1.05) rectangle (1.5,1.05);
+\node at (0,0.55) {\small espacio};
+\node at (0,0.05) {\small fila de $A$};
+\node at (0,-0.5) {\small $\dim=r$};
+\end{scope}
+\begin{scope}[shift={(1.15,-3.2)}]
+\draw[thick,rotate=-45] (-1.4,-0.95) rectangle (1.4,0.95);
+\node at (0,0.45) {\small espacio};
+\node at (0,-0.05) {\small nulo de $A$};
+\node at (0,-0.55) {\small $\dim=n-r$};
+\end{scope}
+\node at (-1.9,-2.4) {$\R^n$};
+\draw (0.72,-1.28) rectangle +(0.28,0.28); % angulo recto
+\node at (1.45,-1.05) {\small $90^{\circ}$};
+% --- lado Rm ---
+\begin{scope}[shift={(8.3,0.2)}]
+\draw[thick,rotate=45] (-1.5,-1.05) rectangle (1.5,1.05);
+\node at (0,0.55) {\small espacio};
+\node at (0,0.05) {\small columna de $A$};
+\node at (0,-0.5) {\small $\dim=r$};
+\end{scope}
+\begin{scope}[shift={(9.45,-3.0)}]
+\draw[thick,rotate=-45] (-1.4,-0.95) rectangle (1.4,0.95);
+\node at (0,0.45) {\small espacio nulo};
+\node at (0,-0.05) {\small de $A^T$};
+\node at (0,-0.55) {\small $\dim=m-r$};
+\end{scope}
+\node at (11.3,-2.2) {$\R^m$};
+\draw (9.02,-1.08) rectangle +(0.28,0.28);
+\node at (8.35,-0.9) {\small $90^{\circ}$};
+% --- flechas ---
+\draw[->,thick] (2.4,0.4) -- node[above]{\small $A\bx_{\text{fila}}=\bi{b}$} (6.1,0.5);
+\draw[->,thick] (3.3,-2.6) -- node[below]{\small $A\bx_{\text{nulo}}=\bi{0}$} (6.6,-1.4);
+\end{tikzpicture}
+\caption{Dos pares de subespacios ortogonales. Las dimensiones suman $n$ y
+suman $m$. Esta es la \emph{gran figura} del álgebra lineal: dos subespacios
+en $\R^n$ y dos en $\R^m$.}
+\label{fig:granfigura}
+\end{figure}
+
+\begin{corolario}[Los cuatro subespacios, completo]\label{coro:cuatro}
+Sea $A\in\R^{m\times n}$ de rango $r$. Entonces
+\[
+\R^n = C(A^T)\oplus N(A),
+\qquad
+\R^m = C(A)\oplus N(A^T),
+\]
+y ambas descomposiciones son ortogonales. En particular
+\[
+\dim C(A^T)=r,\quad \dim N(A)=n-r,\qquad
+\dim C(A)=r,\quad \dim N(A^T)=m-r,
+\]
+y $\big(C(A^T)\big)^{\perp\perp}=C(A^T)$, $\big(N(A)\big)^{\perp}=C(A^T)$.
+\end{corolario}
+
+\begin{proof}
+Por el Teorema~\ref{teo:fila-nulo}, $N(A)=C(A^T)^{\perp}$; la
+Proposición~\ref{prop:descomposicion} aplicada a $\mathbf{W}=C(A^T)$ da la
+suma directa ortogonal y $\dim N(A)=n-\dim C(A^T)=n-r$. Lo mismo con $A^T$
+en lugar de $A$.
+\end{proof}
+
+\begin{observacion}[Dónde se calcula esta descomposición]
+El Corolario~\ref{coro:cuatro} dice que todo $\bx\in\R^n$ se parte de manera
+única en $\bx=\bx_{\text{fila}}+\bx_{\text{nulo}}$, pero no dice cómo
+calcular las dos piezas. La respuesta está en la sección siguiente: si $P$ es
+la proyección ortogonal sobre el espacio fila, entonces
+$\bx_{\text{fila}}=P\bx$ y $\bx_{\text{nulo}}=(I-P)\bx$. Las proyecciones
+son la herramienta \emph{computacional} que corresponde a esta figura.
+\end{observacion}
+
+\begin{observacion}[Dos consecuencias que usaremos todo el tiempo]
+\label{obs:ATA}
+De $N(A)=C(A^T)^{\perp}$ se deduce en dos líneas que
+\[
+N(A^TA)=N(A)
+\qquad\text{y}\qquad
+C(A^TA)=C(A^T),
+\]
+donde la primera igualdad ya apareció en el
+Ejercicio de desarrollo~\ref{ent:rango} del Capítulo~\ref{cap:algebra-lineal}
+y dice, en particular, que \emph{$A^TA$ es invertible si y sólo si las
+columnas de $A$ son independientes}. Esa es la hipótesis que hará falta para
+proyectar sobre $C(A)$ cuando la base no sea ortonormal.
+\end{observacion}
+
+\begin{observacion}[Anticipo: las bases especiales de la SVD]
+Gram-Schmidt (Sección~\ref{sec:gram-schmidt}) produce bases ortonormales
+$\bv_1,\dots,\bv_r$ del espacio fila y $\bu_1,\dots,\bu_r$ del espacio
+columna. La descomposición en valores singulares (SVD), el teorema más
+importante de la ciencia de datos, encuentra bases con una propiedad extra:
+cada par queda conectado por $A$,
+\[
+A\bv_1=\sigma_1\bu_1,\quad A\bv_2=\sigma_2\bu_2,\quad\dots\quad
+A\bv_r=\sigma_r\bu_r .
+\]
+En la Figura~\ref{fig:granfigura}: multiplicar por $A$ lleva una base
+ortogonal de $\bv$'s (a la izquierda) a una base ortogonal de $\bu$'s (a la
+derecha). Volveremos sobre esto.
+\end{observacion}
+
+% ===================================================================
+\section{Proyecciones ortogonales en $\R^n$ con el producto interno usual}\label{sec:proyecciones}
+
+\subsection*{Proyección sobre una recta}
+
+Sea $\ba\ne\bi{0}$ y sea la recta $\gen\{\ba\}$. La \textbf{proyección
+ortogonal} de $\bb$ sobre esa recta es el punto de la recta más cercano a
+$\bb$. Todo punto de la recta es un múltiplo $\alpha\,\ba$ con
+$\alpha\in\R$, así que buscamos el \emph{escalar} $\alpha$ para el cual el
+\emph{error} $\bi{e}=\bb-\alpha\,\ba$ resulta ortogonal a $\ba$:
+\[
+\ba^T(\bb-\alpha\,\ba)=0
+\qquad\Longrightarrow\qquad
+\alpha=\frac{\ba^T\bb}{\ba^T\ba}
+\qquad\Longrightarrow\qquad
+\boxed{\ \bi{p}=\frac{\ba^T\bb}{\ba^T\ba}\,\ba\ }
+\]
+En forma matricial, $\bi{p}=P\bb$ con
+$P=\dfrac{\ba\,\ba^T}{\ba^T\ba}$, una matriz de rango uno. Si el
+vector es unitario, $\bq=\ba/\|\ba\|$, la fórmula es simplemente
+$P=\bq\bq^T$ y $\bi{p}=\bq(\bq^T\bb)$: el coeficiente
+$\bq^T\bb$ del Teorema~\ref{teo:coeficientes} multiplicado por $\bq$.
+
+\subsection*{Proyección sobre un subespacio: $P=QQ^T$}
+
+Sea $\mathbf{V}$ un subespacio de $\R^m$ con base ortonormal
+$\bq_1,\dots,\bq_r$, y sea $Q=[\bq_1\ \cdots\ \bq_r]$ de $m\times r$, de modo
+que $Q^T Q=I_r$. Con una base ortonormal, proyectar sobre $\mathbf{V}$
+es proyectar sobre cada eje y sumar:
+\[
+\bi{p}=\bq_1(\bq_1^T\bb)+\cdots+\bq_r(\bq_r^T\bb)
+=QQ^T\bb .
+\]
+
+\begin{teorema}\label{teo:proyector}
+La matriz $P=QQ^T$ satisface
+\[
+P=P^T=P^2 ,
+\]
+y $P\bb$ es la proyección ortogonal de $\bb$ sobre $C(Q)$: el error
+$\bi{e}=\bb-P\bb$ es ortogonal a $C(Q)$, y $P\bb$ es el punto de $C(Q)$ más
+cercano a $\bb$. Recíprocamente, toda matriz con $P^2=P=P^T$ es la
+proyección ortogonal sobre su espacio columna.
+\end{teorema}
+
+\begin{proof}
+Simetría: $(QQ^T)^T=QQ^T$. Idempotencia: en el medio
+eliminamos $Q^T Q=I$,
+\[
+P^2=(QQ^T)(QQ^T)=Q\,(Q^T Q)\,Q^T=QQ^T=P .
+\]
+El error es ortogonal al subespacio: para cada columna $\bq_k$,
+\[
+Q^T(\bb-QQ^T\bb)=Q^T\bb-(Q^T Q)Q^T\bb
+=Q^T\bb-Q^T\bb=\bi{0}.
+\]
+Y estar más cerca es Pitágoras: si $\bv\in C(Q)$ es cualquier otro punto,
+$\bb-\bv=(\bb-P\bb)+(P\bb-\bv)$ con los dos sumandos ortogonales
+(el primero es el error, el segundo vive en $C(Q)$), así que
+$\|\bb-\bv\|^2=\|\bb-P\bb\|^2+\|P\bb-\bv\|^2\ge\|\bb-P\bb\|^2$.
+
+\emph{Recíproca.} Sea ahora $P$ cualquier matriz con $P^2=P=P^T$ y sea
+$\mathbf{W}=C(P)$. Para todo $\bb$: primero, $P\bb\in\mathbf{W}$. Segundo,
+el ``error'' $\bb-P\bb$ está en el espacio nulo de $P$, porque
+$P(\bb-P\bb)=P\bb-P^2\bb=\bi{0}$; y por simetría
+$N(P)=N(P^T)=C(P)^{\perp}$ (Teorema~\ref{teo:fila-nulo}). Es decir,
+$P\bb\in\mathbf{W}$ y $\bb-P\bb\perp\mathbf{W}$: por la unicidad de la
+descomposición ortogonal (Proposición~\ref{prop:descomposicion}), $P\bb$
+es \emph{la} proyección ortogonal de $\bb$ sobre $\mathbf{W}$. Las dos
+condiciones $P^2=P$ y $P=P^T$ caracterizan completamente a las
+proyecciones ortogonales.
+\end{proof}
+
+\begin{entrega}{Proyecciones oblicuas: por qué se pide $P=P^T$}
+\label{ent:oblicuas}
+El Teorema~\ref{teo:proyector} caracteriza las proyecciones ortogonales con
+\emph{dos} condiciones, $P^2=P$ y $P=P^T$. Este ejercicio explora qué queda si
+se conserva sólo la primera.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Sea $P\in\R^{n\times n}$ con $P^2=P$ (\emph{idempotente}), sin suponer
+simetría. Probar que $\R^n=C(P)\oplus N(P)$ y que, en esa descomposición,
+$P\bx$ es la componente de $\bx$ en $C(P)$ \emph{a lo largo de} $N(P)$.
+Probar también que $I-P$ es idempotente, con $C(I-P)=N(P)$ y $N(I-P)=C(P)$.
+La suma es directa, pero en general \emph{no} es ortogonal.
+
+\item Verificarlo en
+$P=\begin{bsmallmatrix}1&1\\ 0&0\end{bsmallmatrix}$: comprobar $P^2=P$,
+identificar $C(P)$ y $N(P)$, dibujarlos, y marcar en el dibujo cómo se
+proyecta un vector cualquiera.
+
+\item Para $P_t=\begin{bsmallmatrix}1&t\\ 0&0\end{bsmallmatrix}$ con
+$t\in\R$, calcular $\|P_t\bx\|$ para $\bx=(0,1)^T$ y mostrar que el cociente
+$\|P_t\bx\|/\|\bx\|$ se puede hacer tan grande como se quiera. Comparar con
+el caso ortogonal, donde siempre $\|P\bx\|\le\|\bx\|$ (¿por qué?). \emph{Esta
+es la razón de fondo para exigir $P=P^T$: las proyecciones oblicuas
+amplifican, y todo lo que amplifica amplifica también los errores.}
+
+\item Probar que, para $P$ idempotente, $P=P^T$ si y sólo si
+$N(P)=C(P)^{\perp}$.
+
+\item Construir una matriz idempotente de $2\times2$ cuyo espacio columna y
+espacio nulo formen un ángulo de $30^{\circ}$, y calcular para ella el máximo
+de $\|P\bx\|/\|\bx\|$. ¿Qué pasa con ese máximo cuando el ángulo tiende a
+cero?
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (c) explica por
+qué en todo el curso ``proyección'' significa ``proyección ortogonal'' salvo
+aviso en contrario.}}
+\end{entrega}
+
+\begin{observacion}[La proyección complementaria]\label{obs:I-P}
+Toda proyección parte a $\bb$ en dos piezas perpendiculares:
+\[
+\bb=\underbrace{P\bb}_{\text{en } C(Q)}
++\underbrace{(I-P)\bb}_{\text{ortogonal a } C(Q)} .
+\]
+La matriz $I-P$ \emph{también} es una proyección ortogonal, y proyecta sobre
+el complemento ortogonal $C(Q)^{\perp}$. En efecto, cumple las dos
+condiciones del Teorema~\ref{teo:proyector}:
+\[
+(I-P)^T=I-P^T=I-P ,
+\qquad
+(I-P)^2=I-2P+P^2=I-2P+P=I-P ,
+\]
+usando $P^T=P$ y $P^2=P$. Y su espacio columna es $C(Q)^{\perp}$, porque
+$(I-P)\bb$ es el error, que ya vimos que es ortogonal a $C(Q)$; recíprocamente,
+si $\bi{w}\perp C(Q)$ entonces $P\bi{w}=\bi{0}$ y por lo tanto
+$\bi{w}=(I-P)\bi{w}\in C(I-P)$.
+
+Las dos proyecciones son, entonces, las dos mitades de la identidad:
+$P+(I-P)=I$. Esto ya había aparecido en la Sección~\ref{sec:cuatro-ort} al
+descomponer un vector en su parte del espacio fila y su parte del espacio
+nulo.
+\end{observacion}
+
+\begin{ejemplo}\label{ej:proyecciones}
+Tres matrices con columnas ortonormales, creciendo de $3\times1$ a
+$3\times2$ y a $3\times3$:
+\[
+Q_1=\frac13\begin{bmatrix}2\\2\\-1\end{bmatrix}\qquad
+Q_2=\frac13\begin{bmatrix}2&2\\2&-1\\-1&2\end{bmatrix}\qquad
+Q_3=\frac13\begin{bmatrix}2&2&-1\\2&-1&2\\-1&2&2\end{bmatrix}.
+\]
+Proyectemos el mismo $\bb=(3,3,3)^T$ sobre los tres espacios columna.
+
+\emph{Sobre la recta} $C(Q_1)$:
+\[
+P_1\bb=Q_1(Q_1^T\bb)
+=\frac13\begin{bmatrix}2\\2\\-1\end{bmatrix}
+\cdot\frac{2\cdot3+2\cdot3-1\cdot3}{3}
+=\begin{bmatrix}2\\2\\-1\end{bmatrix},
+\qquad
+\bi{e}=\begin{bmatrix}1\\1\\4\end{bmatrix},
+\quad \|\bi{e}\|=\sqrt{18}.
+\]
+
+\emph{Sobre el plano} $C(Q_2)$ (que contiene a la recta anterior):
+\[
+P_2\bb=Q_2(Q_2^T\bb)=\begin{bmatrix}4\\1\\1\end{bmatrix},
+\qquad
+\bi{e}=\begin{bmatrix}-1\\2\\2\end{bmatrix},
+\quad \|\bi{e}\|=\sqrt{9}=3 .
+\]
+El error se achicó ($3<\sqrt{18}$): el plano contiene a la recta, así que su
+punto más cercano a $\bb$ está más cerca.
+
+\emph{Sobre todo el espacio} $C(Q_3)=\R^3$: ahora $Q_3$ es cuadrada,
+$P_3=Q_3Q_3^T=I$, y $P_3\bb=\bb$. \textbf{El error es cero.} Proyectar
+sobre el espacio total no cambia nada. \hfill$\square$
+\end{ejemplo}
+
+\subsection*{¿Y si la base no es ortonormal?}
+
+Todo lo anterior supone que tenemos a mano una base \emph{ortonormal} del
+subespacio. En la práctica lo habitual es que el subespacio venga dado como
+$C(A)$, con las columnas de $A$ independientes pero no ortonormales. La
+fórmula de la proyección sigue existiendo y es
+\begin{equation}\label{eq:proyeccion-general}
+\boxed{\ P=A(A^T A)^{-1}A^T\ }
+\end{equation}
+que tiene sentido gracias a la Observación~\ref{obs:ATA} ($A^TA$ es
+invertible exactamente cuando las columnas de $A$ son independientes) y que
+se reduce a $QQ^T$ cuando $A=Q$ ya tiene columnas ortonormales, porque
+entonces $Q^TQ=I$. Demostrarla, y entender por qué es la proyección correcta,
+es el siguiente ejercicio de desarrollo.
+
+\begin{entrega}{La proyección sobre $C(A)$ con una base cualquiera}
+\label{ent:proyeccion}
+Sea $A\in\R^{m\times n}$ con columnas linealmente independientes y sea
+$P=A(A^TA)^{-1}A^T$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Probar que $A^TA$ es invertible, de modo que $P$ está bien definida.
+\emph{Sugerencia:} es de $n\times n$; alcanza con ver que $N(A^TA)=N(A)$.
+
+\item Probar que $P^2=P$ y $P^T=P$.
+
+\item Probar que $C(P)=C(A)$ y que $N(P)=C(A)^{\perp}$. Deducir que
+$\rg(P)=n$.
+
+\item Probar que, para todo $\bb\in\R^m$, el error $\bb-P\bb$ es ortogonal a
+$C(A)$, y que $P\bb$ es el punto de $C(A)$ más cercano a $\bb$:
+\[
+\|\bb-P\bb\| \le \|\bb-\bv\| \qquad\text{para todo } \bv\in C(A),
+\]
+con igualdad sólo si $\bv=P\bb$. \emph{Sugerencia:} Pitágoras, como en el
+Teorema~\ref{teo:proyector}.
+
+\item \emph{(No depende de la base.)} Sea $M\in\R^{n\times n}$ invertible y
+$B=AM$ (las columnas de $B$ son otra base del mismo subespacio). Probar que
+$B(B^TB)^{-1}B^T = A(A^TA)^{-1}A^T$. Es decir: la proyección depende del
+\emph{subespacio}, no de la base elegida para describirlo.
+
+\item Verificar que si las columnas de $A$ son ortonormales, entonces
+\eqref{eq:proyeccion-general} se reduce a $P=AA^T$.
+
+\item Probar que $\tr(P)=n$. \emph{Sugerencia:} usar
+$\tr(XY)=\tr(YX)$ del Capítulo~\ref{cap:algebra-lineal}. (Es un caso
+particular del Corolario~\ref{cor:traza-proyeccion}: para cualquier
+proyección, la traza es el rango.)
+
+\item Calcular $P$ para
+\[
+A=\begin{bmatrix} 1&0\\ 1&1\\ 0&1\end{bmatrix}
+\]
+y verificar sobre esa matriz concreta los ítems (b), (c) y (g).
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. La fórmula
+\eqref{eq:proyeccion-general} es la que resuelve el problema de mínimos
+cuadrados, que veremos en su propio capítulo; el ítem (e) explica por qué
+tiene sentido hablar de ``la'' proyección sobre un subespacio.}}
+\end{entrega}
+\subsection*{Volver a $A\bx=\bb$}
+
+Con las proyecciones en la mano podemos cerrar la discusión que quedó abierta
+en el Capítulo~\ref{cap:LU}: allí vimos que el conjunto solución de
+$A\bx=\bb$, cuando no es vacío, es $\bx_p+N(A)$, un trasladado del espacio
+nulo. La ortogonalidad permite decir dos cosas más: cómo reconocer sin
+resolver si el sistema es compatible, y cuál es, entre todas las soluciones,
+la \emph{mejor}.
+
+\begin{entrega}{Compatibilidad y la solución de norma mínima}
+\label{ent:norma-minima}
+Sea $A\in\R^{m\times n}$ y $\bb\in\R^m$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item \emph{(Alternativa de Fredholm.)} Probar que
+\[
+A\bx=\bb \ \text{ tiene solución}
+\qquad\Longleftrightarrow\qquad
+\by^T\bb=0 \ \text{ para todo } \by \text{ con } A^T\by=\bi{0}.
+\]
+\emph{Sugerencia:} $C(A)=N(A^T)^{\perp}$, por el Teorema~\ref{teo:fila-nulo}
+y la Proposición~\ref{prop:descomposicion}(iv).
+
+\item Interpretarlo en términos de ecuaciones: cada $\by\in N(A^T)$ da una
+combinación lineal de las filas de $A$ cuyo resultado es la ecuación
+$0=\by^T\bb$; el sistema es compatible exactamente cuando todas esas
+``ecuaciones vacías'' son ciertas. Encontrar todas las condiciones de
+compatibilidad del sistema
+\[
+\begin{bmatrix} 1&2\\ 2&4\\ 1&3\end{bmatrix}\bx = \bb ,
+\]
+calculando primero $N(A^T)$.
+
+\item Supongamos ahora el sistema compatible. Probar que todas sus soluciones
+tienen la \emph{misma} componente en el espacio fila: si $\bx$ y $\bx'$ son
+soluciones y las escribimos como
+$\bx=\bx_{\text{fila}}+\bx_{\text{nulo}}$ según el
+Corolario~\ref{coro:cuatro}, entonces
+$\bx_{\text{fila}}=\bx'_{\text{fila}}$.
+
+\item Deducir que hay exactamente \emph{una} solución que pertenece a
+$C(A^T)$, y que es la de \textbf{norma mínima}: para toda solución $\bx$,
+\[
+\|\bx\|^2=\|\bx_{\text{fila}}\|^2+\|\bx_{\text{nulo}}\|^2
+\ \ge\ \|\bx_{\text{fila}}\|^2 ,
+\]
+con igualdad si y sólo si $\bx=\bx_{\text{fila}}$.
+
+\item Probar que la restricción de $A$ al espacio fila,
+\[
+A\big|_{C(A^T)}:\ C(A^T)\longrightarrow C(A),
+\]
+es una biyección. \emph{(Esta es la semilla de la inversa generalizada y de
+las bases especiales $A\bv_k=\sigma_k\bu_k$ de la SVD.)}
+
+\item Para
+\[
+A=\begin{bmatrix}1&1&1\end{bmatrix},\qquad \bb=\begin{bmatrix}3\end{bmatrix},
+\]
+describir todas las soluciones y hallar la de norma mínima de dos maneras:
+proyectando una solución cualquiera sobre $C(A^T)$, y buscándola
+directamente de la forma $\bx=A^T\bi{z}$. Comprobar que dan lo mismo y
+explicar por qué toda solución de la forma $A^T\bi{z}$ está en el espacio
+fila.
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (a) convierte la
+condición $\bb\in C(A)$, que es difícil de verificar, en una ortogonalidad
+que se chequea; los ítems (d) y (e) son el punto de partida de la inversa
+generalizada.}}
+\end{entrega}
+
+% ===================================================================
+\section{Ortogonalización de Gram-Schmidt con el producto interno usual en $\R^n$}\label{sec:gram-schmidt}
+
+Aquí hay un hecho clave: \textbf{todo subespacio de $\R^n$ tiene una base
+ortogonal} (y, normalizando, una ortonormal). Pensemos en un plano de $\R^3$
+generado por dos vectores independientes $\ba$ y $\bb$. Para conseguir una
+base ortogonal del mismo plano, a $\bb$ le restamos su componente en la
+dirección de $\ba$ (¡una proyección!):
+\begin{equation}\label{eq:gs-idea}
+\text{Base ortogonal:}\quad \ba
+\qquad\text{y}\qquad
+\bi{c}=\bb-\frac{\ba^T\bb}{\ba^T\ba}\,\ba .
+\end{equation}
+La cuenta lo confirma:
+$\ba^T\bi{c}=\ba^T\bb-\dfrac{\ba^T\bb}{\ba^T\ba}\,
+\ba^T\ba=0$. Y $\bi{c}\ne\bi{0}$ porque $\bb$ no era múltiplo de $\ba$.
+El plano generado no cambió: solo cambiamos la base.
+
+Esta idea de ``ortogonalizar'' se aplica a cualquier cantidad de vectores,
+restando en cada paso las proyecciones sobre los vectores ya construidos.
+Ese es el \textbf{proceso de Gram-Schmidt}.
+
+\begin{teorema}[Gram-Schmidt]\label{teo:gram-schmidt}
+Sean $\ba_1,\dots,\ba_r$ linealmente independientes. Definimos
+\[
+\bi{v}_1=\ba_1,\qquad
+\bi{v}_k=\ba_k-\sum_{j=1}^{k-1}
+\frac{\bi{v}_j^T\ba_k}{\bi{v}_j^T\bi{v}_j}\,\bi{v}_j
+\qquad (k=2,\dots,r).
+\]
+Entonces $\bi{v}_1,\dots,\bi{v}_r$ son ortogonales, no nulos, y
+\[
+\hbox{span}\{\bi{v}_1,\dots,\bi{v}_k\}=\hbox{span}\{\ba_1,\dots,\ba_k\}
+\qquad\text{para cada }k .
+\]
+Normalizando, $\bq_k=\bi{v}_k/\|\bi{v}_k\|$ es una base ortonormal del
+subespacio generado. En particular, \emph{todo subespacio tiene una base
+ortonormal}.
+\end{teorema}
+
+\begin{proof}
+Por inducción en $k$. Para $k=1$ no hay nada que probar. Supongamos que
+$\bi{v}_1,\dots,\bi{v}_{k-1}$ ya son ortogonales, no nulos, y generan lo
+mismo que $\ba_1,\dots,\ba_{k-1}$. El vector $\bi{v}_k$ es $\ba_k$ menos su
+proyección sobre el subespacio generado por
+$\bi{v}_1,\dots,\bi{v}_{k-1}$ (proyectar sobre cada eje ortogonal y sumar,
+como en la Sección~\ref{sec:proyecciones}). Para cada $i<k$:
+\[
+\bi{v}_i^T\bi{v}_k
+=\bi{v}_i^T\ba_k-\sum_{j=1}^{k-1}
+\frac{\bi{v}_j^T\ba_k}{\bi{v}_j^T\bi{v}_j}\,
+\bi{v}_i^T\bi{v}_j
+=\bi{v}_i^T\ba_k
+-\frac{\bi{v}_i^T\ba_k}{\bi{v}_i^T\bi{v}_i}\,
+\bi{v}_i^T\bi{v}_i=0 ,
+\]
+porque en la suma solo sobrevive el término $j=i$. Además
+$\bi{v}_k\ne\bi{0}$: si fuera cero, $\ba_k$ sería combinación de
+$\bi{v}_1,\dots,\bi{v}_{k-1}$, es decir de $\ba_1,\dots,\ba_{k-1}$,
+contradiciendo la independencia. Los generados coinciden porque $\bi{v}_k$
+difiere de $\ba_k$ en una combinación de los anteriores.
+\end{proof}
+
+En la práctica conviene normalizar a medida que se avanza: así cada paso es
+``restar proyecciones sobre los $\bq$ ya construidos y normalizar''.
+
+\begin{caja}
+\textbf{Algoritmo de Gram-Schmidt} (entrada: $\ba_1,\dots,\ba_r$
+independientes; salida: $\bq_1,\dots,\bq_r$ ortonormales).
+\begin{enumerate}[leftmargin=*,itemsep=1pt]
+\item Inicializar: $\bq_1=\ba_1/\|\ba_1\|$.
+\item Para $k=2,\dots,r$: restar de $\ba_k$ su proyección sobre lo ya
+construido,
+\[
+\bi{v}_k=\ba_k-\bq_1(\bq_1^T\ba_k)-\cdots
+-\bq_{k-1}(\bq_{k-1}^T\ba_k),
+\]
+y normalizar: $\bq_k=\bi{v}_k/\|\bi{v}_k\|$.
+\end{enumerate}
+En cada paso, $\hbox{span}\{\bq_1,\dots,\bq_k\}=\hbox{span}\{\ba_1,\dots,\ba_k\}$: el
+subespacio construido crece de a una dimensión por vez.
+\end{caja}
+
+\begin{ejemplo}[Gram-Schmidt en acción]\label{ej:gs}
+Ortogonalicemos
+\[
+\ba_1=\begin{bmatrix}1\\-1\\0\end{bmatrix},\qquad
+\ba_2=\begin{bmatrix}2\\0\\-2\end{bmatrix},\qquad
+\ba_3=\begin{bmatrix}3\\-3\\3\end{bmatrix}.
+\]
+\emph{Paso 1.} $\bi{v}_1=\ba_1=(1,-1,0)^T$.
+
+\emph{Paso 2.} $\bi{v}_1^T\ba_2=2$ y $\bi{v}_1^T\bi{v}_1=2$:
+\[
+\bi{v}_2=\ba_2-\frac{2}{2}\,\bi{v}_1
+=\begin{bmatrix}2\\0\\-2\end{bmatrix}-\begin{bmatrix}1\\-1\\0\end{bmatrix}
+=\begin{bmatrix}1\\1\\-2\end{bmatrix}.
+\]
+
+\emph{Paso 3.} $\bi{v}_1^T\ba_3=6$, $\bi{v}_2^T\ba_3=-6$,
+$\bi{v}_2^T\bi{v}_2=6$:
+\[
+\bi{v}_3=\ba_3-\frac{6}{2}\,\bi{v}_1-\frac{-6}{6}\,\bi{v}_2
+=\begin{bmatrix}3\\-3\\3\end{bmatrix}
+-\begin{bmatrix}3\\-3\\0\end{bmatrix}
++\begin{bmatrix}1\\1\\-2\end{bmatrix}
+=\begin{bmatrix}1\\1\\1\end{bmatrix}.
+\]
+Verificación: $\bi{v}_1^T\bi{v}_2=1-1+0=0$,
+$\bi{v}_1^T\bi{v}_3=0$, $\bi{v}_2^T\bi{v}_3=0$. Normalizando,
+\[
+\bq_1=\frac{1}{\sqrt2}\begin{bmatrix}1\\-1\\0\end{bmatrix},\qquad
+\bq_2=\frac{1}{\sqrt6}\begin{bmatrix}1\\1\\-2\end{bmatrix},\qquad
+\bq_3=\frac{1}{\sqrt3}\begin{bmatrix}1\\1\\1\end{bmatrix}
+\]
+es una base ortonormal de $\R^3$. \hfill$\square$
+\end{ejemplo}
+
+\begin{observacion}
+En la Sección~\ref{sec:QR} veremos que este proceso, escrito en forma
+matricial, \emph{es} una factorización: si las columnas de $A$ son
+$\ba_1,\dots,\ba_r$ y las de $Q$ son $\bq_1,\dots,\bq_r$, entonces
+$A=QR$ con $R$ triangular superior.
+\end{observacion}
+
+% ===================================================================
+\section{Matrices  reales ortogonales}\label{sec:matrices-ortogonales}
+
+\subsection*{Altas y delgadas primero: $Q^T Q=I$}
+
+Sea $Q$ de $m\times r$ con columnas ortonormales $\bq_1,\dots,\bq_r$, es
+decir,
+\[
+\bq_i^T\bq_j=\delta_{ij}=
+\begin{cases} 1 & \text{si } i=j,\\ 0 & \text{si } i\neq j.\end{cases}
+\]
+Esas $r^2$ condiciones se resumen en una sola igualdad matricial. En efecto,
+las filas de $Q^T$ son las columnas de $Q$ traspuestas, de modo que al
+multiplicar $Q^T$ por $Q$ la entrada $(i,j)$ del producto es
+\[
+(Q^TQ)_{ij}=\fila_i(Q^T)\,\col_j(Q)=\bq_i^T\bq_j=\delta_{ij} ,
+\]
+es decir, \emph{$Q^TQ$ es la tabla de todos los productos escalares entre
+columnas de $Q$}. Pedir que las columnas sean ortonormales es pedir que esa
+tabla sea la identidad:
+\[
+Q^T Q=
+\begin{bmatrix}\text{---}\ \bq_1^T\ \text{---}\\ \vdots\\
+\text{---}\ \bq_r^T\ \text{---}\end{bmatrix}
+\begin{bmatrix}\bq_1\ \cdots\ \bq_r\end{bmatrix}
+=\begin{bmatrix}
+\bq_1^T\bq_1 & \cdots & \bq_1^T\bq_r\\
+\vdots & \ddots & \vdots\\
+\bq_r^T\bq_1 & \cdots & \bq_r^T\bq_r
+\end{bmatrix}
+=\begin{bmatrix}1&&\\&\ddots&\\&&1\end{bmatrix}=I_r .
+\]
+Conviene leer las dos lecturas por separado: los \emph{unos} de la diagonal
+dicen que cada columna es unitaria, y los \emph{ceros} de afuera dicen que
+cada par de columnas distintas es ortogonal. En resumen,
+\[
+\boxed{\ \text{las columnas de } Q \text{ son ortonormales}
+\iff Q^TQ=I_r\ }
+\]
+
+Vale la pena insistir en que esto \emph{no} dice que $Q$ sea invertible. La
+igualdad $Q^TQ=I_r$ dice que $Q^T$ es inversa \emph{a izquierda} de $Q$, y
+nada más; cuando $m>r$ la matriz $Q$ ni siquiera es cuadrada. En ese caso se
+la llama \textbf{semiortogonal}, y el producto en el otro orden
+\emph{no} da la identidad: $QQ^T\neq I_m$. De hecho ya sabemos qué es, porque
+es la proyección $P$ del Teorema~\ref{teo:proyector}, una matriz de rango $r$;
+si fuera $QQ^T=I_m$ tendría rango $m>r$, imposible. Dicho de otro modo: las
+$m$ filas de $Q$ son $m$ vectores de $\R^r$ y no pueden ser ortonormales si
+$m>r$, porque en $\R^r$ no entran más de $r$ vectores ortonormales.
+
+\begin{proposicion}[$Q$ preserva normas y ángulos]\label{prop:preserva}
+Si $Q^T Q=I$ entonces, para todos $\bx,\by$,
+\[
+\|Q\bx\|=\|\bx\|
+\qquad\text{y}\qquad
+(Q\bx)^T(Q\by)=\bx^T\by .
+\]
+\end{proposicion}
+
+\begin{proof}
+$(Q\bx)^T(Q\by)=\bx^T Q^T Q\,\by=\bx^T\by$; con
+$\by=\bx$ queda $\|Q\bx\|^2=\|\bx\|^2$.
+\end{proof}
+
+Multiplicar por $Q$ no cambia magnitudes ni ángulos. Esta es la razón por la
+que las matrices ortogonales son las favoritas del cálculo numérico:
+\textbf{los cálculos con $Q$ nunca se desbordan}. Multiplicar muchas veces
+por matrices ortogonales no agranda ni achica los errores de redondeo.
+
+\subsection*{Matrices ortogonales: cuadradas}
+
+\begin{definicion}
+Una \textbf{matriz ortogonal} es una matriz \emph{cuadrada} con columnas
+ortonormales.
+\end{definicion}
+
+\begin{teorema}\label{teo:Q-inversa}
+Si $Q$ es cuadrada, son equivalentes:
+\begin{enumerate}[label=(\roman*),itemsep=1pt]
+\item las columnas de $Q$ son ortonormales, es decir $Q^T Q=I$;
+\item $Q$ es invertible y $Q^{-1}=Q^T$;
+\item $QQ^T=I$, es decir las filas de $Q$ son ortonormales;
+\item $\|Q\bx\|=\|\bx\|$ para todo $\bx$.
+\end{enumerate}
+\end{teorema}
+
+\begin{proof}
+(i)$\Rightarrow$(ii): $Q$ cuadrada con columnas ortonormales tiene columnas
+independientes (Proposición~\ref{prop:ort-indep}), luego es invertible; de
+$Q^T Q=I$, la inversa a izquierda $Q^T$ es \emph{la} inversa.
+(ii)$\Rightarrow$(iii): $QQ^T=QQ^{-1}=I$, y ese producto calcula los
+productos internos entre filas: las filas son ortonormales (¡probablemente
+una base ortonormal distinta de la de las columnas!).
+(iii)$\Rightarrow$(i): aplicando (i)$\Rightarrow$(iii) a $Q^T$.
+(i)$\Rightarrow$(iv) es la Proposición~\ref{prop:preserva}. Para
+(iv)$\Rightarrow$(i): de $\|Q\bx\|^2=\|\bx\|^2$ para todo $\bx$ se
+recuperan los productos internos por polarización,
+$\bx^T\by=\tfrac12(\|\bx+\by\|^2-\|\bx\|^2-\|\by\|^2)$, aplicada a
+$Q\bx$ y $Q\by$; en particular $\bq_i^T\bq_j=\bi{e}_i^T\bi{e}_j$.
+\end{proof}
+
+\begin{observacion}
+El nombre honesto sería ``matriz ortonormal'', pero la tradición manda:
+cuando $Q$ es cuadrada y $Q^T=Q^{-1}$, se dice matriz ortogonal.
+\end{observacion}
+
+\begin{observacion}[La identidad como suma de matrices de rango uno]
+\label{obs:identidad-rango-uno}
+Escribamos $QQ^T=I$ con la multiplicación
+\emph{columnas por filas} del Capítulo~\ref{cap:algebra-lineal}:
+\[
+I=\bq_1\bq_1^T+\bq_2\bq_2^T+\cdots+\bq_n\bq_n^T .
+\]
+¡La identidad descompuesta en $n$ matrices de rango uno, una por cada eje
+de la base ortonormal! El caso trivial es
+$I=\sum_k\bi{e}_k\bi{e}_k^T$ con la base canónica. Aplicada a un
+vector, esta identidad es otra vez el Teorema~\ref{teo:coeficientes}:
+\[
+\bv=I\bv=\bq_1(\bq_1^T\bv)+\cdots+\bq_n(\bq_n^T\bv)
+=c_1\bq_1+\cdots+c_n\bq_n .
+\]
+Y si en lugar de sumar los $n$ términos sumamos solo $r$, obtenemos
+$\bq_1\bq_1^T+\cdots+\bq_r\bq_r^T=QQ^T$ con $Q$ de
+$n\times r$: la proyección de la Sección~\ref{sec:proyecciones}.
+\emph{Proyectar es truncar la identidad.}
+\end{observacion}
+
+\begin{proposicion}[Productos e inversas]\label{prop:productos}
+Si $Q_1$ y $Q_2$ son ortogonales del mismo tamaño, entonces $Q_1Q_2$ es
+ortogonal, y $Q^{-1}=Q^T$ es ortogonal.
+\end{proposicion}
+
+\begin{proof}
+$(Q_1Q_2)^T(Q_1Q_2)=Q_2^T Q_1^T Q_1Q_2=Q_2^T Q_2=I$.
+Y $(Q^T)^T Q^T=QQ^T=I$ por el
+Teorema~\ref{teo:Q-inversa}.
+\end{proof}
+
+\subsection*{Matrices ortogonales famosas}
+
+\textbf{1. Rotaciones.} Cuando todo el plano gira un ángulo $\theta$
+alrededor de $(0,0)$, las magnitudes no cambian y los ángulos entre vectores
+tampoco. Las columnas son las imágenes de $\bi{e}_1$ y $\bi{e}_2$: vectores
+unitarios ortogonales, con $\cos^2\theta+\sin^2\theta=1$:
+\begin{equation}\label{eq:rotacion}
+Q_{\text{rota}}=\begin{bmatrix}\cos\theta&-\sin\theta\\
+\sin\theta&\cos\theta\end{bmatrix}
+=\textbf{rotación de ángulo } \theta,
+\qquad \det Q_{\text{rota}}=+1 .
+\end{equation}
+
+\textbf{2. Reflexiones.} Si multiplicamos la segunda columna por $-1$, las
+dos columnas siguen siendo ortogonales y unitarias:
+\begin{equation}\label{eq:reflexion}
+Q_{\text{refleja}}=\begin{bmatrix}\cos\theta&\sin\theta\\
+\sin\theta&-\cos\theta\end{bmatrix}
+=\textbf{reflexión en la recta a ángulo } \tfrac{\theta}{2},
+\qquad \det Q_{\text{refleja}}=-1 .
+\end{equation}
+Esta $Q$ refleja cada vector como en un espejo: la recta espejo forma ángulo
+$\theta/2$ con el eje $x$. La rotación tiene determinante $+1$ (el plano
+gira); la reflexión tiene determinante $-1$ (el plano se da vuelta).
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=1.5,>=stealth]
+% rotacion
+\begin{scope}
+\draw[->,gray] (-1.3,0)--(1.4,0);
+\draw[->,gray] (0,-0.3)--(0,1.4);
+\draw[->,thick] (0,0)--(1,0) node[below right]{\small $\bi{e}_1$};
+\draw[->,thick] (0,0)--(0,1) node[above left]{\small $\bi{e}_2$};
+\draw[->,thick,blue] (0,0)--(40:1)
+  node[right]{\small $Q\bi{e}_1=\binom{\cos\theta}{\sin\theta}$};
+\draw[->,thick,blue] (0,0)--(130:1)
+  node[above left]{\small $Q\bi{e}_2=\binom{-\sin\theta}{\cos\theta}$};
+\draw[->] (0.55,0) arc (0:40:0.55); \node at (18:0.75) {\small $\theta$};
+\draw[->] (90:0.4) arc (90:130:0.4);
+\node at (0,-0.75) {\small Rotación: $\det=+1$};
+\end{scope}
+% reflexion
+\begin{scope}[shift={(4.6,0)}]
+\draw[->,gray] (-1.3,0)--(1.4,0);
+\draw[->,gray] (0,-1.1)--(0,1.4);
+\draw[dashed] (-1.1,0) ++(20:2.2) -- (200:1.1)
+  node[pos=0.05,above]{\small recta a $\theta/2$};
+\draw[->,thick] (0,0)--(1,0) node[below right]{\small $\bi{e}_1$};
+\draw[->,thick] (0,0)--(0,1) node[above left]{\small $\bi{e}_2$};
+\draw[->,thick,blue] (0,0)--(40:1)
+  node[right]{\small $Q\bi{e}_1=\binom{\cos\theta}{\sin\theta}$};
+\draw[->,thick,blue] (0,0)--(-50:1)
+  node[below right]{\small $Q\bi{e}_2=\binom{\sin\theta}{-\cos\theta}$};
+\node at (0,-1.45) {\small Reflexión: $\det=-1$};
+\end{scope}
+\end{tikzpicture}
+\caption{Girar todo el plano un ángulo $\theta$; reflejar cada vector
+respecto de la recta a ángulo $\theta/2$ (con $\theta=40^{\circ}$). Las
+columnas de $Q$ son $Q\bi{e}_1$ y $Q\bi{e}_2$.}
+\label{fig:rota-refleja}
+\end{figure}
+
+Componer transformaciones es multiplicar matrices, y la
+Proposición~\ref{prop:productos} dice que el producto sigue siendo
+ortogonal: rotación por rotación $=$ rotación; reflexión por reflexión $=$
+rotación; rotación por reflexión $=$ reflexión (los determinantes se
+multiplican: $(+1)(+1)=+1$, $(-1)(-1)=+1$, $(+1)(-1)=-1$). Todo esto sigue
+valiendo en $\R^n$.
+
+\textbf{3. Reflexiones de Householder.} Ejemplos hermosos de reflexiones en
+$\R^n$. Se elige un vector unitario $\bu$ y se define
+\begin{equation}\label{eq:householder}
+H=I-2\,\bu\bu^T .
+\end{equation}
+$H$ es simétrica (es la identidad menos dos veces la matriz simétrica de
+rango uno $\bu\bu^T$) y es ortogonal: usando $\bu^T\bu=1$,
+\[
+H^T H=H^2=(I-2\bu\bu^T)(I-2\bu\bu^T)
+=I-4\bu\bu^T+4\bu\,(\bu^T\bu)\,\bu^T=I .
+\]
+Dos reflexiones seguidas devuelven cada vector a su lugar. Geométricamente,
+$H$ refleja respecto del hiperplano perpendicular a $\bu$:
+\[
+H\bu=\bu-2\bu(\bu^T\bu)=-\bu ,
+\qquad
+H\bw=\bw \quad\text{si } \bw\perp\bu .
+\]
+Los ``autovalores'' de $H$ son $-1$ (una vez, en la dirección $\bu$) y $+1$
+($n-1$ veces, en el espejo): como toda reflexión.
+
+\begin{observacion}[Reflexiones $\leftrightarrow$ proyecciones]
+\label{obs:reflexion-proyeccion}
+La construcción de Householder es un caso particular de una
+correspondencia general. Si $P$ es \emph{cualquier} proyección ortogonal
+($P^2=P=P^T$), la matriz
+\[
+H=I-2P
+\]
+es simétrica y ortogonal:
+$H^2=(I-2P)^2=I-4P+4P^2=I$. Y refleja: para $\bw\in C(P)$ es
+$H\bw=\bw-2\bw=-\bw$, mientras que para $\bi{z}\perp C(P)$ es
+$H\bi{z}=\bi{z}$. Es la reflexión que invierte $C(P)$ y deja fijo su
+complemento ortogonal. Householder es el caso $P=\bu\bu^T$
+(proyección sobre la recta de $\bu$). Recíprocamente, si $H$ es simétrica
+con $H^2=I$, entonces
+\[
+P=\tfrac12(I-H)
+\]
+cumple $P^T=P$ y
+$P^2=\tfrac14(I-2H+H^2)=\tfrac14(2I-2H)=P$: es una proyección ortogonal.
+\textbf{Reflexiones y proyecciones son dos caras de la misma moneda}:
+$H=I-2P$, $P=\tfrac12(I-H)$.
+\end{observacion}
+
+Con $\bu=(1,1,\dots,1)^T/\sqrt n$, la fórmula
+$H_n=I-\frac{2}{n}\,\textbf{unos}(n,n)$ da ejemplos fáciles de recordar:
+\[
+H_3=\frac13\begin{bmatrix}1&-2&-2\\-2&1&-2\\-2&-2&1\end{bmatrix}
+\qquad
+H_4=\frac12\begin{bmatrix}1&-1&-1&-1\\-1&1&-1&-1\\-1&-1&1&-1\\
+-1&-1&-1&1\end{bmatrix},
+\]
+y $H_4$ se parece a una matriz de Hadamard.
+
+\begin{entrega}{Reflexiones de Householder}\label{ent:householder}
+Sea $\bu\in\R^n$ con $\|\bu\|=1$ y sea $H=I-2\,\bu\bu^T$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Probar que $H^T=H$, que $H^2=I$ y que $H$ es ortogonal, y concluir que
+$H^{-1}=H$: \emph{reflejar dos veces es no hacer nada}.
+
+\item Probar que $H\bu=-\bu$ y que $H\bw=\bw$ para todo $\bw\perp\bu$.
+Describir en palabras qué le hace $H$ a un vector cualquiera, descomponiéndolo
+según $\R^n=\gen\{\bu\}\oplus\bu^{\perp}$.
+
+\item \emph{(El lema que hace funcionar todo.)} Sean $\bx\neq\by$ con
+$\|\bx\|=\|\by\|$. Probar que, tomando
+\[
+\bu=\frac{\bx-\by}{\|\bx-\by\|},
+\]
+resulta $H\bx=\by$. \emph{Sugerencia:} calcular $\|\bx-\by\|^2$ usando
+$\|\bx\|=\|\by\|$ y ver que $\bu^T\bx=\tfrac12\|\bx-\by\|$.
+
+\item Aplicar el ítem anterior al caso que nos interesa: dado
+$\bx\neq\bi{0}$, los únicos
+$\by$ múltiplos de $\bi{e}_1$ con $\|\by\|=\|\bx\|$ son
+$\by=\pm\|\bx\|\,\bi{e}_1$. Escribir $\bu$ explícitamente en cada caso.
+
+\item Hacer las cuentas con $\bx=(1,2,2)^T$ para las dos elecciones de signo
+y verificar que
+\begin{align*}
+H&=\frac13\begin{bmatrix}1&2&2\\2&1&-2\\2&-2&1\end{bmatrix}
+&&\text{da}& H\bx&=3\,\bi{e}_1,\\[2pt]
+H'&=\frac13\begin{bmatrix}-1&-2&-2\\-2&2&-1\\-2&-1&2\end{bmatrix}
+&&\text{da}& H'\bx&=-3\,\bi{e}_1 .
+\end{align*}
+
+\item \emph{(Estabilidad --- opcional.)} En el ítem (c) hay que dividir por
+$\|\bx-\by\|$. Mostrar que, con $\by=\pm\|\bx\|\bi{e}_1$,
+\[
+\|\bx-\by\|^2 = 2\|\bx\|\big(\|\bx\|\mp x_1\big),
+\]
+y explicar por qué conviene elegir el signo
+$\by=-\sgn(x_1)\,\|\bx\|\,\bi{e}_1$. ¿Qué pasa si se elige el otro y $\bx$
+ya está casi alineado con $\bi{e}_1$?
+
+\item \emph{(Costo --- opcional.)} Para $X\in\R^{n\times k}$, comparar el costo de
+calcular $HX$ ensamblando primero la matriz $H$ con el de calcular
+$X-\bu\,(2\bu^TX)$ sin ensamblarla nunca. \emph{Las reflexiones de
+Householder no se guardan como matrices: se guarda el vector $\bu$.}
+
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. Los ítems (c), (d) y (e)
+son exactamente lo que necesita la construcción de la factorización $QR$ de la
+Sección~\ref{sec:QR}: allí los usaremos sin volver a demostrarlos. Los ítems
+(f) y (g) son opcionales: explican, respectivamente, cómo se elige el signo y
+por qué estas reflexiones nunca se guardan como matrices.}}
+\end{entrega}
+
+\textbf{4. Permutaciones.} Ya las usamos: son las matrices que aparecieron en
+la Sección~\ref{sec:pivoteo} del Capítulo~\ref{cap:LU} para intercambiar filas
+durante el pivoteo, y las que hacen que la factorización $PA=LU$ exista
+siempre. Una \textbf{matriz de permutación} $P$ tiene las mismas columnas que
+la identidad, en algún orden; sus columnas son vectores canónicos distintos y
+por lo tanto ortonormales. Allá probamos $P^{-1}=P^T$ a mano, y dijimos que
+las matrices con esa propiedad se llamarían ortogonales: acá se cierra esa
+promesa, porque es exactamente la definición de arriba. La inversa es también
+una permutación: la que deshace el reordenamiento. Por ejemplo,
+\[
+P=\begin{bmatrix}0&1&0&0\\0&0&1&0\\0&0&0&1\\1&0&0&0\end{bmatrix}
+\qquad\text{tiene columnas ortonormales, }P^T P=I .
+\]
+
+\textbf{5. Rotaciones de Givens.} Son rotaciones que actúan sobre un solo par
+de coordenadas y dejan todas las demás quietas. Dados $i<j$ y un ángulo
+$\theta$, la matriz $G(i,j,\theta)\in\R^{n\times n}$ es la identidad salvo
+las cuatro entradas
+\[
+g_{ii}=g_{jj}=c=\cos\theta,
+\qquad
+g_{ij}=-s=-\sin\theta,
+\qquad
+g_{ji}=s=\sin\theta,
+\]
+es decir, es la rotación \eqref{eq:rotacion} embebida en las filas y columnas
+$i,j$:
+\[
+G(2,4,\theta)=
+\begin{bmatrix}
+1&0&0&0\\
+0&c&0&-s\\
+0&0&1&0\\
+0&s&0&c
+\end{bmatrix}.
+\]
+Multiplicar $G\bx$ sólo cambia las coordenadas $i$ y $j$ de $\bx$, rotándolas
+en su plano. Eligiendo bien el ángulo se puede \emph{anular} una de las dos:
+mientras Householder pone en cero toda una columna de un solo golpe, Givens
+lo hace entrada por entrada. Eso lo vuelve la herramienta adecuada cuando la
+matriz ya tiene muchos ceros y no queremos destruirlos.
+
+\begin{entrega}{Rotaciones de Givens}\label{ent:givens}
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Probar que $G(i,j,\theta)$ es ortogonal y que $\det G=+1$.
+Describir $G^T$ en términos de $G$.
+
+\item Dado $\bx\in\R^n$ con $(x_i,x_j)\neq(0,0)$, hallar $c$ y $s$ con
+$c^2+s^2=1$ tales que $G(i,j,\theta)\bx$ tenga un cero en la coordenada $j$,
+y comprobar que en la coordenada $i$ queda $\sqrt{x_i^2+x_j^2}$. Escribir
+$c$ y $s$ sin usar funciones trigonométricas, y explicar cómo calcular
+$\sqrt{x_i^2+x_j^2}$ sin que se desborde cuando $x_i$ o $x_j$ son muy
+grandes. \emph{Sugerencia:} sacar factor común el mayor de los dos en
+valor absoluto.
+
+\item Verificar que las demás coordenadas de $\bx$ no cambian, y que
+$\|G\bx\|=\|\bx\|$ (dos veces: por la Proposición~\ref{prop:preserva} y
+haciendo la cuenta).
+
+\item \emph{(Factorización $QR$ por Givens.)} Describir cómo anular, una por
+una, todas las entradas debajo de la diagonal de una matriz
+$A\in\R^{m\times n}$ usando rotaciones de Givens, y verificar que se obtiene
+$G_N\cdots G_1A=\widetilde{R}$ y por lo tanto
+$A=\widetilde{Q}\widetilde{R}$ con
+$\widetilde{Q}=G_1^T\cdots G_N^T$. ¿Cuántas rotaciones hacen falta si $A$ es
+llena? Hacerlo explícitamente con
+\[
+A=\begin{bmatrix} 3&1\\ 4&1\\ 0&2\end{bmatrix}.
+\]
+
+\item \emph{(Cuándo conviene.)} Estimar el costo de $QR$ por Givens para una
+matriz llena y compararlo con Householder. Después, contar cuántas rotaciones
+hacen falta si $A$ es \emph{tridiagonal} de $n\times n$, o si es de Hessenberg
+superior (ceros debajo de la primera subdiagonal). Explicar por qué en esos
+casos Givens gana por lejos.
+
+\item \emph{(Actualizar una factorización.)} Supongamos conocida
+$A=\widetilde{Q}\widetilde{R}$ y que se agrega una fila nueva $\bi{a}^T$ al
+final de $A$. Mostrar cómo recuperar la factorización de la matriz ampliada
+con $n$ rotaciones de Givens, en lugar de refactorizar desde cero. \emph{Este
+es el procedimiento que se usa cuando los datos llegan de a una observación
+por vez.}
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. Las rotaciones de Givens
+vuelven a aparecer en el algoritmo $QR$ para calcular autovalores, donde las
+matrices que hay que factorizar son justamente de Hessenberg.}}
+\end{entrega}
+
+\begin{observacion}[De dónde salen los vectores ortogonales]
+Cuando una matriz es simétrica u ortogonal, \textbf{tiene autovectores
+ortogonales}. Esta es la fuente más importante de vectores ortogonales de la
+matemática aplicada, y es el corazón de los Capítulos~\ref{cap:schur} a
+\ref{cap:SVD}: teorema espectral $S=Q\Lambda Q^T$ y SVD $A=U\Sigma V^T$. Los ejercicios
+sobre la matriz de Fourier (autovectores de una permutación) son el primer
+ejemplo de este fenómeno.
+\end{observacion}
+
+% ===================================================================
+\section{La factorización $A=QR$}\label{sec:QR}
+
+Cerramos el capítulo juntando las dos ideas centrales: ortonormalizar
+(Gram-Schmidt) y reflejar (Householder). Las dos producen la misma
+factorización.
+
+\subsection*{Gram-Schmidt en forma matricial}
+
+Sea $A\in\R^{m\times n}$ con columnas $\ba_1,\dots,\ba_n$ linealmente
+independientes, y apliquémosles Gram-Schmidt para obtener
+$\bq_1,\dots,\bq_n$. La clave es leer al revés el algoritmo: en el paso $k$
+escribimos
+\[
+\ba_k=(\bq_1^T\ba_k)\,\bq_1+\cdots+(\bq_{k-1}^T\ba_k)\,\bq_{k-1}
++\|\bi{v}_k\|\,\bq_k ,
+\]
+porque $\bi{v}_k=\ba_k-\sum_{j<k}(\bq_j^T\ba_k)\bq_j$ y
+$\bq_k=\bi{v}_k/\|\bi{v}_k\|$. Es decir: \emph{cada $\ba_k$ es combinación
+lineal de los primeros $k$ vectores $\bq$}, y los coeficientes son productos
+internos.
+
+Acá es donde conviene recordar la fórmula \eqref{eq:cols} del
+Capítulo~\ref{cap:algebra-lineal}, que decía
+\[
+\col_k(QR)=Q\,\col_k(R) .
+\]
+Leída de derecha a izquierda, dice exactamente lo que necesitamos: \emph{una
+combinación lineal de las columnas de $Q$ es una columna de un producto
+$QR$, y los coeficientes de esa combinación son la columna correspondiente de
+$R$}. Nuestra relación de arriba es precisamente una combinación lineal de
+$\bq_1,\dots,\bq_k$ que da $\ba_k$, de modo que si llamamos $\bi{r}_k$ al
+vector de coeficientes,
+\[
+\bi{r}_k=
+\big(\bq_1^T\ba_k,\ \dots,\ \bq_{k-1}^T\ba_k,\ \|\bi{v}_k\|,\ 0,\dots,0\big)^T
+\in\R^n ,
+\]
+entonces $\ba_k=Q\,\bi{r}_k$ para cada $k$. Poniendo esas $n$ igualdades una
+al lado de la otra, es decir armando la matriz cuya columna $k$ es
+$\bi{r}_k$, obtenemos de un saque
+\[
+\underbrace{[\,\ba_1\ \cdots\ \ba_n\,]}_{A}
+=Q\,\underbrace{[\,\bi{r}_1\ \cdots\ \bi{r}_n\,]}_{R} ,
+\qquad\text{o sea}\qquad
+A=QR,
+\]
+donde los ceros al final de cada $\bi{r}_k$ son los que vuelven triangular
+superior a $R$. Explícitamente:
+\[
+Q=\begin{bmatrix}\bq_1&\cdots&\bq_n\end{bmatrix}\in\R^{m\times n},
+\qquad
+R=\begin{bmatrix}
+\|\bi{v}_1\| & \bq_1^T\ba_2 & \bq_1^T\ba_3 & \cdots & \bq_1^T\ba_n\\
+0 & \|\bi{v}_2\| & \bq_2^T\ba_3 & \cdots & \bq_2^T\ba_n\\
+0 & 0 & \|\bi{v}_3\| & \cdots & \bq_3^T\ba_n\\
+\vdots & & & \ddots & \vdots\\
+0 & 0 & \cdots & 0 & \|\bi{v}_n\|
+\end{bmatrix}\in\R^{n\times n}.
+\]
+La matriz $R$ es triangular superior \emph{porque} $\ba_k$ no usa
+$\bq_{k+1},\dots,\bq_n$: el subespacio generado crece de a una dimensión por
+vez. Y su diagonal es positiva porque $\|\bi{v}_k\|>0$.
+
+\begin{teorema}[Factorización $QR$ reducida]\label{teo:QR}
+Sea $A\in\R^{m\times n}$ con columnas linealmente independientes (en
+particular $m\ge n$). Entonces existen $Q\in\R^{m\times n}$ con columnas
+ortonormales y $R\in\R^{n\times n}$ triangular superior con diagonal
+positiva tales que
+\[
+A=QR .
+\]
+Además $Q$ y $R$ son \emph{únicas} con esas condiciones.
+\end{teorema}
+
+\begin{proof}
+La existencia es la construcción de arriba. Para la unicidad, supongamos
+$Q_1R_1=Q_2R_2$ con las dos $R_i$ triangulares superiores de diagonal
+positiva (y por lo tanto invertibles). Entonces
+$Q_2^TQ_1=R_2R_1^{-1}$. El miembro izquierdo es ortogonal: en efecto,
+$Q_1=Q_2(R_2R_1^{-1})$ y multiplicando por su traspuesta,
+$I=Q_1^TQ_1=(R_2R_1^{-1})^T(R_2R_1^{-1})$. Llamemos $T=R_2R_1^{-1}$: es
+triangular superior con diagonal positiva (producto e inversa de
+triangulares superiores de diagonal positiva) y cumple $T^TT=I$. Pero
+entonces $T^{-1}=T^T$ es a la vez triangular superior y triangular inferior,
+o sea diagonal; y una matriz diagonal con $T^TT=I$ y diagonal positiva es
+$T=I$. Luego $R_2=R_1$ y $Q_2=Q_1$.
+\end{proof}
+
+\begin{ejemplo}[$QR$ del Ejemplo~\ref{ej:gs}]
+Con $\ba_1=(1,-1,0)^T$, $\ba_2=(2,0,-2)^T$, $\ba_3=(3,-3,3)^T$ habíamos
+obtenido $\bi{v}_1=(1,-1,0)^T$, $\bi{v}_2=(1,1,-2)^T$,
+$\bi{v}_3=(1,1,1)^T$, de normas $\sqrt2,\sqrt6,\sqrt3$. Los coeficientes de
+$R$ son $\bq_1^T\ba_2=\sqrt2$, $\bq_1^T\ba_3=3\sqrt2$ y
+$\bq_2^T\ba_3=-\sqrt6$, así que
+\[
+\underbrace{\begin{bmatrix}1&2&3\\-1&0&-3\\0&-2&3\end{bmatrix}}_{A}
+=
+\underbrace{\begin{bmatrix}
+\tfrac{1}{\sqrt2}&\tfrac{1}{\sqrt6}&\tfrac{1}{\sqrt3}\\[2pt]
+-\tfrac{1}{\sqrt2}&\tfrac{1}{\sqrt6}&\tfrac{1}{\sqrt3}\\[2pt]
+0&-\tfrac{2}{\sqrt6}&\tfrac{1}{\sqrt3}
+\end{bmatrix}}_{Q}
+\underbrace{\begin{bmatrix}
+\sqrt2&\sqrt2&3\sqrt2\\ 0&\sqrt6&-\sqrt6\\ 0&0&\sqrt3
+\end{bmatrix}}_{R} .
+\]
+Conviene verificar columna por columna: la primera dice
+$\ba_1=\sqrt2\,\bq_1$; la segunda, $\ba_2=\sqrt2\,\bq_1+\sqrt6\,\bq_2$.
+\hfill$\square$
+\end{ejemplo}
+
+\begin{observacion}[$QR$ completa]\label{obs:QR-completa}
+La $Q$ del Teorema~\ref{teo:QR} es \emph{alta y delgada}: tiene columnas
+ortonormales pero no es una matriz ortogonal si $m>n$. Completando
+$\bq_1,\dots,\bq_n$ hasta una base ortonormal de $\R^m$ se obtiene la
+\textbf{factorización $QR$ completa}
+\[
+A=\widetilde{Q}\,\widetilde{R},
+\qquad
+\widetilde{Q}\in\R^{m\times m}\ \text{ortogonal},
+\qquad
+\widetilde{R}=\begin{bmatrix}R\\ 0\end{bmatrix}\in\R^{m\times n},
+\]
+donde las $m-n$ columnas nuevas de $\widetilde{Q}$ son una base ortonormal
+de $C(A)^{\perp}=N(A^T)$. Las dos versiones son útiles: la reducida es la que
+se guarda, la completa es la que se usa en las demostraciones.
+\end{observacion}
+
+\subsection*{$QR$ por reflexiones de Householder}
+
+Gram-Schmidt construye $Q$ ortonormalizando las columnas de $A$. La
+construcción de Householder hace exactamente lo contrario: deja $A$ quieta y
+la va \emph{triangulando} a fuerza de reflexiones, igual que la eliminación
+gaussiana la triangula a fuerza de restas de filas --- con la diferencia
+capital de que ahora las operaciones son ortogonales y por lo tanto no
+amplifican los errores.
+
+La herramienta son los ítems (c) y (d) del Ejercicio de
+desarrollo~\ref{ent:householder}: dado $\bx$, existe una reflexión $H$ con
+\[
+H\bx=-\sgn(x_1)\,\|\bx\|\,\bi{e}_1 ,
+\]
+es decir, una reflexión que concentra todo $\bx$ en su primera coordenada y
+anula las demás. Apliquémosla a la primera columna de $A$:
+\[
+H_1A=\begin{bmatrix}
+\rho_1 & \n{r}_1^T\\
+\bi{0} & A_1
+\end{bmatrix},
+\qquad \rho_1=-\sgn(a_{11})\|\col_1(A)\| ,
+\]
+con $A_1\in\R^{(m-1)\times(n-1)}$. Ahora repetimos sobre $A_1$: tomamos
+$H_2'\in\R^{(m-1)\times(m-1)}$ que anula todo debajo del primer elemento de
+$\col_1(A_1)$ y la embebemos sin tocar la primera fila ni la primera columna,
+\[
+H_2=\begin{bmatrix}1&\bi{0}^T\\ \bi{0}&H_2'\end{bmatrix},
+\]
+que sigue siendo ortogonal y simétrica. Después de $n$ pasos,
+\[
+H_n\cdots H_2H_1\,A=\begin{bmatrix}R\\ 0\end{bmatrix},
+\qquad\text{y por lo tanto}\qquad
+A=\underbrace{H_1H_2\cdots H_n}_{\widetilde{Q}}
+\begin{bmatrix}R\\ 0\end{bmatrix},
+\]
+usando que cada $H_k$ es su propia inversa. El producto de matrices
+ortogonales es ortogonal (Proposición~\ref{prop:productos}), así que
+$\widetilde{Q}$ lo es.
+
+\begin{teorema}[$QR$ por Householder]\label{teo:QR-householder}
+Toda matriz $A\in\R^{m\times n}$ con $m\ge n$ admite una factorización
+$A=\widetilde{Q}\widetilde{R}$ con $\widetilde{Q}\in\R^{m\times m}$ ortogonal
+y $\widetilde{R}=\begin{bsmallmatrix}R\\ 0\end{bsmallmatrix}$ con $R$
+triangular superior de $n\times n$. Si las columnas de $A$ son
+independientes, $R$ es invertible.
+\end{teorema}
+
+\begin{observacion}[Cuál conviene]
+Las dos construcciones dan la misma factorización cuando las columnas son
+independientes (por la unicidad del Teorema~\ref{teo:QR}, salvo signos de las
+columnas de $Q$), pero no son equivalentes en la práctica.
+\begin{itemize}[itemsep=2pt]
+\item Gram-Schmidt es más transparente y da directamente la versión reducida,
+pero es \emph{numéricamente frágil}: los $\bq_k$ calculados pierden
+ortogonalidad a medida que $k$ crece, y el efecto empeora cuanto más
+parecidas entre sí son las columnas de $A$. (La variante llamada
+\emph{Gram-Schmidt modificado}, que resta las proyecciones de a una en lugar
+de todas juntas, es matemáticamente idéntica y numéricamente mucho mejor.)
+\item Householder trabaja siempre con matrices ortogonales, que por la
+Proposición~\ref{prop:preserva} no agrandan nada, y produce una $\widetilde{Q}$
+ortogonal hasta la precisión de la máquina. Además no hay que ensamblar
+ninguna $H_k$: alcanza con guardar los vectores $\bu_k$.
+\item No hace falta que las columnas de $A$ sean independientes: Householder
+funciona igual y los ceros aparecen solos en la diagonal de $R$.
+\end{itemize}
+Por eso todas las bibliotecas numéricas calculan $QR$ con reflexiones de
+Householder.
+\end{observacion}
+
+\begin{observacion}[Para qué sirve]
+La factorización $QR$ es la herramienta estándar para resolver el problema de
+\textbf{mínimos cuadrados}: minimizar $\|A\bx-\bb\|$. Como multiplicar por
+$\widetilde{Q}^T$ no cambia las normas,
+\[
+\|A\bx-\bb\|^2=\|\widetilde{Q}^T(A\bx-\bb)\|^2
+=\Big\|\begin{bmatrix}R\\ 0\end{bmatrix}\bx
+-\begin{bmatrix}\bi{c}_1\\ \bi{c}_2\end{bmatrix}\Big\|^2
+=\|R\bx-\bi{c}_1\|^2+\|\bi{c}_2\|^2 ,
+\]
+con $\bi{c}=\widetilde{Q}^T\bb$. El primer término se puede hacer cero
+resolviendo el sistema triangular $R\bx=\bi{c}_1$, y el segundo es el error
+mínimo, que no depende de $\bx$. Desarrollamos esto en el capítulo dedicado a
+mínimos cuadrados, donde lo compararemos con las ecuaciones normales
+$A^TA\bx=A^T\bb$ que salen de la proyección
+\eqref{eq:proyeccion-general}. Allí se verá también por qué esta vía es
+preferible: formar $A^TA$ eleva al cuadrado el número de condición del
+problema.
+\end{observacion}
+
+% ===================================================================
+\section*{Ideas clave en $\R^n$}
+\begin{ideas}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Ortogonalidad}: $\bx\perp\by\iff\bx^T\by=0$ (caso
+complejo: $\overline{\bx}^T\by=0$). Pitágoras:
+$\|\bx\pm\by\|^2=\|\bx\|^2+\|\by\|^2$. Cauchy-Schwarz:
+$|\bx^T\by|\le\|\bx\|\,\|\by\|$, que define el ángulo (similitud
+coseno) $\cos\theta=\bx^T\by/(\|\bx\|\,\|\by\|)$.
+\item \textbf{Base ortonormal} $\bq_1,\dots,\bq_n$: los coeficientes de
+$\bv=\sum c_k\bq_k$ se obtienen por separado, $c_k=\bq_k^T\bv$
+(matricialmente, $\bv=Q\bi{c}\Rightarrow\bi{c}=Q^T\bv$).
+\item \textbf{Subespacios ortogonales}: $C(A^T)\perp N(A)$ y
+$C(A)\perp N(A^T)$; las dimensiones suman $n$ y $m$. Todo
+$\bv=\bv_{\text{fila}}+\bv_{\text{nulo}}$, con componentes ortogonales; en
+general $\R^n=\mathbf{W}\oplus\mathbf{W}^{\perp}$ y
+$(\mathbf{W}^{\perp})^{\perp}=\mathbf{W}$ (ortogonales $\ne$
+complementos: las dimensiones deben sumar $n$).
+\item \textbf{Proyección}: con base ortonormal del subespacio,
+$P=QQ^T$ cumple $P=P^T=P^2$; el error $(I-P)\bb$ es ortogonal al
+subespacio y $P\bb$ es el punto más cercano. Recíprocamente,
+$P^2=P=P^T$ \emph{caracteriza} a las proyecciones ortogonales, y
+$H=I-2P$ da la reflexión asociada. La identidad se descompone como
+$I=\sum_k\bq_k\bq_k^T$: proyectar es truncar esa suma.
+\item \textbf{Gram-Schmidt}: restar proyecciones ortogonaliza. Todo
+subespacio tiene base ortonormal.
+\item \textbf{Matriz ortogonal}: cuadrada con $Q^T Q=I$, o sea
+$Q^{-1}=Q^T$; preserva normas y ángulos ($\|Q\bx\|=\|\bx\|$). Famosas:
+rotaciones ($\det=+1$), reflexiones y Householder $H=I-2\bu\bu^T$
+($\det=-1$), rotaciones de Givens, permutaciones, Hadamard$/\sqrt n$,
+Fourier (compleja).
+Productos e inversas de ortogonales son ortogonales.
+\item \textbf{Factorización $A=QR$}: $Q$ con columnas ortonormales, $R$
+triangular superior de diagonal positiva; es Gram-Schmidt leído como
+producto de matrices, y es única. La misma factorización se obtiene
+triangulando $A$ con reflexiones de Householder, que es la forma
+numéricamente estable y la que usan las bibliotecas.
+\item \textbf{Anticipo}: simétricas y ortogonales tienen autovectores
+ortogonales; proyecciones y $QR$ $\to$ mínimos cuadrados.
+\end{itemize}
+\end{ideas}
+
+% ===================================================================
+\section*{Ejercicios}
+
+\noindent\footnotesize Las etiquetas indican el sabor de cada ejercicio:
+\textsc{[Cálculo]} para fijar la mecánica, \textsc{[Concepto]} para
+justificar y demostrar, \textsc{[Datos]} para la conexión con ciencia de
+datos. Las soluciones están al final del capítulo.\normalsize
+
+\begin{enumerate}[leftmargin=*,label=\textbf{\thechapter.\arabic*}]
+
+\item \tipo{Cálculo} Si $\bu$ y $\bv$ son vectores unitarios ortogonales,
+demuestre que $\bu+\bv$ es ortogonal a $\bu-\bv$. ¿Cuáles son las magnitudes
+de esos vectores?
+
+\item \tipo{Cálculo} Dibuje dos vectores unitarios $\bu$ y $\bv$ que
+\emph{no sean} ortogonales. Muestre que $\bw=\bv-\bu(\bu^T\bv)$ es
+ortogonal a $\bu$ (y agregue $\bw$ al gráfico). ¿Qué paso de Gram-Schmidt
+acaba de hacer?
+
+\item \tipo{Concepto} Dibuje dos vectores $\bu$ y $\bv$ cualesquiera a
+partir del origen $(0,0)$. Complete dos lados más para hacer un
+paralelogramo con diagonales $\bw=\bu+\bv$ y $\bi{z}=\bu-\bv$. Muestre que
+$\bw^T\bw+\bi{z}^T\bi{z}$ es igual a $2\bu^T\bu+2\bv^T\bv$
+(\emph{ley del paralelogramo}: la suma de los cuadrados de las diagonales es
+la suma de los cuadrados de los cuatro lados).
+
+\item \tipo{Cálculo} Sean $\bx=(1,i)^T$ y $\by=(i,1)^T$ en
+$\Cx^2$.
+\begin{enumerate}[label=(\alph*)]
+\item Calcule $\bx^T\by$ y $\overline{\bx}^T\by$. ¿Son $\bx$ y
+$\by$ ortogonales?
+\item Calcule $\|\bx\|$ y $\|\by\|$ con la norma correcta
+$\|\bx\|^2=\overline{\bx}^T\bx$. ¿Qué daría la fórmula real
+$\bx^T\bx$, y por qué es inaceptable?
+\end{enumerate}
+
+\item \tipo{Concepto} Suponga que $H_n$ es una matriz de Hadamard: entradas
+$\pm1$ y columnas ortogonales, con $n\ge2$.
+\begin{enumerate}[label=(\alph*)]
+\item Mirando dos columnas, muestre que $n$ debe ser par.
+\item Mirando tres columnas, muestre que $n$ debe ser múltiplo de $4$.
+\emph{Ayuda:} puede suponer que la primera columna es toda de unos
+(¿por qué?); cuente con $a$ = cantidad de filas donde la segunda y la
+tercera columna tienen ambas un $+1$, etc.
+\end{enumerate}
+
+\item\label{ej:proy-recta} \tipo{Cálculo} Sea $\bq=\frac13(2,2,-1)^T$ (unitario) y
+$P=\bq\bq^T$.
+\begin{enumerate}[label=(\alph*)]
+\item Escriba la matriz $P$ y verifique $P=P^T=P^2$. ¿Cuál es su rango?
+\item Proyecte $\bb=(0,3,3)^T$ sobre la recta generada por $\bq$ y
+verifique que el error $\bi{e}=\bb-P\bb$ es ortogonal a $\bq$.
+\item ¿Sobre qué subespacio proyecta $I-P$? Verifique
+$\|P\bb\|^2+\|\bi{e}\|^2=\|\bb\|^2$.
+\end{enumerate}
+
+\item \tipo{Cálculo} Aplique Gram-Schmidt a
+\[
+\ba_1=\begin{bmatrix}1\\0\\1\end{bmatrix},\qquad
+\ba_2=\begin{bmatrix}1\\1\\0\end{bmatrix},\qquad
+\ba_3=\begin{bmatrix}0\\1\\1\end{bmatrix},
+\]
+y escriba la base ortonormal resultante $\bq_1,\bq_2,\bq_3$.
+
+\item \tipo{Concepto} Propiedad clave de toda matriz ortogonal:
+$\|Q\bx\|^2=\|\bx\|^2$ para todo vector $\bx$. Más aún, muestre que
+$(Q\bx)^T(Q\by)=\bx^T\by$ para todo par $\bx,\by$. Entonces $Q$
+no modifica las magnitudes ni los ángulos. ¡Los cálculos con $Q$ nunca se
+desbordan! Explique por qué esto también garantiza que las columnas de $Q$
+(las imágenes $Q\bi{e}_k$) son ortonormales.
+
+\item \tipo{Cálculo} Con las matrices de \eqref{eq:rotacion} y
+\eqref{eq:reflexion}:
+\begin{enumerate}[label=(\alph*)]
+\item Multiplique dos rotaciones de ángulos $\theta_1$ y $\theta_2$ y
+muestre que el producto es la rotación de ángulo $\theta_1+\theta_2$
+(recupere las fórmulas de suma de senos y cosenos).
+\item Sin multiplicar matrices, use determinantes para decidir: ¿reflexión
+por reflexión es rotación o reflexión? ¿Y rotación por reflexión?
+\end{enumerate}
+
+\item \tipo{Concepto} En $\R^2$, tome el vector unitario
+$\bu=(-\sin\varphi,\cos\varphi)^T$, normal a la recta que forma ángulo
+$\varphi$ con el eje $x$. Calcule $H=I-2\bu\bu^T$ y muestre que
+coincide con la reflexión \eqref{eq:reflexion} con $\theta=2\varphi$: las
+reflexiones de Householder en $\R^2$ son exactamente las matrices
+$Q_{\text{refleja}}$.
+
+\item \tipo{Cálculo} Una \textbf{matriz de permutación} tiene las mismas
+columnas que la matriz identidad (en algún orden). \emph{Explique por qué
+esta y todas las matrices de permutación son ortogonales}:
+\[
+P=\begin{bmatrix}0&1&0&0\\0&0&1&0\\0&0&0&1\\1&0&0&0\end{bmatrix}
+\quad\text{tiene columnas ortonormales, entonces } P^T P=I
+\text{ y } P^{-1}=P^T .
+\]
+¿Qué permutación es $P^{-1}$, en términos de la que hace $P$?
+
+\item \tipo{Cálculo} Cuatro autovectores de esa matriz $P$ son
+$\bx_1=(1,1,1,1)$, $\bx_2=(1,i,i^2,i^3)$, $\bx_3=(1,i^2,i^4,i^6)$ y
+$\bx_4=(1,i^3,i^6,i^9)$. Multiplique $P$ por cada uno de esos vectores para
+encontrar $\lambda_1,\lambda_2,\lambda_3,\lambda_4$. Los autovectores son
+las columnas de la \textbf{matriz de Fourier $\bi{F}$} de $4\times4$.
+\[
+\text{Muestre que } Q=\frac{F}{2}=\frac12
+\begin{bmatrix}1&1&1&1\\1&i&-1&i^3\\1&i^2&1&i^6\\1&i^3&-1&i^9\end{bmatrix}
+\text{ tiene columnas ortonormales}:\ \overline{Q}^T Q=I .
+\]
+(La matriz de Fourier es la matriz ortogonal compleja más importante de la
+matemática aplicada. Como es compleja, el test correcto es
+$\overline{\bx}_j^T\bx_k=0$.)
+
+\item \tipo{Cálculo} \textbf{Las wavelets de Haar son vectores ortogonales
+(columnas de $W$) que usan solo $1,-1,0$}:
+\[
+n=4\qquad
+W=\begin{bmatrix}1&1&1&0\\1&1&-1&0\\1&-1&0&1\\1&-1&0&-1\end{bmatrix}
+\qquad
+\begin{array}{l}
+\textbf{Encuentre } W^T W,\ W^{-1}\textbf{ y las}\\
+\textbf{ocho wavelets de Haar para } n=8 .
+\end{array}
+\]
+Las wavelets de Haar pueden pensarse como funciones con soporte en el
+intervalo $[0,1]$. Son estudiadas en diferentes campos de la matemática y
+resultan una herramienta útil en informática e ingeniería, por ejemplo para
+la codificación de señales.
+
+\begin{center}
+\begin{tabular}{c@{\hspace{18pt}}c@{\hspace{18pt}}c@{\hspace{18pt}}c}
+\begin{tikzpicture}[scale=1.1]
+\draw[step=0.5,gray!30,very thin] (-0.4,-1.4) grid (1.4,1.4);
+\draw[->,thick] (-0.45,0)--(1.45,0);
+\draw[->,thick] (0,-1.45)--(0,1.45);
+\draw[gray,thick] (0,0)--(0,1);
+\draw[blue,very thick] (0,1)--(1,1);
+\draw[gray,thick] (1,1)--(1,0);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[scale=1.1]
+\draw[step=0.5,gray!30,very thin] (-0.4,-1.4) grid (1.4,1.4);
+\draw[->,thick] (-0.45,0)--(1.45,0);
+\draw[->,thick] (0,-1.45)--(0,1.45);
+\draw[gray,thick] (0,0)--(0,1);
+\draw[blue,very thick] (0,1)--(0.5,1);
+\draw[gray,thick] (0.5,1)--(0.5,-1);
+\draw[blue,very thick] (0.5,-1)--(1,-1);
+\draw[gray,thick] (1,-1)--(1,0);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[scale=1.1]
+\draw[step=0.5,gray!30,very thin] (-0.4,-1.4) grid (1.4,1.4);
+\draw[->,thick] (-0.45,0)--(1.45,0);
+\draw[->,thick] (0,-1.45)--(0,1.45);
+\draw[gray,thick] (0,0)--(0,1);
+\draw[blue,very thick] (0,1)--(0.25,1);
+\draw[gray,thick] (0.25,1)--(0.25,-1);
+\draw[blue,very thick] (0.25,-1)--(0.5,-1);
+\draw[gray,thick] (0.5,-1)--(0.5,0);
+\draw[blue,very thick] (0.5,0)--(1,0);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[scale=1.1]
+\draw[step=0.5,gray!30,very thin] (-0.4,-1.4) grid (1.4,1.4);
+\draw[->,thick] (-0.45,0)--(1.45,0);
+\draw[->,thick] (0,-1.45)--(0,1.45);
+\draw[blue,very thick] (0,0)--(0.5,0);
+\draw[gray,thick] (0.5,0)--(0.5,1);
+\draw[blue,very thick] (0.5,1)--(0.75,1);
+\draw[gray,thick] (0.75,1)--(0.75,-1);
+\draw[blue,very thick] (0.75,-1)--(1,-1);
+\draw[gray,thick] (1,-1)--(1,0);
+\end{tikzpicture}
+\end{tabular}
+\end{center}
+
+\item \tipo{Datos} (Compresión con la base de Haar.) Normalice las columnas
+de la matriz $W$ del ejercicio anterior para obtener una base ortonormal
+$\bw_1,\bw_2,\bw_3,\bw_4$ de $\R^4$, y tome la ``señal''
+$\bv=(5,3,-1,1)^T$.
+\begin{enumerate}[label=(\alph*)]
+\item Calcule los cuatro coeficientes $c_k=\bw_k^T\bv$ (¡cada uno por
+separado!) y verifique la reconstrucción $\bv=\sum c_k\bw_k$.
+\item Verifique la identidad de Parseval $\|\bv\|^2=c_1^2+c_2^2+c_3^2+c_4^2$
+y explique por qué vale en cualquier base ortonormal.
+\item \emph{Comprima}: conserve solo los dos coeficientes más grandes y
+reconstruya $\widetilde{\bv}$. ¿Qué forma tiene $\widetilde{\bv}$ y cuánto
+vale el error $\|\bv-\widetilde{\bv}\|$? (Esta es la idea de la codificación
+de señales e imágenes: guardar pocos coeficientes en una base ortonormal
+bien elegida.)
+\end{enumerate}
+
+\item \tipo{Datos} Sea $Q$ ortogonal de $n\times n$ y sean
+$\bx_1,\dots,\bx_N\in\R^n$ los puntos de un conjunto de datos.
+\begin{enumerate}[label=(\alph*)]
+\item Muestre que $\|Q\bx_i-Q\bx_j\|=\|\bx_i-\bx_j\|$ para todo par $i,j$:
+rotar (o reflejar) la nube de datos no cambia ninguna distancia.
+\item Concluya que cualquier método basado en distancias (por ejemplo,
+buscar el vecino más cercano de un punto) da exactamente el mismo resultado
+con los datos $\bx_i$ que con los datos rotados $Q\bx_i$.
+\item Si en cambio multiplicamos por una matriz invertible \emph{no}
+ortogonal, dé un ejemplo de $2\times2$ donde el vecino más cercano de un
+punto cambie.
+\end{enumerate}
+
+\item \tipo{Datos} (Similitud coseno.) Tres ``documentos'' se representan
+por sus conteos de tres palabras clave:
+$\bx=(3,1,0)^T$, $\by=(6,2,0)^T$, $\bi{z}=(0,2,3)^T$.
+\begin{enumerate}[label=(\alph*)]
+\item Calcule las tres similitudes coseno entre pares.
+\item ¿Por qué $\bx$ e $\by$ tienen similitud exactamente $1$? Relacione
+con el caso de igualdad de Cauchy-Schwarz.
+\item Explique por qué la similitud coseno es la medida natural cuando un
+documento puede ser ``el doble de largo'' que otro con el mismo tema.
+\end{enumerate}
+
+\item \tipo{Concepto} (Reflexiones $\leftrightarrow$ proyecciones.) Sea
+$P$ una proyección ortogonal ($P^2=P=P^T$) y $H=I-2P$.
+\begin{enumerate}[label=(\alph*)]
+\item Muestre que $H$ es simétrica y ortogonal, que $H\bw=-\bw$ para
+$\bw\in C(P)$ y que $H\bi{z}=\bi{z}$ para $\bi{z}\perp C(P)$.
+\item Recíprocamente, si $H$ es simétrica con $H^2=I$, muestre que
+$P=\frac12(I-H)$ es una proyección ortogonal.
+\item Tome $P=\bq\bq^T$ con $\bq=\frac13(2,2,-1)^T$ (ejercicio
+\textbf{5.6}) y escriba la matriz $H=I-2P$. ¿Qué hace $H$
+geométricamente?
+\end{enumerate}
+
+\end{enumerate}
+
+% ===================================================================
+\section*{Soluciones}
+
+\begin{enumerate}[leftmargin=*,label=\textbf{\thechapter.\arabic*}]
+
+\item $(\bu+\bv)^T(\bu-\bv)=\bu^T\bu-\bu^T\bv+\bv^T\bu
+-\bv^T\bv=\|\bu\|^2-\|\bv\|^2=1-1=0$. Las magnitudes:
+$\|\bu\pm\bv\|^2=\|\bu\|^2+\|\bv\|^2=2$ (Pitágoras), así que ambas
+diagonales miden $\sqrt2$.
+
+\item $\bu^T\bw=\bu^T\bv-(\bu^T\bu)(\bu^T\bv)
+=\bu^T\bv-\bu^T\bv=0$, usando $\bu^T\bu=1$. En el dibujo,
+$\bw$ es $\bv$ menos su ``sombra'' sobre $\bu$. Es exactamente el paso 2 de
+Gram-Schmidt \eqref{eq:gs-idea}: restar a $\bv$ su proyección sobre $\bu$.
+
+\item
+$\bw^T\bw+\bi{z}^T\bi{z}
+=(\|\bu\|^2+2\bu^T\bv+\|\bv\|^2)+(\|\bu\|^2-2\bu^T\bv+\|\bv\|^2)
+=2\bu^T\bu+2\bv^T\bv$. Los términos cruzados se cancelan entre las
+dos diagonales, sean o no ortogonales $\bu$ y $\bv$.
+
+\item (a) $\bx^T\by=1\cdot i+i\cdot1=2i\ne0$, pero el test correcto da
+$\overline{\bx}^T\by=1\cdot i+\overline{i}\cdot1=i-i=0$: sí son
+ortogonales. (b) $\|\bx\|^2=|1|^2+|i|^2=2$, luego $\|\bx\|=\|\by\|=\sqrt2$.
+La fórmula real daría $\bx^T\bx=1+i^2=0$: un vector no nulo con
+``norma'' cero, inaceptable; por eso la norma compleja conjuga.
+
+\item (a) Sean $\bi{h}_j,\bi{h}_k$ dos columnas. Cada producto
+$h_{ij}h_{ik}$ vale $\pm1$, y la suma de los $n$ productos es $0$: la mitad
+son $+1$ y la mitad $-1$, así que $n$ es par. (b) Cambiar de signo una fila
+completa no altera ni las entradas $\pm1$ ni la ortogonalidad de las
+columnas; haciéndolo fila por fila podemos suponer que la columna 1 es toda
+de unos. Entonces, por (a) aplicado contra la columna 1, las columnas 2 y 3
+tienen exactamente $n/2$ unos. Sean $a,b,c,d$ las cantidades de filas donde
+(columna 2, columna 3) valen $(+,+),(+,-),(-,+),(-,-)$. Ortogonalidad con la
+columna 1: $a+b=c+d=n/2$ y $a+c=b+d=n/2$, de donde $b=c$ y $a=d$.
+Ortogonalidad entre las columnas 2 y 3: $a-b-c+d=0$, o sea $2a=2b$. Entonces
+$a=b=c=d$ y $n=4a$: múltiplo de $4$.
+
+\item (a)
+\[
+P=\bq\bq^T=\frac19\begin{bmatrix}4&4&-2\\4&4&-2\\-2&-2&1\end{bmatrix},
+\]
+claramente simétrica, y $P^2=\bq(\bq^T\bq)\bq^T=\bq\bq^T=P$
+porque $\bq^T\bq=1$. Es de rango 1 (todas las columnas son múltiplos de
+$\bq$). (b) $\bq^T\bb=\frac{0+6-3}{3}=1$, así que
+$P\bb=\bq=(2/3,2/3,-1/3)^T$ y
+$\bi{e}=\bb-P\bb=(-2/3,7/3,10/3)^T$;
+$\bq^T\bi{e}=\frac{-4/3+14/3-10/3}{3}=0$. (c) $I-P$ proyecta sobre el
+plano $\bq^{\perp}$, el complemento ortogonal de la recta. Pitágoras:
+$\|P\bb\|^2+\|\bi{e}\|^2=1+17=18=\|\bb\|^2$.
+
+\item $\bi{v}_1=(1,0,1)^T$. Después
+$\bi{v}_2=\ba_2-\frac{1}{2}\bi{v}_1=(\tfrac12,1,-\tfrac12)^T$
+(o, reescalado, $(1,2,-1)^T$). Después, con
+$\bi{v}_1^T\ba_3=1$ y $\bi{v}_2^T\ba_3=\tfrac12$,
+$\bi{v}_2^T\bi{v}_2=\tfrac32$:
+\[
+\bi{v}_3=\ba_3-\frac12\,\bi{v}_1-\frac{1/2}{3/2}\,\bi{v}_2
+=\left(-\tfrac23,\tfrac23,\tfrac23\right)^T
+\quad\text{(o, reescalado, }(-1,1,1)^T\text{)}.
+\]
+Normalizando:
+\[
+\bq_1=\frac{1}{\sqrt2}\begin{bmatrix}1\\0\\1\end{bmatrix},\qquad
+\bq_2=\frac{1}{\sqrt6}\begin{bmatrix}1\\2\\-1\end{bmatrix},\qquad
+\bq_3=\frac{1}{\sqrt3}\begin{bmatrix}-1\\1\\1\end{bmatrix}.
+\]
+
+\item $(Q\bx)^T(Q\by)=\bx^T Q^T Q\by=\bx^T\by$; tomando
+$\by=\bx$, $\|Q\bx\|^2=\|\bx\|^2$. Como las normas y los productos internos
+no cambian, tampoco cambian los ángulos
+($\cos\theta=\bx^T\by/\|\bx\|\|\by\|$), y los números nunca crecen al
+multiplicar por $Q$. Las columnas de $Q$ son $Q\bi{e}_1,\dots,Q\bi{e}_n$; el
+producto interno de dos de ellas es
+$(Q\bi{e}_i)^T(Q\bi{e}_j)=\bi{e}_i^T\bi{e}_j$, que vale $1$ si
+$i=j$ y $0$ si no: ortonormales.
+
+\item (a) Escribiendo $c_k=\cos\theta_k$ y $s_k=\sin\theta_k$:
+\[
+\begin{bmatrix}c_1&-s_1\\ s_1&c_1\end{bmatrix}
+\begin{bmatrix}c_2&-s_2\\ s_2&c_2\end{bmatrix}
+=\begin{bmatrix}c_1c_2-s_1s_2&-(c_1s_2+s_1c_2)\\
+s_1c_2+c_1s_2&c_1c_2-s_1s_2\end{bmatrix},
+\]
+que es la rotación de ángulo $\theta_1+\theta_2$; comparando entradas se
+leen las fórmulas de suma
+$\cos(\theta_1+\theta_2)=\cos\theta_1\cos\theta_2-\sin\theta_1\sin\theta_2$
+y
+$\sin(\theta_1+\theta_2)=\sin\theta_1\cos\theta_2+\cos\theta_1\sin\theta_2$. (b) El producto de dos ortogonales es ortogonal,
+y su determinante es el producto de los determinantes: reflexión por
+reflexión tiene $\det=(-1)(-1)=+1$, es una rotación; rotación por reflexión
+tiene $\det=-1$, es una reflexión.
+
+\item Con $\bu=(-\sin\varphi,\cos\varphi)^T$:
+\[
+\bu\bu^T=\begin{bmatrix}\sin^2\varphi&-\sin\varphi\cos\varphi\\
+-\sin\varphi\cos\varphi&\cos^2\varphi\end{bmatrix},
+\]
+\[
+H=I-2\bu\bu^T
+=\begin{bmatrix}1-2\sin^2\varphi&2\sin\varphi\cos\varphi\\
+2\sin\varphi\cos\varphi&1-2\cos^2\varphi\end{bmatrix}
+=\begin{bmatrix}\cos2\varphi&\sin2\varphi\\ \sin2\varphi&-\cos2\varphi
+\end{bmatrix},
+\]
+usando las fórmulas del ángulo doble. Es \eqref{eq:reflexion} con
+$\theta=2\varphi$: refleja respecto de la recta a ángulo
+$\theta/2=\varphi$, que es justo la recta perpendicular a $\bu$. Las
+Householder de $2\times2$ son todas las reflexiones.
+
+\item Las columnas de $P$ son los vectores canónicos
+$\bi{e}_4,\bi{e}_1,\bi{e}_2,\bi{e}_3$: distintos vectores de la base
+canónica, que es ortonormal. Entonces $P^T P=I$ y $P^{-1}=P^T$,
+que vuelve a ser una matriz de permutación: la que \emph{deshace} el
+reordenamiento (si $P$ corre cíclicamente las coordenadas hacia arriba,
+$P^T$ las corre hacia abajo).
+
+\item Multiplicar por $P$ corre las coordenadas: $P(x_1,x_2,x_3,x_4)^T
+=(x_2,x_3,x_4,x_1)^T$. Entonces
+\[
+P\bx_1=\bx_1\ (\lambda_1=1),\qquad
+P\bx_2=(i,i^2,i^3,1)^T=i\,\bx_2\ (\lambda_2=i),
+\]
+\[
+P\bx_3=(i^2,i^4,i^6,1)^T=i^2\bx_3\ (\lambda_3=i^2=-1),\qquad
+P\bx_4=i^3\bx_4\ (\lambda_4=i^3=-i).
+\]
+Los autovalores son las cuatro raíces cuartas de $1$. Para la
+ortonormalidad, con $\omega=i$: la entrada $(j,k)$ de
+$\overline{F}^T F$ es
+\[
+\overline{\bx}_j^T\bx_k=\sum_{m=0}^{3}\overline{\omega^{jm}}\,
+\omega^{km}=\sum_{m=0}^{3}\omega^{(k-j)m}
+=\begin{cases}4&j=k\\[2pt]
+\dfrac{\omega^{4(k-j)}-1}{\omega^{\,k-j}-1}=0&j\ne k,\end{cases}
+\]
+(suma geométrica de raíces de la unidad). Entonces
+$\overline{F}^T F=4I$ y $Q=F/2$ cumple $\overline{Q}^T Q=I$.
+Por ejemplo,
+$\overline{\bx}_1^T\bx_2=1+i+i^2+i^3=(1-1)+(i-i)=0$ y
+$\overline{\bx}_2^T\bx_3=(1,-i,-1,i)\,(1,i^2,i^4,i^6)^T
+=1+i-1-i=0$: al conjugar el primer vector, $i$ se cambia por $-i$.
+
+\item Las columnas de $W$ son ortogonales (verificarlo par a par), con
+normas al cuadrado $4,4,2,2$:
+\[
+W^T W=\begin{bmatrix}4&0&0&0\\0&4&0&0\\0&0&2&0\\0&0&0&2\end{bmatrix},
+\qquad
+W^{-1}=(W^T W)^{-1}W^T
+=\begin{bmatrix}1/4&1/4&1/4&1/4\\ 1/4&1/4&-1/4&-1/4\\
+1/2&-1/2&0&0\\ 0&0&1/2&-1/2\end{bmatrix}.
+\]
+(Como las columnas son ortogonales pero no unitarias, la inversa es
+$D^{-1}W^T$ con $D=W^T W$ diagonal.) Para $n=8$, cada wavelet se
+``parte'' en dos mitades de soporte:
+\[
+W_8=\begin{bmatrix}
+1&1&1&0&1&0&0&0\\
+1&1&1&0&-1&0&0&0\\
+1&1&-1&0&0&1&0&0\\
+1&1&-1&0&0&-1&0&0\\
+1&-1&0&1&0&0&1&0\\
+1&-1&0&1&0&0&-1&0\\
+1&-1&0&-1&0&0&0&1\\
+1&-1&0&-1&0&0&0&-1
+\end{bmatrix}:
+\]
+la constante; la que separa mitades; dos a escala $1/2$; y cuatro ``finas''
+del tipo $(1,-1)$ en posiciones consecutivas.
+
+\item Las columnas normalizadas son
+$\bw_1=\tfrac12(1,1,1,1)^T$, $\bw_2=\tfrac12(1,1,-1,-1)^T$,
+$\bw_3=\tfrac{1}{\sqrt2}(1,-1,0,0)^T$,
+$\bw_4=\tfrac{1}{\sqrt2}(0,0,1,-1)^T$.
+(a) $c_1=\tfrac{5+3-1+1}{2}=4$, $c_2=\tfrac{5+3+1-1}{2}=4$,
+$c_3=\tfrac{5-3}{\sqrt2}=\sqrt2$, $c_4=\tfrac{-1-1}{\sqrt2}=-\sqrt2$.
+Reconstrucción:
+$4\bw_1+4\bw_2=(4,4,0,0)^T$, $\sqrt2\,\bw_3=(1,-1,0,0)^T$,
+$-\sqrt2\,\bw_4=(0,0,-1,1)^T$; la suma es $(5,3,-1,1)^T=\bv$.
+(b) $\|\bv\|^2=25+9+1+1=36$ y $c_1^2+c_2^2+c_3^2+c_4^2=16+16+2+2=36$.
+En general $\bv=Q\bi{c}$ con $Q$ ortogonal, y entonces
+$\|\bv\|=\|Q\bi{c}\|=\|\bi{c}\|$: las matrices ortogonales preservan
+normas. (c) Conservando $c_1=c_2=4$:
+$\widetilde{\bv}=(4,4,0,0)^T$, que promedia la señal por bloques
+($4=\tfrac{5+3}{2}$, $0=\tfrac{-1+1}{2}$). El error es
+$\bv-\widetilde{\bv}=(1,-1,-1,1)^T$ con
+$\|\bv-\widetilde{\bv}\|=2=\sqrt{c_3^2+c_4^2}$: por Parseval, el error de
+comprimir es exactamente la energía de los coeficientes descartados.
+
+\item (a) $\|Q\bx_i-Q\bx_j\|=\|Q(\bx_i-\bx_j)\|=\|\bx_i-\bx_j\|$ por la
+Proposición~\ref{prop:preserva}. (b) Todas las distancias entre pares son
+las mismas antes y después, así que cualquier comparación de distancias (en
+particular ``¿cuál es el punto más cercano a $\bx_i$?'') da la misma
+respuesta. (c) Con $A=\begin{bmatrix}1&0\\0&1/10\end{bmatrix}$ y los puntos
+$\bx_1=(0,0)$, $\bx_2=(1,0)$, $\bx_3=(0,2)$: antes, el más cercano a
+$\bx_1$ es $\bx_2$ ($1<2$); después, $A\bx_2=(1,0)$ queda a distancia $1$
+pero $A\bx_3=(0,0.2)$ queda a distancia $0.2$: el vecino más cercano cambió.
+Las matrices invertibles cualesquiera deforman; las ortogonales solo mueven
+rígidamente.
+
+\item (a) $\|\bx\|=\sqrt{10}$, $\|\by\|=\sqrt{40}=2\sqrt{10}$,
+$\|\bi{z}\|=\sqrt{13}$. Entonces
+\[
+\cos(\bx,\by)=\frac{18+2}{\sqrt{10}\cdot2\sqrt{10}}=\frac{20}{20}=1,
+\qquad
+\cos(\bx,\bi{z})=\frac{2}{\sqrt{10}\sqrt{13}}=\frac{2}{\sqrt{130}}
+\approx 0{,}18,
+\]
+y $\cos(\by,\bi{z})=\frac{4}{2\sqrt{10}\sqrt{13}}=\frac{2}{\sqrt{130}}$,
+igual que el anterior. (b) $\by=2\bx$: son linealmente dependientes con
+constante positiva, que es exactamente el caso de igualdad de
+Cauchy-Schwarz (Teorema~\ref{teo:cauchy-schwarz}); mismas proporciones de
+palabras $\Rightarrow$ misma dirección $\Rightarrow$ similitud $1$.
+(c) Duplicar el largo de un documento duplica su vector de conteos pero no
+cambia su dirección: la similitud coseno ignora la magnitud y compara solo
+las proporciones (el ``tema''). Por eso $\by$ tiene la misma similitud con
+$\bi{z}$ que $\bx$.
+
+\item (a) $H^T=(I-2P)^T=I-2P=H$ y
+$H^2=I-4P+4P^2=I-4P+4P=I$, así que $H^T H=H^2=I$: ortogonal. Si
+$\bw\in C(P)$ entonces $P\bw=\bw$ (la proyección deja fijo al subespacio)
+y $H\bw=\bw-2\bw=-\bw$; si $\bi{z}\perp C(P)$ entonces $P\bi{z}=\bi{0}$ y
+$H\bi{z}=\bi{z}$. (b) $P^T=\frac12(I-H)^T=P$ y
+\[
+P^2=\tfrac14(I-2H+H^2)=\tfrac14(2I-2H)=\tfrac12(I-H)=P :
+\]
+proyección ortogonal (por la recíproca del
+Teorema~\ref{teo:proyector}). (c) Con $P$ del Ejercicio~\ref{ej:proy-recta},
+\[
+H=I-2P=\frac19\begin{bmatrix}1&-8&4\\-8&1&4\\4&4&7\end{bmatrix},
+\]
+que es la reflexión de Householder $I-2\bq\bq^T$: invierte la
+dirección de $\bq$ y deja fijo el plano espejo $\bq^{\perp}$.
+
+\end{enumerate}
+
+ 

@@ -1,0 +1,830 @@
+\chapter{Normas de matrices}\label{cap:normas-matrices}
+
+En el Capítulo~\ref{cap:normas} estudiamos normas en espacios vectoriales
+cualesquiera, y en particular las de $\R^{n\times p}$: como ese espacio tiene
+dimensión $np$, todo lo de allí se aplica a matrices sin cambiar una coma.
+Pero las matrices tienen una operación que los vectores no tienen ---el
+producto--- y eso cambia las cosas. Este capítulo trata de las normas de
+matrices que \emph{son compatibles con el producto}. Esa compatibilidad es lo
+que las vuelve la herramienta central del análisis numérico: es la que
+permite acotar el error de un cálculo largo, decidir si un método iterativo
+converge y medir cuán confiable es la solución de un sistema lineal.
+
+% ===================================================================
+\section{Normas matriciales}
+\label{sec:normas-matriciales}
+
+Recordemos la construcción del Capítulo~\ref{cap:normas}. Sea
+$\textup{vec}:\R^{n\times p}\rightarrow\R^{np}$ la función que transforma
+matrices en vectores apilando sus columnas. Para cada norma $\|\cdot\|$ en
+$\R^{np}$ queda definido un funcional $\vertiii{\cdot}$ en $\R^{n\times p}$,
+\[
+\vertiii{A}=\|\textup{vec}(A)\| ,
+\]
+y no es difícil mostrar que es una norma (Ejercicio~\ref{ejer-normaiii}). El
+caso más usado es la \textbf{norma de Frobenius} de la
+Sección~\ref{sec:frobenius},
+\[
+\|A\|_F=\|\textup{vec}(A)\|_2=\sqrt{\sum_{i=1}^n\sum_{j=1}^p a_{ij}^2}
+=\sqrt{\tr(A^TA)} ,
+\]
+que no es otra cosa que la norma $\|\cdot\|_2$ de $\R^{np}$.
+
+Hasta acá nada distingue a una matriz de un vector largo. La diferencia
+aparece cuando se multiplican. Si queremos usar una norma para acotar errores
+en una cuenta que encadena productos, lo mínimo que necesitamos es poder
+acotar $\|AB\|$ en términos de $\|A\|$ y $\|B\|$. Eso es lo que pedimos.
+
+\begin{defn}[Norma matricial]\label{def:norma-matricial}
+Una norma $\|\cdot\|$ definida sobre matrices es una \textbf{norma matricial}
+si además de las tres propiedades de norma verifica la
+\emph{submultiplicatividad}:
+\begin{enumerate}[label=(n\arabic*)]
+\setcounter{enumi}{3}
+\item $\|AB\|\le\|A\|\,\|B\|$ para todo par de matrices $A$ y $B$ compatible
+con el producto.
+\end{enumerate}
+\end{defn}
+
+Conviene subrayar que la desigualdad es $\le$ y no $=$: pedir la igualdad
+sería absurdo, porque $AB$ puede ser la matriz nula sin que lo sean $A$ ni
+$B$. Lo que (n4) dice es que \emph{multiplicar no puede agrandar más que el
+producto de los tamaños}, y eso alcanza para que, iterando,
+$\|A^k\|\le\|A\|^k$.
+
+\begin{prop}\label{prop:frobenius-matricial}
+    La norma de Frobenius es una norma matricial.
+\end{prop}
+
+\begin{proof}
+Sean $A\in\R^{m\times n}$ y $B\in\R^{n\times p}$. La entrada $(i,j)$ de $AB$ es
+el producto escalar de la fila $i$ de $A$ con la columna $j$ de $B$,
+\[
+(AB)_{ij}=\fila_i(A)\,\col_j(B) ,
+\]
+así que por la desigualdad de Cauchy--Schwarz
+\[
+(AB)_{ij}^2\ \le\ \|\fila_i(A)\|_2^2\;\|\col_j(B)\|_2^2 .
+\]
+Ahora sumamos en $i$ y en $j$. El primer factor no depende de $j$ y el segundo
+no depende de $i$, de modo que la suma doble se parte en un producto de dos
+sumas simples:
+\[
+\|AB\|_F^2\ \le\ \Bigl(\sum_{i=1}^{m}\|\fila_i(A)\|_2^2\Bigr)
+\Bigl(\sum_{j=1}^{p}\|\col_j(B)\|_2^2\Bigr)=\|A\|_F^2\,\|B\|_F^2 ,
+\]
+porque la norma de Frobenius al cuadrado es tanto la suma de los cuadrados de
+las longitudes de las filas como la de las columnas
+(Ejercicio~\ref{ej-matrizortogonal}). Tomando raíz cuadrada se completa la
+demostración.
+\end{proof}
+
+\begin{remark}[Una cota mejor, mirando por columnas]\label{obs:frob-por-columnas}
+La fórmula~\eqref{eq:cols} del Capítulo~\ref{cap:algebra-lineal} dice que
+$\col_j(AB)=A\,\col_j(B)$: el producto $AB$ no es otra cosa que $A$ aplicada a
+cada columna de $B$, una por una. Si medimos cada una de esas columnas con la
+norma espectral,
+\[
+\|AB\|_F^2=\sum_{j=1}^{p}\|A\,\col_j(B)\|_2^2
+\ \le\ \|A\|_2^2\sum_{j=1}^{p}\|\col_j(B)\|_2^2=\|A\|_2^2\,\|B\|_F^2 ,
+\]
+es decir $\|AB\|_F\le\|A\|_2\|B\|_F$. Como $\|A\|_2\le\|A\|_F$, esto es más
+fuerte que la proposición anterior. La versión simétrica,
+$\|AB\|_F\le\|A\|_F\|B\|_2$, sale mirando por filas
+con~\eqref{eq:filas} (Ejercicio~\ref{ej-mixtas}).
+\end{remark}
+
+No es cierto que toda norma en un espacio de matrices sea una norma
+matricial. Para verlo basta mirar la que se obtiene de la norma del máximo de
+$\R^{np}$,
+\[
+\|A\|_{\max}=\|\textup{vec}(A)\|_\infty=\max_{i,j}|a_{ij}| ,
+\]
+---el mayor elemento en módulo--- que llamaremos \textbf{norma del máximo}.
+Tomando
+\[
+A=B=\begin{bmatrix}
+1 & 1 \\
+1 & 1
+\end{bmatrix}
+\]
+resulta $\|AB\|_{\max}=2$ mientras que $\|A\|_{\max}\|B\|_{\max}=1$: la
+desigualdad (n4) falla. El Ejercicio~\ref{ej-medica} muestra que
+multiplicándola por una constante adecuada se la puede arreglar.
+
+\begin{remark}[Frobenius y los valores singulares]\label{obs:frobenius-sigmas-rec}
+La Proposición~\ref{prop:frobenius-sigmas} del Capítulo~\ref{cap:SVD} dice que
+\[
+\|A\|_F^2=\sigma_1^2+\cdots+\sigma_r^2 ,
+\]
+y el Corolario~\ref{coro:tres-invariantes} que $\|\cdot\|_F$, $\|\cdot\|_2$ y
+$\|\cdot\|_*$ son ortogonalmente invariantes. Que la norma nuclear sea
+efectivamente una norma es el Ejercicio~\ref{ej-nuclear}.
+\end{remark}
+
+% ===================================================================
+\section{Normas inducidas}
+\label{sec:normas-inducidas}
+Una clase de normas sobre matrices que resultan ser siempre normas matriciales son las que consideran a la matriz $A \in \RR^{n\times p}$ no como un vector reordenado sino como un operador lineal entre $\RR^p$ y $\RR^n$. Dada una norma vectorial $\| \cdot \|$ definida tanto en $\RR^n$ como en $\RR^p$ definimos la norma matricial inducida por $\|\cdot\|$ como
+\begin{equation}\label{eq-normainducida}
+    \|A\| = \max_{\|\bec x\|\neq 0} \frac{\|A\bec x\|}{\|\bec x\|}.
+\end{equation}
+Aquí lo estándar es usar la misma notación que para la norma vectorial como para la norma matricial inducida. Antes de demostrar que toda norma inducida es una norma matricial hacemos la siguiente observación que quedará como Ejercicio~\ref{ej-equivalencianormainducida}:
+\[\max_{\bec x \neq \bec 0}\frac{\|A\bec x\|}{\|\bec x\|} = \max_{\|\bec x \| = 1}{\|A\bec x\|} = \max_{\|\bec x \| \leq  1}{\|A\bec x\|}.   \]
+
+\begin{thm}\label{T:consistencia}
+    Dada una norma vectorial $\| \cdot \|$, la norma definida por~\eqref{eq-normainducida} es una norma matricial.
+\end{thm}
+
+\begin{proof}
+     Verificaremos que la norma inducida cumple con las tres propiedades de una norma: no negatividad y propiedad de separación, homogeneidad, y desigualdad triangular. Luego, probaremos la submultiplicatividad.
+
+
+
+        Por definición, tenemos
+        \[
+        \|A\| = \max_{\|\bec x\| \neq 0} \frac{\|A\bec x\|}{\|\bec x\|}.
+        \]
+        Dado que tanto \(\|A\bec x\|\) como \(\|\bec x\|\) son no negativas, el cociente también es no negativo, por lo que \(\|A\| \geq 0\).
+Si \(A = 0\), entonces \(A\bec x = 0\) para todo \(\bec x\), lo cual implica que \(\|A\bec x\| = 0\) para todo \(\bec x\), y, por lo tanto, \(\|A\| = 0\).
+Por otro lado, si \(\|A\| = 0\), entonces \(\|A\bec x\| = 0\) para todo \(\bec x\) con \(\|\bec x\| \neq 0\), lo cual solo es posible si \(A = 0\). 
+
+ 
+        Sea ahora \(\alpha \in \mathbb{R}\). Tenemos que
+        \[
+        \|\alpha A\| = \max_{\|\bec x\| \neq 0} \frac{\|\alpha A \bec x\|}{\|\bec x\|} = \max_{\|\bec x\| \neq 0} \frac{|\alpha| \|A\bec x\|}{\|\bec x\|} = |\alpha| \max_{\|\bec x\| \neq 0} \frac{\|A\bec x\|}{\|\bec x\|} = |\alpha| \|A\|.
+        \]
+        Esto prueba la propiedad de homogeneidad.
+
+
+        Para verificar la desigualdad triangular queremos probar que \(\|A + B\| \leq \|A\| + \|B\|\). Por definición de la norma inducida,
+        \[
+        \|A + B\| = \max_{\|\bec x\| \neq 0} \frac{\|(A + B)\bec x\|}{\|\bec x\|}.
+        \]
+        Dado que \(\|(A + B)\bec x\| \leq \|A\bec x\| + \|B\bec x\|\) (por la desigualdad triangular de la norma vectorial), se tiene que
+        \[
+        \frac{\|(A + B)\bec x\|}{\|\bec x\|} \leq \frac{\|A\bec x\|}{\|\bec x\|} + \frac{\|B\bec x\|}{\|\bec x\|}.
+        \]
+        Tomando el máximo en ambos lados respecto de \(\|\bec x\| \neq 0\), obtenemos
+        \[
+        \|A + B\| = \max_{\|\bec x\| \neq 0} \frac{\|(A + B)\bec x\|}{\|\bec x\|} \leq \max_{\|  \bec x\| \neq 0} \frac{\|A\bec x\|}{\|\bec x\|} + \max_{\|\bec x\| \neq 0} \frac{\|B\bec x\|}{\|\bec x\|} = \|A\| + \|B\|.
+        \]
+
+
+    Por lo tanto, \(\|A\|\) cumple con las propiedades de no negatividad, homogeneidad y desigualdad triangular, lo cual demuestra que es una norma.
+    Finalmente, probaremos que \(\|AB\| \leq \|A\| \|B\|\).
+
+    Por definición,
+    \[
+    \|AB\| = \max_{\|\bec x\| \neq 0} \frac{\|AB \bec x\|}{\|\bec x\|}.
+    \]
+    Sea \(\bec y = B\bec x\). Entonces \(\|\bec y\| \leq \|B\| \|\bec x\|\), y
+    \[
+    \|AB \bec x\| = \|A \bec y\| \leq \|A\| \|\bec y\| \leq \|A\| \|B\| \|\bec x\|.
+    \]
+    Por lo tanto,
+    \[
+    \frac{\|AB \bec x\|}{\|\bec x\|} \leq \|A\| \|B\|,
+    \]
+    y tomando el máximo sobre todos los \(\bec x\) con \(\|\bec x\| \neq 0\), obtenemos que
+    \[
+    \|AB\| \leq \|A\| \|B\|.
+    \]
+\end{proof}
+
+
+La definición~\eqref{eq-normainducida} es un máximo sobre infinitos vectores:
+sirve para demostrar, pero no para calcular. Para las tres normas vectoriales
+más usadas ---$\|\cdot\|_2$, $\|\cdot\|_1$ y $\|\cdot\|_\infty$--- ese máximo
+se puede escribir directamente en términos de las entradas de la matriz.
+
+\begin{thm}\label{teo-l1l2linfty} Sea $A$ una matriz de columnas $\{\bec a_1, \dots, \bec a_n\}$ y filas $\{\bec a_1^\star, \dots \bec a_m^\star\}$. Tenemos que 
+    \begin{enumerate}[label=\textup{(\alph*)}]
+        \item\label{item-l2} $\|A\|_2 = \sigma_1(A)$.
+        \item\label{item-l1} \(\displaystyle\|A\|_1  = \max_{1
+        \leq j
+        \leq n} \sum_i |a_{i,j}| = \max_{1\leq j\leq n} \|\bec a_j\|_1. \)
+        \item\label{item-linfty} \(\displaystyle\|A\|_\infty = \max_{1\leq i \leq m} \sum_j |a_{i,j}| =  \max_{1\leq i\leq m} \|\bec a_i^\star\|_1. \) 
+    \end{enumerate}
+\end{thm}
+
+\begin{proof}
+La parte~\ref{item-l2} ya está hecha: la norma inducida por $\|\cdot\|_2$ es
+exactamente la \emph{norma espectral} de la
+Definición~\ref{def:norma-espectral}, y el Teorema~\ref{teo:sigma1} dice que
+ese máximo vale $\sigma_1(A)$. Dicho de otro modo, la norma espectral que
+venimos usando desde el Capítulo~\ref{cap:SVD} es un caso particular de la
+construcción de esta sección, y por el Teorema~\ref{T:consistencia} resulta
+ser, de paso, una norma matricial.
+
+Ahora, para la norma $\ell_1$, la fórmula~\eqref{eq:mat-vec-col} del
+Capítulo~\ref{cap:algebra-lineal} dice que $A\bec x$ es la combinación de las
+columnas de $A$ con coeficientes $x_j$. Entonces, por la desigualdad
+triangular, si $\bec x = [x_1,\dots,x_n]^T$
+\begin{equation*}
+    \|A\bec x\|_1 = \left\|\sum_{j=1}^n x_j \bec a_j\right\|_1 \leq \sum_{j=1}^n \| x_j \bec a_j\|_1 = \sum_{j=1}^n |x_j|\| \bec a_j\|_1.
+\end{equation*}
+Por lo tanto, si $\|x\|_1 = 1$,
+\begin{equation*}
+     \|A\bec x\|_1 \leq \left(\max_{1\leq j\leq n}\| \bec a_j\|_1\right) \sum_{j=1}^n |x_j|  = \max_{1\leq j\leq n}\| \bec a_j\|_1
+\end{equation*}
+y
+\begin{equation*}
+    \|A\|_1 = \max_{\|\bec x\|_1 = 1}\|A\bec x\|_1 \leq \max_{1\leq j\leq n}\| \bec a_j\|_1. 
+\end{equation*}
+
+Para mostrar la igualdad, consideremos una matriz $A$ y sea $j_0$ tal que 
+\[\max_{1\leq j \leq m}\|\bec a_j\|_1 = \|\bec a_{j_0}\|_1.\]
+Si tomamos $\bec x = \bec e_{j_0}$, el vector que vale  uno en la posición $j_0$ y cero en las demás, tenemos que
+\[\|A\bec x\|_1 = \|\bec a_{j_0}\| = \max_{1\leq j \leq m}\|\bec a_j\|_1.\]
+Como además $\|\bec x\|_1 = 1$ tenemos que 
+\begin{equation*}
+    \|A\|_1 \geq \max_{1\leq j\leq n}\| \bec a_j\|_1. 
+\end{equation*}
+
+La caracterización de la norma $\ell_\infty$ sale del mismo modo, pero mirando
+por filas en lugar de por columnas: queda como el
+Ejercicio~\ref{ej-linfty}.
+\end{proof}
+
+\section{Espectro y radio espectral.}
+
+Dada una matriz $A\in\Rnn$ se define su \emph{espectro} $\sigma(A)$ como el conjunto de autovalores de $A$, así
+\[
+\sigma(A) = \{ \lambda \in \C : \lambda \text{ es autovalor de }A\}.
+\]
+
+El \emph{radio espectral} $\rho(A)$ de $A$ es el máximo módulo de sus autovalores, más precisamente
+\[
+\rho(A) = \max \{ |\lambda| : \lambda \in \sigma(A) \}.
+\]
+Por lo dicho anteriormente,
+\[
+\text{si $A$ es simétric}a \quad\Longrightarrow\quad \rho(A) = \|A\|_2.
+\]
+
+El radio espectral juega un papel fundamental en el estudio de métodos iterativos para sistemas lineales, principalmente debido al siguiente teorema:
+
+\begin{thm}[Caracterización del radio espectral]
+  \label{T:radio-espectral}
+  Sea $A\in\Rnn$, entonces
+  \[
+  \rho(A) = \inf \{ \|A\| : \|\cdot\| \text{ es una norma inducida} \}.
+  \]
+\end{thm}
+
+
+La demostración se apoya en la descomposición de Schur
+(Teorema~\ref{teo:schur} del Capítulo~\ref{cap:schur}): toda
+$A\in\C^{n\times n}$ se escribe $A=UTU^{*}$ con $U$ unitaria y $T$ triangular
+superior cuya diagonal son los autovalores de $A$ contados con multiplicidad.
+Eso es cierto aunque $A$ no sea diagonalizable, y si los autovalores de $A$ son
+reales se puede tomar $U$ real ortogonal.
+
+\begin{proof}[Demostración del Teorema~\ref{T:radio-espectral}]
+  Es fácil ver que $\rho(A) \le \|A\|$ para toda norma inducida $\| \cdot \|$ y cualquier matriz cuadrada $A$ (EJERCICIO). Lo más difícil es ver que dada $A\in\Rnn$, para todo $\varepsilon > 0$ existe una norma inducida $\| \cdot \|$ tal que $\|A\| < \rho(A) + \varepsilon$.
+
+  Sean entonces $A\in\Rnn$ y $\varepsilon > 0$ dados.
+  Por el Teorema~\ref{teo:schur} de descomposición de Schur existe $U$ unitaria tal que $UA\bar U^T = T$ con $T$ triangular superior tal que
+  \[
+  \diag(T) = (\lambda_1, \lambda_2,\dots,\lambda_n),\quad\text{y $\lambda_i$, $i=1,2,\dots,n$ son los autovalores de $A$}.
+  \]
+  Entonces $T$ es de la forma
+  \[
+  T = \begin{bmatrix}
+    \lambda_1 & t_{12}  & t_{13} & \dots & t_{1n} \\
+    0      & \lambda_2 & t_{23} & \dots & t_{2n} \\
+    \vdots  & \ddots    & \ddots & \ddots & \vdots  \\
+    0       & \dots  & 0      & \lambda_{n-1} & t_{(n-1)n}\\
+    0       & \dots  & 0      & 0     & \lambda_n
+  \end{bmatrix}.
+  \]
+  Para $z \in \R$, $z > 0$, definimos
+  \[
+  D_z = \diag(z,z^2,\dots,z^n) =
+  \begin{bmatrix}z & 0   & 0   & \dots & 0 \\
+    0 & z^2 & 0   & \dots & 0 \\
+    \vdots & \ddots & \ddots & \ddots & \vdots \\
+    0 & 0 & \dots & z^{n-1} & 0 \\
+    0 & 0 & \dots & 0 & z^n
+  \end{bmatrix}
+  \]
+  Por~\eqref{eq:filas}, multiplicar por $D_z$ a izquierda multiplica la fila
+  $i$ por $z^i$; por~\eqref{eq:cols}, multiplicar por $D_z^{-1}$ a derecha
+  multiplica la columna $j$ por $z^{-j}$. Haciendo las dos cosas, la entrada
+  $(i,j)$ de $T$ queda multiplicada por $z^{i-j}$: la diagonal no se mueve
+  ---ahí $i=j$--- y todo lo de arriba de la diagonal, donde $i<j$, se achica.
+  Es decir,
+  \[
+  D_z  U A \bar U^T D_z^{-1} =
+  D_z T D_z^{-1} = \begin{bmatrix}
+    \lambda_1 & z^{-1} t_{12} & z^{-2} t_{13}  & \dots & z^{-(n-1)} t_{1n} \\
+    0      & \lambda_2 & z^{-1}t_{23}  & \dots & z^{-(n-2)}t_{2n} \\
+    \vdots  & \ddots    & \ddots & \ddots & \vdots  \\
+    0       & \dots  & 0      & \lambda_{n-1} & z^{-1}t_{(n-1)n}\\
+    0       & \dots  & 0      & 0     & \lambda_n
+  \end{bmatrix},
+  \]
+  Elegimos ahora $z$ suficientemente grande de manera que
+  \[
+  \max_{1\le j \le n} \sum_{i=1}^{j-1} z^{i-j} |t_{ij}| < \varepsilon,
+  \]
+  y entonces
+  \[
+  \| D_z  U A \bar U^T D_z^{-1} \|_1
+  = \max_{1\le j \le n} |\lambda_j| + \sum_{i=1}^{j-1} z^{i-j} |t_{ij}|
+  < \rho(A) + \varepsilon.
+  \]
+  Faltaría ver que $\| D_z  U A \bar U^T D_z^{-1} \|_1$ es una norma inducida de $A$. Definimos entonces la norma $\| x \| = \| D_z U x \|_1$ para $x \in \mathbb{R}^n$ (que resulta una norma, verificar), y observemos que
+  \[
+  \| A \| = \max_{\substack{x\in\mathbb{R}^n\\x\neq 0}} \frac{\|Ax\|}{\|x\|}
+  = \max_{\substack{x\in\mathbb{R}^n\\x\neq 0}} \frac{\|D_z U Ax\|_1}{\|\underbrace{D_z U x}_{y}\|_1}
+  = \max_{\substack{y\in\mathbb{R}^n\\y\neq 0}} \frac{\|D_z U A (D_z U)^{-1} y\|_1}{\|y\|_1}
+  = \| D_z U A \bar U^T D_z^{-1} \|_1 .
+  \]
+\end{proof}
+
+La importancia del \emph{radio espectral} queda plasmada en el siguiente teorema.
+
+\begin{thm}\label{T:equivalencia-radio-espectral}
+  Sea $A\in\Rnn$, entonces las siguientes afirmaciones son equivalentes:
+  \begin{enumerate}[label=\textup{(\alph*)}]
+  \item $\rho(A) < 1$.
+  \item $\|A \|<1$ para alguna norma inducida.
+  \item $\displaystyle \lim_{k \to\infty} \|A^k\| = 0$, para toda norma inducida $\| \cdot \|$.
+  \item $\displaystyle \lim_{k\to\infty} A^k x = 0$, para todo vector $x \in \mathbb{R}^n$.
+  \end{enumerate}
+\end{thm}
+
+\begin{proof}
+  $(1) \Rightarrow (2)$ es inmediato por el Teorema~\ref{T:radio-espectral}.
+
+  $(2) \Rightarrow (3)$. Supongamos que $\|A\|_* < 1$ para alguna norma inducida $\| \cdot \|_*$. Sea $\| \cdot \|$ una norma inducida cualquiera. Entonces, como todas las normas son equivalentes, por ser el espacio de las matrices de dimensión finita, existe $c > 0$ tal que
+  \[
+  \| A^k \| \le c \| A^k \|_*, \qquad \forall k \in \mathbb{N}_0.
+  \]
+  Por el Teorema~\ref{T:consistencia} de consistencia, resulta que $\|A^k \|_* \le \|A\|_*^k$ y luego
+  \[
+  \| A^k \| \le c \| A^k \|_* \le c \|A\|_*^k \to 0 , \quad\text{cuando }k\to\infty.
+  \]
+
+  $(3) \Rightarrow (4)$. Sea $x \in \Rn$ y sea $\| \cdot \|$ una norma en $\Rn$ y también su norma inducida en $\Rnn$. Entonces, por el Teorema~\ref{T:consistencia} de consistencia
+  \[
+  \| A^k x - 0\| = \| A^k x \| \le \| A^k \| \| x \|  \to 0 , \quad\text{cuando }k\to\infty.
+  \]
+
+  $(4) \Rightarrow (1)$. Sea $\lambda \in \sigma(A)$ y sea $x$ un autovector asociado a $\lambda$, luego
+  \[
+  Ax = \lambda x, \qquad \text{y}\qquad
+  A^k x = \lambda^k x.
+  \]
+  Así,
+  \[
+  \| A^k x \| = |\lambda|^k \| x\|
+  \]
+  para cualquier norma $\| \cdot \| $ de $\mathbb{R}^n$. Por (4), $\| A^k x \| \to 0$ y por ende $|\lambda|^k \| x\| \to 0$. Como $x$ es un autovector, es no nulo, y por lo tanto $|\lambda|^k \to 0$ cuando $k\to\infty$. Por lo tanto $|\lambda| < 1$. Como $\lambda\in\sigma(A)$ era arbitrario, resulta $\rho(A) = \max_{\lambda \in \sigma(A)} |\lambda| < 1$.
+\end{proof}
+
+
+\begin{thm} Sea $A\in\Rnn$. Entonces, cualquiera sea la norma inducida $\| \cdot \|$, resulta
+  \[
+  \rho(A) = \lim_{k \to \infty} \| A^k \|^{1/k}.
+  \]
+\end{thm}
+
+\begin{proof}
+  Veamos primero que $\rho(A)\le \| A^k \|^{1/k}$. Sea $\lambda \in \sigma(A)$ y sea $x$ un autovector asociado a $\lambda$. Entonces
+  \begin{align*}
+    Ax &= \lambda x \quad\Longrightarrow\quad
+    A^k x = \lambda ^k x \quad\Longrightarrow\quad
+    \| A^k x \| = |\lambda|^k \| x \| \\
+    \Longrightarrow\quad |\lambda|^k &= \frac{\| A^k x \|}{\| x \|} \le \| A^k \|
+    \quad\Longrightarrow\quad |\lambda| \le  \| A^k \|^{1/k}
+    \quad\Longrightarrow\quad \rho(A)  \le  \| A^k \|^{1/k}.
+  \end{align*}
+
+  Veamos ahora que el límite de $\| A^k \|^{1/k}$ es $\rho(A)$.
+  Sea $\varepsilon > 0$ y definimos
+  \[
+  \tilde A = \frac{1}{\rho(A) + \varepsilon} A \quad\Longrightarrow\quad
+  \rho(\tilde A) = \frac{1}{\rho(A) + \varepsilon} \rho(A) = \frac{\rho(A)}{\rho(A)+\varepsilon} < 1.
+  \]
+  Por el Teorema anterior, $\displaystyle \lim_{k\to\infty} \|\tilde A^k \| = 0$ y
+  por lo tanto, existe $k_0 \in \mathbb{N}$ tal que
+  \[
+  \| \tilde A^k \| = \frac{\|A^k\|}{(\rho(A)+\varepsilon)^k} < 1 , \quad\forall k \ge k_0.
+  \]
+  Es decir que dado $\varepsilon > 0$, existe $k_0\in\mathbb{N}$ tal que
+  \[
+  \rho(A) \le \| A^k \|^{1/k} \le \rho(A) + \varepsilon,  \quad\forall k \ge k_0.
+  \]
+  O sea, $\lim_{k\to\infty} \| A^k \|^{1/k} = \rho(A)$.
+\end{proof}
+
+Cuando $\rho(A)<1$, la serie geométrica de matrices converge y da la inversa de
+$I-A$.
+
+\begin{thm}[Serie de Neumann]\label{T:neumann}
+Sea $A\in\Rnn$ con $\rho(A)<1$. Entonces $I-A$ es invertible y
+\[
+(I-A)^{-1}=\sum_{k=0}^{\infty}A^{k}=I+A+A^{2}+A^{3}+\cdots ,
+\]
+con convergencia en cualquier norma. Si además $\|A\|<1$ para alguna norma
+inducida, entonces
+\[
+\bigl\|(I-A)^{-1}\bigr\|\ \le\ \frac{1}{1-\|A\|} ,
+\qquad
+\Bigl\|(I-A)^{-1}-\sum_{k=0}^{m}A^{k}\Bigr\|\ \le\ \frac{\|A\|^{m+1}}{1-\|A\|} .
+\]
+\end{thm}
+
+\begin{proof}
+Si $I-A$ no fuera invertible, existiría $x\neq0$ con $(I-A)x=0$, es decir
+$Ax=x$: entonces $1$ sería autovalor de $A$ y $\rho(A)\ge1$, en contra de la
+hipótesis. Sea $S_m=\sum_{k=0}^{m}A^{k}$. La identidad telescópica
+\[
+(I-A)\,S_m = I-A^{m+1}
+\]
+se verifica desarrollando el producto. Por el
+Teorema~\ref{T:equivalencia-radio-espectral}, $\rho(A)<1$ implica
+$\|A^{m+1}\|\to0$, así que $(I-A)S_m\to I$ y, multiplicando por
+$(I-A)^{-1}$, $S_m\to(I-A)^{-1}$.
+
+Para las cotas, si $\|\cdot\|$ es inducida y $\|A\|<1$, la submultiplicatividad
+da $\|A^k\|\le\|A\|^k$ y entonces
+$\|S_m\|\le\sum_{k=0}^m\|A\|^k\le 1/(1-\|A\|)$; pasando al límite se obtiene
+la primera. La segunda sale de
+$(I-A)^{-1}-S_m=\sum_{k>m}A^{k}=A^{m+1}(I-A)^{-1}$ y de la primera.
+\end{proof}
+
+\begin{remark}[De dónde viene esto]\label{obs:neumann-iterativos}
+La serie de Neumann es la versión matricial de $\frac1{1-a}=\sum a^k$ para
+$|a|<1$, y es el esqueleto de los \emph{métodos iterativos} para resolver
+$Ax=b$. La idea es partir $A=M-N$ con $M$ fácil de invertir ---diagonal, o
+triangular, como las que salieron de la eliminación en el
+Capítulo~\ref{cap:LU}--- y escribir $Ax=b$ como
+\[
+x = M^{-1}Nx + M^{-1}b =: Tx + c .
+\]
+La iteración $x^{(k+1)}=Tx^{(k)}+c$ converge, para cualquier punto de partida,
+exactamente cuando $\rho(T)<1$, y entonces el límite es
+$(I-T)^{-1}c$, que es la solución. El radio espectral de la \emph{matriz de
+iteración} $T$ es, entonces, lo único que hay que mirar para saber si un
+método iterativo sirve, y cuán rápido converge: el error se multiplica,
+aproximadamente, por $\rho(T)$ en cada paso.
+\end{remark}
+
+% ===================================================================
+\section{Número de condición y error relativo}
+
+Dada $A\in\Rnn$ y $b \in \mathbb{R}^n$, consideremos el problema de hallar $x \in \mathbb{R}^n$ tal que $Ax = b$. Supongamos que $\tilde x \in\mathbb{R}^n$ es una solución aproximada del sistema. Considerando una norma dada $\| \cdot \|$ de $\mathbb{R}^n$, definimos:
+\begin{align*}
+  \text{error} &=  x - \tilde x , \\
+  \text{error relativo} &= \frac{ \| x - \tilde x \| }{ \| x \| },\\
+  \text{residuo} &= A\tilde x - b = \tilde b - b, \quad\text{si $\tilde b = A \tilde x$},\\
+  \text{residuo relativo} &= \frac{ \|\tilde b - b\|}{\|b\|}.
+\end{align*}
+
+Queremos hallar una estimación para el error relativo $\frac{ \| x - \tilde x \| }{ \| x \| }$ en términos del residuo relativo $ \frac{ \|\tilde b - b\|}{\|b\|}$.
+Observemos lo siguiente
+\[
+\| \tilde x - x \| = \| A\inv \tilde b - A\inv b \| \le \| A\inv \| \| \tilde b - b \|,
+\]
+Además,
+\[
+\| A x \| = \| b \| \quad\Longrightarrow\quad \| b \| \le \| A \| \| x \|.
+\]
+Luego,
+\begin{equation}\label{eq:err_rel1}
+\frac{\| \tilde x - x \| }{\| x \|}
+\le \| A \| \| A\inv\| \frac{\| \tilde b - b \|}{\| b \|}.
+\end{equation}
+
+Análogamente
+\[
+\| \tilde b - b \| = \| A \tilde x - A x \| \le \| A \| \| \tilde x - x \|,
+\]
+y
+\[
+\| x \| = \| A\inv b \| \le \| A\inv \| \| b \|.
+\]
+Por lo tanto
+\begin{equation}\label{eq:err_rel2}
+  \frac{1}{\| A \| \| A\inv\|} \frac{\| \tilde b - b \|}{\| b \|}
+  \le \frac{\| \tilde x - x \| }{\| x \|}.
+\end{equation}
+
+De~\eqref{eq:err_rel1}--\eqref{eq:err_rel2} obtenemos que
+\begin{equation}\label{eq:err_rel}
+  \frac{1}{\| A \| \| A\inv\|} \frac{\| \tilde b - b \|}{\| b \|}
+  \le \frac{\| \tilde x - x \| }{\| x \|}
+  \le \| A \| \| A\inv\| \frac{\| \tilde b - b \|}{\| b \|}.
+\end{equation}
+
+\begin{defn}
+  Dada una norma inducida $\| \cdot \|$ en el espacio de las matrices de $n\times n$, se define el \textbf{número de condición} para esa norma como
+  \[
+  \kappa (A ) =  \| A \| \, \| A\inv\|, \qquad A \in \Rnn \text{ invertible}.
+  \]
+\end{defn}
+
+\begin{lema}\label{L:error-vs-residuo}
+Si $x \in \Rn \setminus\{0\}$ es la solución de $Ax = b$, entonces, cualquiera sea $\tilde x \in \Rn$, se cumple que
+\[
+  \frac{1}{\kappa(A)} \frac{\| \tilde b - b \|}{\| b \|}
+  \le \frac{\| \tilde x - x \| }{\| x \|}
+  \le \kappa(A) \frac{\| \tilde b - b \|}{\| b \|},
+  \]
+  para $\tilde b = A \tilde x$.
+\end{lema}
+
+
+
+\begin{remark} El número de condición siempre es mayor o igual a uno:
+  \[
+  \kappa(A) =  \| A \| \| A\inv\| \ge \| A A\inv \| = \| I \| = 1.
+  \]
+  Cuando $\kappa(A)$ es pequeño, o cercano a uno, $\kappa(A) \cong 1$ resulta
+  \[
+  \frac{\| \tilde x - x \| }{\| x \|}
+  \cong \frac{\| \tilde b - b \|}{\| b \|}
+  \]
+  Es decir, pequeñas perturbaciones en el lado derecho de la ecuación, producen pequeños cambios en las soluciones. En este caso decimos que el problema $Ax=b$ está \emph{bien condicionado}.
+\end{remark}
+
+\begin{remark}
+  Dada la solución $x$ de $Ax = b$, si $\tilde x$ es una aproximación de $x$, entonces
+  \[
+  \underbrace{\frac{\| \tilde x - x \| }{\| x \|}}_{\text{desconocido}} \le \kappa(A)
+  \underbrace{\frac{\| A \tilde x - b \|}{\| b \|}}_{\text{calculable}}.
+  \]
+  El lado derecho de la desigualdad anterior se utiliza en la implementación de criterios de parada en algunos métodos iterativos.
+\end{remark}
+
+\begin{remark} Observemos que multiplicar una matriz por una constante arbitraria no nula, no afecta el número de condición:
+  \[
+  \kappa(\alpha A) = \| \alpha A \| \| (\alpha A)\inv \|
+  = |\alpha| \| A \| \frac{1}{|\alpha|} \| A\inv\| = \kappa(A).
+  \]
+\end{remark}
+
+Hay una relación estrecha entre el número de condición y el espectro cuando se
+usa la norma $\|\cdot\|_2$ y la matriz es simétrica.
+
+\begin{lema}\label{L:condicion-simetrica}
+  Si $A\in\Rnn$ es simétrica e invertible, entonces
+  \[
+  \kappa_2(A)=\frac{|\lambda|_{\max}}{|\lambda|_{\min}} ,
+  \]
+  donde $|\lambda|_{\max}$ y $|\lambda|_{\min}$ son el mayor y el menor
+  \emph{módulo} de los autovalores de $A$.
+\end{lema}
+
+\begin{proof}
+  Como $A$ es simétrica, $\|A\|_2=\rho(A)=\max\{|\lambda|:\lambda\in\sigma(A)\}
+  =|\lambda|_{\max}$. Como además $A$ es invertible, $A\inv$ es simétrica y sus
+  autovalores son los $\lambda\inv$ con $\lambda\in\sigma(A)$
+  (Corolario~\ref{cor:traza-det}), así que
+  \begin{align*}
+  \|A\inv\|_2 &= \rho(A\inv)
+  = \max\bigl\{|\mu| : \mu\in\sigma(A\inv)\bigr\}
+  = \max\bigl\{|\lambda|\inv : \lambda\in\sigma(A)\bigr\}\\
+  &= \frac{1}{\min\bigl\{|\lambda| : \lambda\in\sigma(A)\bigr\}}
+  = \frac{1}{|\lambda|_{\min}} ,
+  \end{align*}
+  donde la anteúltima igualdad dice simplemente que el máximo de los inversos
+  de números positivos es el inverso del mínimo. Multiplicando las dos normas
+  queda el enunciado.
+\end{proof}
+
+Para una matriz cualquiera ---sin ninguna hipótesis--- la respuesta la da la
+SVD, y es todavía más simple.
+
+\begin{lema}[El número de condición son los valores singulares]\label{L:condicion-svd}
+Sea $A\in\Rnn$ invertible, con valores singulares
+$\sigma_1\ge\cdots\ge\sigma_n>0$. Entonces
+\[
+\boxed{\ \kappa_2(A)=\frac{\sigma_1}{\sigma_n}\ }
+\]
+\end{lema}
+
+\begin{proof}
+Por la Definición~\ref{def:norma-espectral}, $\|A\|_2=\sigma_1$. Si
+$A=U\Sigma V^T$ es una SVD de $A$ con $\Sigma=\diag(\sigma_1,\dots,\sigma_n)$
+invertible, entonces
+\[
+A\inv=V\Sigma^{-1}U^T ,
+\]
+y como $U$ y $V$ son ortogonales eso es una SVD de $A\inv$, salvo por el orden
+de la diagonal: los valores singulares de $A\inv$ son
+$\sigma_n^{-1}\ge\cdots\ge\sigma_1^{-1}$. El mayor es $\sigma_n^{-1}$, de
+donde $\|A\inv\|_2=1/\sigma_n$.
+\end{proof}
+
+\begin{remark}[Qué mide, en una frase]\label{obs:condicion-elipsoide}
+El Teorema~\ref{teo:elipsoide} dice que $A$ transforma la esfera unitaria en
+un elipsoide de semiejes $\sigma_1,\dots,\sigma_n$. El número de condición es
+el cociente entre el semieje más largo y el más corto: cuán \emph{achatado}
+queda ese elipsoide. Una matriz bien condicionada manda la esfera a algo
+todavía parecido a una esfera; una mal condicionada la aplasta casi hasta un
+subespacio, y por eso un cambio chico del lado derecho produce un cambio
+enorme en la solución. De paso se ve que $\kappa_2(A)=1$ exactamente cuando
+todos los valores singulares coinciden, es decir cuando $A$ es un múltiplo de
+una matriz ortogonal: \emph{las matrices ortogonales son las mejor
+condicionadas que hay}, y es la razón por la que $QR$ y las reflexiones de
+Householder del Capítulo~\ref{cap:ortogonalidad} son numéricamente preferibles
+a la eliminación gaussiana.
+\end{remark}
+
+
+
+
+
+% ===================================================================
+\section*{Ejercicios}
+
+\begin{enumerate}
+
+% ---------- normas de matrices: definiciones y propiedades ----------
+\item\label{ejer-normaiii} Mostrar que si $\|\cdot\|$ es una norma en $\RR^{np}$ entonces $ \vertiii{\cdot}$ en $\RR^{n\times p}$ definido como
+\[\vertiii{A} = \|\textup{vec}(A)\|\]
+es una norma.
+
+\item\label{ej-matrizortogonal} Sea $A\in\RR^{m\times n}$.
+\begin{enumerate}[label=\textup{(\alph*)}]
+    \item Mostrar que $\|A\|_F^2 = \sum_{j=1}^n \|\col_j(A)\|_2^2$ y también
+    $\|A\|_F^2 = \sum_{i=1}^m \|\fila_i(A)\|_2^2$: la norma de Frobenius al
+    cuadrado es tanto la suma de los cuadrados de las longitudes de las
+    columnas como la de las filas.
+    \item Mostrar que si $Q$ es una matriz ortogonal entonces $\|A\|_F = \|QA\|_F = \|AQ\|_F$.
+\end{enumerate}
+
+\item Decimos que una norma de matrices está \textbf{normalizada} si la matriz
+identidad de cualquier orden tiene norma $1$. (Cuidado con el nombre: no tiene
+nada que ver con las matrices unitarias del Capítulo~\ref{cap:schur} ni con
+las normas ortogonalmente invariantes de la Sección~\ref{sec:tres-normas}; de
+hecho $\|\cdot\|_F$ es ortogonalmente invariante y no está normalizada.)
+\begin{enumerate}[label=\textup{(\alph*)}]
+    \item Mostrar que toda norma inducida está normalizada.
+    \item ¿Es cierto que toda norma matricial debe estar normalizada?
+\item Considere en $\RR^{n\times p}$
+\[\|A\| = \|\textup{vec}(A)\|_1.\]
+¿Está normalizada? ¿Es una norma matricial?
+\end{enumerate}
+
+\item\label{ej-equivalencianormainducida} Probar que 
+\[ \max_{\bec x \neq \bec 0}\frac{\|A\bec x\|}{\|\bec x\|} = \max_{\|\bec x \| = 1}{\|A\bec x\|} = \max_{\|\bec x \| \leq  1}{\|A\bec x\|}   \]
+
+\item Para una matriz $A$ de columnas $\{\bec a_1, \dots, \bec a_n\}$ definimos
+\[\|A\|_{2,1} = \sum_{j=1}^n \|\bec a_j\|_2.\]
+Mostrar que es una norma. ¿Es una norma matricial?
+
+\item\label{ej-medica} Mostrar que la siguiente modificación de la norma del
+máximo la vuelve una norma matricial en $\RR^{m\times n}$:
+\[\|A\| = \sqrt{mn}\,\|\textup{vec}(A)\|_{\infty} .\]
+
+\item\label{ej-traspuesta} Probar que $\|A\|_F=\|A^T\|_F$ y
+$\|A\|_2=\|A^T\|_2$, pero que en cambio $\|A\|_1=\|A^T\|_\infty$. Dar una
+matriz con $\|A\|_1\neq\|A^T\|_1$.
+
+\item\label{ej-mixtas} \emph{(Cotas mixtas.)} Usando que
+$\fila_i(AB)=\fila_i(A)B$ ---la fórmula~\eqref{eq:filas} del
+Capítulo~\ref{cap:algebra-lineal}--- probar que
+$\|AB\|_F\le\|A\|_F\,\|B\|_2$, que es la versión por filas de la
+Observación~\ref{obs:frob-por-columnas}. ¿Por qué estas dos cotas son mejores
+que la submultiplicatividad $\|AB\|_F\le\|A\|_F\|B\|_F$ de la
+Proposición~\ref{prop:frobenius-matricial}?
+
+% ---------- cuentas a mano ----------
+\item\label{ej-calcular-normas} \emph{(A mano.)} Para cada una de las matrices
+\[
+A_1=\begin{bmatrix}3&0\\ 4&5\end{bmatrix},\qquad
+A_2=\begin{bmatrix}0&2\\ 0&0\end{bmatrix},\qquad
+A_3=\begin{bmatrix}1&1\\ 1&1\end{bmatrix},
+\]
+\[
+A_4=\begin{bmatrix}2&-1\\ -1&2\end{bmatrix},\qquad
+A_5=\begin{bmatrix}0&-1\\ 1&0\end{bmatrix},\qquad
+A_6=\diag(3,-2,1),
+\]
+calcular, haciendo las cuentas:
+$\|A\|_1$, $\|A\|_\infty$, $\|A\|_F$, $\|A\|_2$, $\|A\|_*$ y $\rho(A)$.
+\emph{Sugerencias:} $\|A\|_1$ y $\|A\|_\infty$ salen del
+Teorema~\ref{teo-l1l2linfty} mirando sumas de columnas y de filas; para
+$\|A\|_2$ y $\|A\|_*$ hacen falta los valores singulares, que acá se consiguen
+sin esfuerzo en cada caso: $A_1$ tiene su SVD calculada en el
+Ejemplo~\ref{ej:svd-completo}; $A_2$ y $A_3$ tienen rango uno;
+$A_4$, $A_6$ son simétricas (Ejercicio~\ref{ej-simetrica-rho}); y $A_5$ es
+ortogonal. Armar una tabla con los seis resultados en filas.
+
+\item\label{ej-orden-normas} Con los números del ejercicio anterior:
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Verificar en cada caso las desigualdades
+$\rho(A)\le\|A\|_2\le\|A\|_F\le\sqrt r\,\|A\|_2$, donde $r=\rango(A)$.
+\item Probar las dos últimas en general, y caracterizar las matrices en las
+que vale cada igualdad. \emph{Sugerencia:} las tres normas se leen de los
+$\sigma_k$ (Sección~\ref{sec:tres-normas}); la primera igualdad pide
+$\sigma_1^2=\sigma_1^2+\cdots+\sigma_r^2$ y la segunda, que todos los
+$\sigma_k$ sean iguales. ¿Cuáles de las seis matrices de arriba realizan cada
+igualdad?
+\item Deducir de la misma manera que $\|A\|_F\le\|A\|_*\le\sqrt r\,\|A\|_F$.
+\item ¿En cuáles de las seis es $\rho(A)<\|A\|_2$ estrictamente? ¿Qué tienen
+en común aquellas en las que vale la igualdad?
+\end{enumerate}
+
+\item\label{ej-rango-uno-normas} \emph{(Rango uno.)} Sea $A=\bec u\bec v^T$
+con $\bec u\in\RR^m$ y $\bec v\in\RR^n$ no nulos.
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Probar que $A$ tiene un solo valor singular no nulo y que vale
+$\|\bec u\|_2\|\bec v\|_2$. \emph{Sugerencia:} $A^TA=\|\bec u\|_2^2\,\bec v\bec v^T$.
+\item Deducir que $\|A\|_2=\|A\|_F=\|A\|_*=\|\bec u\|_2\|\bec v\|_2$.
+\item Probar que $\|A\|_1=\|\bec u\|_1\max_j|v_j|$ y
+$\|A\|_\infty=\|\bec v\|_1\max_i|u_i|$.
+\item Verificar los cuatro valores a mano con $\bec u=(1,2,-2)^T$ y
+$\bec v=(3,0,4)^T$. (Deberían dar $15$, $15$, $15$, $20$ y $14$.)
+\end{enumerate}
+
+\item\label{ej-identidad-unos} Calcular $\|\cdot\|_1$, $\|\cdot\|_\infty$,
+$\|\cdot\|_F$, $\|\cdot\|_2$ y $\|\cdot\|_*$ de la identidad $I_n$ y de la
+matriz $\mathbf 1\mathbf 1^T\in\RR^{n\times n}$ de todos unos. Las dos
+matrices tienen la misma norma $\|\cdot\|_2$; ¿cuál de las normas distingue
+mejor el rango, y por qué?
+
+% ---------- del Teorema 12.5 y del radio espectral ----------
+\item\label{ej-linfty} \emph{(La parte que falta del
+Teorema~\ref{teo-l1l2linfty}.)} Probar la parte~\ref{item-linfty}, es decir
+que $\|A\|_\infty=\max_i\|\fila_i(A)\|_1$, siguiendo el mismo esquema que la
+demostración de la parte~\ref{item-l1} pero mirando por filas.
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Probar que si $\|\bec x\|_\infty\le1$ entonces
+$|(A\bec x)_i|=|\fila_i(A)\,\bec x|\le\|\fila_i(A)\|_1$, y deducir
+$\|A\|_\infty\le\max_i\|\fila_i(A)\|_1$.
+\item Para la otra desigualdad, sea $i_0$ la fila de mayor norma $\ell_1$ y
+tomar $\bec x$ con $x_j=\sgn(a_{i_0j})$ (y $x_j=1$ si
+$a_{i_0j}=0$). Verificar que $\|\bec x\|_\infty=1$ y que
+$(A\bec x)_{i_0}=\|\fila_{i_0}(A)\|_1$.
+\item ¿Por qué acá el vector que realiza el máximo tiene todas sus
+coordenadas no nulas, mientras que en la parte~\ref{item-l1} alcanzaba con un
+vector de la base canónica?
+\end{enumerate}
+
+\item\label{ej-simetrica-rho} Probar que si $A\in\Rnn$ es simétrica entonces
+$\|A\|_2=\rho(A)$ ---la igualdad que se usa sin demostrar al final de la
+Sección~\ref{sec:normas-inducidas}--- y que sus valores singulares son los
+módulos de sus autovalores. Dar una matriz no simétrica con
+$\rho(A)<\|A\|_2$ y otra, también no simétrica, con $\rho(A)=\|A\|_2$.
+
+\item\label{ej-rho-cota} Probar que $\rho(A)\le\|A\|$ para toda norma inducida
+$\|\cdot\|$ y toda $A$ cuadrada. \emph{Sugerencia:} si $A\bec x=\lambda\bec x$
+con $\bec x\neq\bec 0$, dividir $\|A\bec x\|$ por $\|\bec x\|$. Dar después
+una matriz con $\rho(A)=0$ y $\|A\|_2$ tan grande como se quiera, y concluir
+que $\rho$ \emph{no} es una norma.
+
+\item\label{ej-equivalencias} Del Teorema~\ref{T:equivalencia-radio-espectral}
+demostrar las implicaciones $(c)\Rightarrow(d)$ y $(d)\Rightarrow(a)$, que no
+usan nada más que la submultiplicatividad y la definición de autovector.
+
+\item\label{ej-potencias} Verificar $\rho(A)=\lim_k\|A^k\|^{1/k}$ en
+$A=\begin{bsmallmatrix}0&t\\ 0&0\end{bsmallmatrix}$ con $t>0$ y en una matriz
+diagonalizable a elección, calculando $\|A^k\|^{1/k}$ para
+$k=1,2,5,10,50$. ¿Por qué el límite se alcanza enseguida en un caso y es lento
+en el otro?
+
+% ---------- más finos ----------
+\item\label{ej-2-1-infty} Probar que $\|A\|_2^2\le\|A\|_1\,\|A\|_\infty$.
+\emph{Sugerencia:} $\|A\|_2^2=\|A^TA\|_2\le\|A^TA\|_\infty$ y
+$\|A^T\|_\infty=\|A\|_1$ (Ejercicio~\ref{ej-traspuesta}). Verificarlo en
+$A_1=\begin{bsmallmatrix}3&0\\ 4&5\end{bsmallmatrix}$ del
+Ejercicio~\ref{ej-calcular-normas}.
+
+\item\label{ej-nuclear} Probar que $\|A\|_*=\sum_i\sigma_i(A)$ es una norma.
+Lo único que cuesta es la desigualdad triangular; una manera es usar la
+caracterización
+\[
+\|A\|_*=\max\bigl\{\tr(Q^TA)\ :\ Q\in\R^{m\times n},\ \|Q\|_2\le1\bigr\} ,
+\]
+que conviene probar primero con la SVD de $A$: el máximo se alcanza en
+$Q=U_rV_r^T$.
+
+\item\label{ej-condicion} \emph{(Número de condición.)}
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Probar que $\kappa(A)\ge1$ para toda norma inducida y que
+$\kappa(\alpha A)=\kappa(A)$ para todo $\alpha\neq0$.
+\item Calcular $\kappa_2(A)$ para
+$A=\begin{bsmallmatrix}1&1\\ 1&1+\varepsilon\end{bsmallmatrix}$ y estudiar qué
+pasa cuando $\varepsilon\to0$. (Para $\varepsilon$ chico da del orden de
+$4/\varepsilon$.)
+\item Resolver $Ax=b$ con $b=(2,2)^T$ y con $b=(2,2+\delta)^T$ y comparar el
+cambio relativo de la solución con el del lado derecho, contrastándolo con la
+cota del Lema~\ref{L:error-vs-residuo}.
+\end{enumerate}
+
+\item Probar que si $A = \bec u \bec v^T$ y $B= \bec v \bec w^T$ con
+$\bec u,\bec v,\bec w$ vectores no nulos, entonces se satisface que
+$\|AB\|_F^2=\|A\|_F^2\|B\|_F^2$.
+
+La implicación contraria es una conjetura: las únicas matrices sin elementos
+nulos, de rango uno, que satisfacen $\|AB\|_F=\|A\|_F\,\|B\|_F$ son de la
+forma $A=\bec u\bec v^T$ y $B=\bec v\bec w^T$ con un vector compartido
+$\bec v$.
+\end{enumerate}

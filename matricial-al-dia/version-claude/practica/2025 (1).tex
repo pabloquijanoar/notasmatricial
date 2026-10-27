@@ -1,0 +1,2792 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{fullpage}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[colorlinks]{hyperref}
+\usepackage{caption}
+%\usepackage{mnsymbol}
+\usepackage{etex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{shadow}
+\usepackage{epsfig}
+\usepackage{epic}
+\usepackage{eepic}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{psfrag}
+\usepackage{alltt}%%%necessary for {matlab} environment to work
+\usepackage{theorem}
+\usepackage{calc}
+\usepackage{rotating}
+\usepackage{pspicture} %\usepackage{pspic} changed by Pedro
+\usepackage{multicol}
+\usepackage{multirow}
+% \usepackage{sols_man}
+\usepackage{relsize}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[abs]{overpic}
+\usepackage{pgfplots}
+
+\usepackage{tikz}
+% \tikzstyle{arrow}=[draw, -latex]
+
+\usepackage[dvipsnames,prologue,table]{pstricks}
+\usepackage{pst-grad}
+\usepackage{pstricks}
+% \usepackage{pst-ghsb}
+\usepackage{pst-slpe,pst-3d}
+\usepackage[spanish]{babel}
+\usepackage{xcolor} % Paquete para definir y usar colores
+
+% Definir el color lila
+\definecolor{lili}{RGB}{182, 102, 210}
+
+% Crear un nuevo comando \lili para aplicar el color lila
+\newcommand{\lili}[1]{{\color{lili}#1}}
+
+% Definir el color lila
+\definecolor{pablo}{RGB}{100, 130, 240}
+
+% Crear un nuevo comando \lili para aplicar el color lila
+\newcommand{\pablo}[1]{{\color{pablo}#1}}
+
+\usepackage{imakeidx}
+\let\imakeidxtheindex\theindex
+\let\imakeidxendtheindex\endtheindex
+\AtBeginDocument{%
+  \let\theindex\imakeidxtheindex
+  \let\endtheindex\imakeidxendtheindex
+}
+% nullify bidi redefinition
+
+\makeindex[name=authors,title={Índice de autores},columns=4,columnsep=20pt]
+\makeindex[name=indx,title=Índice]
+\makeindex[name=smbl,title=Índice de símbolos]
+\usepackage[indentunit=3pt,justific=raggedright,columnsep=10pt]{idxlayout}%if you pass a parameter columns=4 here, it will apply for all indices
+%---Three indices: for authors, list of words, list of symbols
+ 
+\newcommand\bwxhat{\widehat{\bi x}}
+\newcommand{\wthat}{{\widehat t}}
+\newcommand\wxhat{\widehat{x}}
+\newcommand\xhat{{\scriptstyle\widehat{\textstyle x}}}
+\newcommand\bxhat{\bs{\xhat}}
+\newcommand\bfwh{\boldsymbol{\widehat}}
+
+\newcommand{\summ}{\displaystyle\sum}
+\newcommand{\bi}[1]{\hbox{\boldmath$#1$}}
+\newcommand\1{\mbox{\,\vrule height-0.8pt depth1.0pt width2pc\,}}
+\newcommand\2{\mbox{\,\vrule height-0.8pt depth1.0pt width1pc\,}}
+\newcommand{\trans}{\mathrm{T}} 
+\DeclareRobustCommand\transp{^{\mathrm{T}}}
+% \renewcommand{\index}[1][2]{}{}
+
+\newcommand{\embf}[1]{\emph{\bfseries{#1}}}
+
+\newcommand{\bmembf}[1]{\emph{\boldmath\textbf{#1}}}
+\newcommand{\bu}{\hbox{\boldmath$u$}}
+\newcommand{\bv}{\hbox{\boldmath$v$}}
+\newcommand{\bw}{\hbox{\boldmath$w$}}
+\newcommand{\pa}{\partial}
+\newcommand{\hs}[1]{\hspace{#1ex}}
+\newcommand{\degree}{^{\circ}\;}
+
+% bold cdot
+\newcommand\bfcdot{\boldsymbol{\cdot}}
+% bold cdots
+\newcommand\bfcdots{\boldsymbol{\cdots}}
+% less used
+\newcommand\boldcdot{\boldsymbol{\cdot}}
+\newcommand\og{\quad\hbox{y}\quad}
+\newcommand\OG{\qquad\hbox{y}\qquad}
+\newcommand{\la}{\lambda}
+\newcommand{\La}{\Lambda}
+\newcommand{\half}{\frac{1}{2}}
+\def\ph{\phantom{-}}
+
+\newdimen\dima
+\newdimen\dimb
+\newcommand{\bm}{\mathbf}
+\def\hitem[#1]{\unskip\qquad\hbox to\standardindent{#1\hfil}\ignorespaces}
+
+%%% \standardindent
+\newdimen\standardindent
+\standardindent 2pc
+
+
+\title{Analisis Matricial}
+
+
+\title{Análisis Matricial}
+\author{}
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Sección I.1}
+
+\subsection*{Videos}
+
+\begin{itemize}
+\item \href{https://youtu.be/_0AMEXou_5E}{\bf Video 1: Multiplicación $Ax$ usando las columnas de $A$} (18 minutos)
+
+Multiplicaci\'on de matriz $A$ por vector $x$: combinaci\'on lineal de las columnas de $A$. Definci\'on de espacio columna de $A$: $C(A)$. Si $A$ es de $m\times n$. ?`Donde vive $C(A)$? Dimensiones posibles del espacio columna de $A$. Invertibilidad de $A$, soluci\'on del sistema $Ax=b$ cuando $A$ es invertible. 
+
+
+
+\item \href{https://youtu.be/HjeNmsckPLw}{\bf Video 2: Columnas independientes y el rango de $A$} (24 minutos)
+
+
+Base del espacio columna de $A$. Independencia y dependencia de columnas de $A$. Rango de una matriz $A$: dimensi\'on del espacio columna de $A$ ($C(A)$). Descomposici\'on: $A= CR$. Dimensi\'on del espacio columna de $A$ es igual a la dimensi\'on del espacio fila de $A$. ?` Qu\'e de $A$ puede recuperar con $C$ y que se puede recuperar de $A$ usando $R.$ Ya que las columnas de $C$ es una base del espacio columna de $A$ y las filas de $R$ es un espacio de las filas de $A$, y la cantidad de filas de $R$ es igual a la cantidad de columnas de $C$ tenemos que el espacio fila y columna de $A$ tienen la misma dimensi\'on.
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+
+
+    
+\item Dé un ejemplo donde una combinaci\'on lineal de tres vectores no nulos de $\hbox{\textbf{R}}^4$ sea el vector cero. Luego, exprese su ejemplo como soluci\'on de $A\bi{x}=\bi{0}$. ¿\,Qué tamaño tienen  $A$, $\bi{x}$ y $\bi{0}$\,? %\linebreak\vspace{-6pt}
+
+
+% \item Suponga que una combinación de las columnas de $A$ es igual a una combinación diferente de esas columnas. Expréselo como $A\bi{x}=A\bi{y}$. Encuentre dos combinaciones de las columnas de $A$ que son iguales al vector cero (en lenguaje matricial: encuentre dos soluciones para $A\bi{z}=\bi{0}$).
+
+ 
+
+% \item Hallar una matriz $A$ de modo que dos combinaciones diferentes de sus columnas sean iguales. Luego, mostrar dos combinaciones diferentes de las columnas de $A$  que den como resultado al vector cero. ¿Cómo pueden expresarse estas características de forma matricial?
+
+
+\item Hallar una matriz $A$ de modo que dos combinaciones diferentes de sus columnas sean iguales. Luego, mostrar dos combinaciones diferentes de las columnas de \A  que den como resultado al vector cero. ¿ Cómo pueden expresarse estas características de forma matricial?
+
+
+\item (Práctica con subíndices)Los vectores $\bi{a}_{1}, \bi{a}_{2}$, \dots, $\bi{a}_{n}$ están en el espacio $m$-dimensional $\R^m$, y la combinación $c_{1}\bi{a}_{1}+\cdots+c_{n}\bi{a}_{n}$ es el vector cero. La afirmación utiliza la notación vectorial, a continuación:
+
+\begin{enumerate}
+\item [$(a)$] Escriba la afirmación en notaci\'on matricial. Use la matriz $A$ con los vectores $\bi{a}_j$ en sus columnas y el vector columna $\bi{c}=(c_{1}$, . . . , $c_{n}$).
+
+\item [$(b)$] Escriba la afirmación en notaci\'on escalar. Use subíndices y notación de sumatoria para sumar. El vector columna $\bi{a}_{j}$ tiene componentes $a_{1j}, a_{2j},\ldots,a_{mj}$.
+\end{enumerate}
+ 
+\item  Suponga que $A=\textbf{unos}(3,3)$ es la matriz de $3 \times 3$ con un 1 en cada posición. Encuentre dos vectores independientes $\bi{x}$ e $\bi{y}$ que sean solución de $A\bi{z} = \bi{0}$. Escriba la ecuación $A\bi{x}= \bi{0}$ como una combinación de las columnas de $A$. ¿ Es posible hallar un tercer vector \bi{w} independiente que satisfaga la ecuación?
+
+\item Las combinaciones lineales de $\bi{v}=(1,1,0)$ y $\bi{w}=(0,1,1)$ completan un plano en $\hbox{\textbf{R}}^{3}$\,:
+
+\begin{itemize}
+\item[(a)] Encuentre un vector $\bi{z}$ que sea perpendicular a $\bi{v}$ y a $\bi{w}$.
+Corrobore que $\bi{z}$ es perpendicular a todos los vectores $c\bi{v}+d\bi{w}$ en el plano, mostrando que ${(c\bi{v}+d\bi{w})^{T}\bi{z}=0+0}$. Con $c,d \in  \hbox{\textbf{R}}.$
+
+\item[(b)] Encuentre un vector $\bi{u}$ que no esté en el plano. Verifique que $\bi{u}^{\mathrm{T}}\bi{z}\neq 0$.
+
+\end{itemize}
+
+\item Si  $(1, 1)$, $(4, 2)$, y $(1, 3)$ son los tres vértices de un paralelogramo, encuentre las tres posibilidades para el cuarto vértice. Grafíquelos.
+
+
+\item Describa el espacio columna de $A=\begin{bmatrix} \bi{v}\ & \bi{w} & \bi{v}+2\bi{w}\end{bmatrix}$, para \bi{v},\bi{w} vectores independientes.
+Describa el espacio nulo de $A$\,: todos los vectores $\bi{x}=(x_{1}, x_{2}, x_{3})$ solución de $A\bi{x}=\bi{0}$. Corrobore que se satisface:
+\[
+\begin{array}{c}\textbf{Dimensión del} \\ \textbf{espacio columna} \end{array} \;\bi{\pmb{+}}\; \begin{array}{c}\textbf{Dimensión del} \\\textbf{espacio nulo}\end{array}
+\;\bi{\pmb{=}}\; \textbf{Cantidad de columnas.}
+\]
+
+
+\item  $A=CR$ es la representación de las columnas de $A$ en la base formada por las columnas de $C$ con coeficientes en $R$. Escriba $A$, $C$ y $R$ para el caso en que $A_{ij} = j^{2}$.
+
+
+\item Sea todo $\hbox{\textbf{R}}^3$ el espacio columna de una matriz $m$ por $n$. ¿\,Qué puede decir sobre $m$ y $n$\,? ¿\,Qué puede decir sobre el rango $r$\,?
+
+\item Encuentre las matrices $C_{1}$ y $C_{2}$ que contengan columnas independientes de $A_{1}$ y $A_{2}$, donde:
+$$
+A_1=\left[\begin{array}{rrr}1&3&-2\\3&9&-6\\2&6&-4\\\end{array}\right]\qquad\qquad A_2=\left[\begin{array}{rrr}1&2&3\\4&5&6\\7&8&9\\\end{array}\right]
+$$
+
+\item Factorice cada una de esas matrices como $A=CR$. Notar que la matriz $R$ contiene los números que multiplicados por las columnas de $C$ recuperan las columnas de $A$.
+
+% Esta es una manera de interpretar la multiplicación de matrices\,: \textbf{$C$ por cada columna de $R$.}
+
+
+\item Halle una base para el espacio columna de $A_{1}$ y de $A_{2}$. ¿\,Cuáles son las {\it dimensiones} de los espacios columna\,? ¿\,Cuáles son los {\it rangos} de $A_{1}$ y $A_{2}$\,? ¿\,Cuántas filas independientes tienen $A_{1}$ y $A_{2}$\,?
+
+\item Encuentre la solución al sistema  $A\bi{x}=\bi{b}$ usando la descomposición $CR$, donde: 
+$$
+A=\left[\begin{array}{rrr}1&2&3\\2&4&6\\1&1&2\\0&1&1\\\end{array}\right]\qquad\qquad \bi{b}=\left[\begin{array}{c}5\\10\\4\\1\\\end{array}\right]
+$$
+\textit{Ayuda:} $A\bi{x} = (CR)\bi{x} = C\bi{y}.$
+
+
+\item Encuentre una matriz $A$ de $4\times 4$ de rango 2. ¿\,Qué tamaño tienen $C$ y $R$\,?
+
+\item Suponga que dos matrices $A$ y $B$ tienen el mismo espacio columna.
+
+(a)\; Muestre que los espacios fila pueden ser diferentes.
+
+(b)\; Muestre que las matrices $C$ (columnas básicas) pueden ser diferentes.
+
+(c)\; ¿\,Qué valor será el mismo para $A$ y $B$\,?
+
+\item Si $A = CR$, la primera fila de $A$ es una combinación de las filas de $R$. ¿\,Qué parte de qué matriz tiene los coeficientes de esa combinación (los números que multiplican las filas de $R$ para producir la fila 1 de $A$)\,?
+
+%\item The rows of $R$ are a basis for the row space of $A$. \emph{What does that sentence mean}\,?\linebreak\vspace{-11pt}% Explain why it is true.
+\item Las filas de $R$ son una base para el espacio fila de $A$. \emph{¿\,Qué significa esta afirmación\,?}
+
+%\item For these matrices with square blocks, find $A=CR$. What ranks\,?
+\item Para las siguientes matrices con bloques cuadrados, encuentre la factorización ${A = CR}$. ?`\,Cu\'ales son los rangos de estas matrices\,?
+
+\vspace{-11pt}
+$$
+A_1=\!\left[\begin{array}{cc}\text{ceros}&\text{unos}\\\text{unos}& \text{unos}\end{array}\right]_{\text{\footnotesize $\bi{4\times 4}$}}\qquad A_2=\!\left[\begin{array}{c}A_1\\A_1\\\end{array}\right]_{\text{\footnotesize $\bi{8\times 4}$}}\qquad A_3=\!\left[\begin{array}{cc}A_1&A_1\\A_1&A_1\\\end{array}\right]_{\text{\footnotesize $\bi{8\times 8}$}}
+$$
+
+%\item If $A=CR$,\index[smbl]{$A=CR$} what are the $CR$ factors of the matrix  $\left[\begin{array}{cc}0&A\\0&A\\\end{array}\right]$\,?
+\item Si $A=CR$, ¿\,cuáles son los factores $CR$ de la matriz  $\left[\begin{array}{cc}0&A\\0&A\\\end{array}\right]$\,?
+
+%\item ``Elimination'' subtracts a number $\ell_{ij}$ times row $j$ from row $i$\,: a ``row operation.'' Show how those steps can reduce the matrix $A$ in Example 4 to $R$ (except that\linebreak this row echelon form $R$ has a row of zeros). The rank won't change\,!
+\item  La {\it eliminación} resta de la fila $i$ un factor $\ell_{ij}$ multiplicado por la fila $j$\,: es una operación por filas.
+Muestre cómo esos pasos pueden reducir la matriz $A$ del Ejemplo 4 a $R$ (tal vez con una fila nula en la matriz escalonada $R$).  Notar que el rango no cambiará.
+$$
+A=\left[\begin{array}{ccc}1&3&8\\1&2&6\\0&1&2\\\end{array}\right]\quad\rightarrow\quad\rightarrow\quad R=\left[\begin{array}{ccc}1&0&2\\0&1&2\\0&0&0\\\end{array}\right]=\textbf{rref}\,(A).
+$$
+
+\newpage
+%This page is about the factorization $A=CR$ and its close relative $A=\bi{CMR}$.\index[smbl]{$A=CMR$}\linebreak As before, $\bi{C}$ has $r$ independent columns taken from $A$. \emph{The new matrix $\bi{R}$ has $r$ independent rows, also taken directly from $A$}. The $r$ by $r$ ``\textbf{mixing matrix}''\index[indx]{Mixing matrix} is $\bi{M}$. This invertible matrix makes $A=\bi{CMR}$ a true equation.
+Esta página es sobre la factorización $A = CR$ y su pariente cercana $A =\bi{C} \bi{M} \bi{R}$\index[smbl]{$A=CMR$}. Al igual que antes, $C$ tiene $r$ columnas independientes de $A$. {\it La nueva matriz} $\bi{R}$ {\it tiene $R$ filas independientes, también de $A$}. La matriz $\bi{M}$ de $r \times r$  es de \textbf{de mezcla}.\index[indx]{Matriz de mezcla} La matriz invertible $\bi{M}$ es la que logra la igualdad $A =\bi{C} \bi{M} \bi{R}$.
+
+
+\vspace{5pt}
+%The rows of $R$ (not bold) were chosen to produce $A=CR$, but those rows of $R$ \emph{did not come directly from} $A$. We will see that $R$ has the form $\bi{MR}$ (bold $\bi{R}$).\linebreak
+Las filas de $R$ (sin negrita) fueron elegidas para producir $A=CR$, pero esas filas de $R$ {\it no provienen directamente de} $A$. Veremos que $R$ es de la forma $\bi{M}\bi{R}$ ($\bi{R}$ negrita).
+%
+% \vspace{-22pt}
+$$
+\begin{array}{c}\textbf{Ejemplo de rango 1}\\A=CR=\bi{CMR}\end{array}\quad \left[\begin{array}{rr}2&4\\3&6\\\end{array}\right]=\left[\begin{array}{r}2\\3\\\end{array}\right]
+\begin{array}{@{\!\,}r@{\!\,}}\left[\begin{array}{rr}1&2\\\end{array}\right]\\\\\end{array}
+=\left[\begin{array}{r}\bi{2}\\\bi{3}\\\end{array}\right]
+\begin{array}{@{\!\,}r}\left[\begin{array}{r}\bi{\frac{1}{2}}\\\end{array}\right]\left[\begin{array}{rr}\bi{2}&\bi{4}\\\end{array}\right]\\\\\end{array}
+$$
+
+%In this case $\bi{M}$ is just $1$ by $1$. How do we find $\bi{M}$ in other examples of $A=\bi{CMR}$\,?\linebreak $\bi{C}$ and $\bi{R}$ are not square. They have \emph{one-sided} inverses.\index[indx]{One-sided inverse} \emph{We invert $\bi{C\transp C}$} and $\bi{RR}\transp$.\linebreak
+
+
+En este caso $\bi{M}$ es de 1 por 1. ¿\,Cómo podemos encontrar $\bi{M}$ en otros ejemplos de $A=\bi{C}\bi{M}\bi{R}$\,?
+
+Usualmente $\bi{C}$ y $\bi{R}$ no son cuadradas.Tienen {\it inversa lateral}.\index[indx]{Inversa lateral} {\it Invertimos}  $\bi{C}\transp\bi{C}$ y $\bi{R}\bi{R}\transp$. De modo que
+
+%\vspace{-11pt}
+%$$
+\begin{align*}
+   \bi{A}\! &=\!\bi{CMR}\\ 
+\bi{C\transp AR\transp}\!&=\!\bi{C\transp C\,M\,RR\transp}\\
+\bi{M}\!&=\!(\bi{C\transp C})^{-1}(\bi{C\transp AR\transp})(\bi{RR\transp})^{-1} \hspace{2 cm} (\ast)
+\end{align*}
+
+% \begin{tabular}{|@{\,}c@{\,}|c|c@{\,}|c}\cline{1-1}\cline{3-3}
+% \!$\bi{A}\!=\!\bi{CMR}\;^{\textcolor{white}{|}}_{\textcolor{white}{|}}\!\!\!$&
+% $\bi{C\transp AR\transp}\!=\!\bi{C\transp C\,M\,RR\transp}$&
+% \!\!\!$\bi{M}\!=\!(\bi{C\transp C})^{-1}(\bi{C\transp AR\transp})(\bi{RR\transp})^{-1}$\scalebox{1}[-1]{\raisebox{-12pt}{\textcolor{white}{|}}}\!\!&($\ast$)\\\cline{1-1}\cline{3-3}
+% \end{tabular}
+
+
+%\quad\; R=\bi{UR}\quad\text{gives}\quad R\bi{R}\transp=\bi{URR}\transp\quad\text{and then}\quad\bi{U}=R\bi{R}\transp(\bi{RR}\transp)^{-1}\hspace{20pt}(\ast)
+%$$
+
+\vspace{5pt}
+%Here are extra problems to give practice with all these rectangular matrices of rank $r$.\linebreak $\bi{C\transp C}$ and $\bi{RR}\transp$ have rank $r$ so they are invertible (see the last page of Section I.3).
+A continuación, se presentan más problemas para practicar con todas estas matrices rectangulares de rango $r$.
+$\bi{C}^{\mathrm{T}}\bi{C}$ y $\bi{R}\bi{R}^{\mathrm{T}}$ tienen rango $r$ y son, por ende, invertibles (vea la última página de la Sección I.3).
+
+%\vspace{-11pt}
+%\item Show that equation ($\ast$) produces $\bi{M}=\left[\begin{array}{r}\frac{1}{2}\\\end{array}\right]$ in the small example above.
+\item Muestre que la ecuación $(*)$ da lugar a $\bi{M}=\left[\begin{array}{r}\frac{1}{2}\\\end{array}\right]$ en el ejemplo anterior.
+
+%\item The rank-$2$ example in the text produced $A=CR$ in equation ($2$)\,:
+\item El ejemplo de rango $2$ en el texto da $A=CR$ en la ecuación (2) :
+%\vspace{-11pt}
+$$
+A=\left[\begin{array}{ccc}1&3&8\\1&2&6\\0&1&2\\\end{array}\right]=\left[\begin{array}{cc}1&3\\1&2\\0&1\\\end{array}\right]\begin{array}{@{\!}l@{\!}}\left[\begin{array}{ccc}1&0&2\\0&1&2\\\end{array}\right]\\\\\end{array}=\bi{C}R
+$$
+
+%Choose rows $1$ and $2$ directly from $A$ to go into $\bi{R}$. Then from equation ($\ast$), find the $2$ by $2$ matrix $\bi{M}$ that produces $A=\bi{CMR}$. Fractions enter the inverse of matrices\,:
+Elija las filas 1 y 2 de $A$ para $\bi{R}$. De la ecuación $(*)$, encuentre la matriz $\bi{M}$ de $2\times 2$ que produce $A= \bi{C} \bi{M} \bi{R}$.
+%\vspace{-11pt}
+
+Recordar que es sencillo calcular la inversa de una matriz invertible de $2\times 2$.
+
+\textbf{Inversa de una matriz $2\times 2$\,:} $\quad\left[\begin{array}{rr}a&b\\c&d\\\end{array}\right]^{-1}=\dfrac{1}{ad-bc}\left[\begin{array}{rr}d&-b\\-c&a\\\end{array}\right]\hspace{39pt}(\ast\ast)$
+
+
+%\vspace{10pt}
+%\item Show that this formula ($\bi{\ast\ast}$) breaks down if $\left[\begin{array}{r}b\\d\\\end{array}\right]=m\left[\begin{array}{r}a\\c\\\end{array}\right]$\,: \emph{dependent columns}.
+\item Muestre que esta fórmula $(**)$ no funciona si $\left[\begin{array}{r}
+b\\
+d
+\end{array}\right] =m \left[\begin{array}{r}
+a\\
+c
+\end{array}\right]$\. Es decir, en el caso que las \emph{columnas} son \emph{dependientes}.
+
+%\item Create a $3$ by $2$ matrix $A$ with rank $1$. Factor $A$ into $A=CR$ and $A=\bi{CMR}$.
+\item Halle una matriz $A$ de $3 \times 2$ de rango 1. Factorice $A$ en $A=CR$ y en $A=\bi{C}\bi{M}\bi{R}$.\linebreak\vspace{-6pt}
+
+%\item Create a $3$ by $2$ matrix $A$ with rank $2$. Factor $A$ into $A=\bi{CMR}$.
+\item Halle una matriz $A$ de $3 \times 2$ de rango 2. Factorice $A$ en $A=\bi{C}\bi{M}\bi{R}$.
+
+\vspace{5pt}
+\hspace{10pt}
+%The reason for this page is that the factorizations $A=CR$ and $A=\bi{CMR}$ have jumped forward in importance for large matrices. When $\bi{C}$ takes columns directly\linebreak from $A$, and $\bi{R}$ takes rows directly from $A$, those matrices preserve properties\linebreak that are lost in the more famous $QR$ and SVD factorizations. Where $A=QR$ and $A=U\Sigma V\transp$ involve orthogonalizing the vectors, $\bi{C}$ and $\bi{R}$ keep the original data\,:\linebreak
+La razón por la que incluimos esta página con una discusión sobre las factorizaciones $A=CR$ y $A=\bi{C}\bi{M}\bi{R}$ se debe a la importancia que han cobrado cuando se trabaja con matrices grandes. Cuando $\bi{C}$ toma las columnas directamente de $A$, y $\bi{R}$ toma las filas directamente de $A$, las matrices preservan propiedades que se pierden en las famosas factorizaciones $QR$ y SVD. Las factorizaciones $A=QR$ y $A= U\Sigma V^{\mathrm{T}}$ involucran ortogonalizar vectores, mientras que $\bi{C}$ y $\bi{R}$ mantienen los datos originales\,:
+
+%\vspace{-19pt}
+% \begin{center}
+% If $A$ is nonnegative,\index[indx]{Nonnegative} so are $\bi{C}$ and $\bi{R}$. \hspace{25pt}
+% If $A$ is sparse,\index[indx]{Sparse} so are $\bi{C}$ and $\bi{R}$.
+% \end{center}
+\hfil\begin{tabular}{l}
+Si $A$ es no negativa,\index[indx]{No negativa} también lo son $\bi{C}$ y $\bi{R}$. \\
+Si $A$ es rala (\emph{sparse}),\index[indx]{Rala}\index[indx]{Sparse} también lo son $\bi{C}$ y $\bi{R}$.
+\end{tabular}
+
+\end{enumerate}
+
+
+\noindent {\bf Problemas extra: }
+
+
+
+\textbf{Ejercicio 1.} Sea la matriz
+\[
+A = \begin{pmatrix}
+1 & 2 \\
+0 & 1 \\
+1 & 3
+\end{pmatrix}
+\quad \text{y los vectores} \quad
+b_1 = \begin{pmatrix} 5 \\ 1 \\ 8 \end{pmatrix},
+\quad
+b_2 = \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix}.
+\]
+\begin{enumerate}
+    \item Determinar si $b_1$ pertenece al espacio columna de $A$.
+    \item Determinar si $b_2$ pertenece al espacio columna de $A$.
+    \item Justificar la respuesta resolviendo el sistema $Ax = b$ en cada caso, o utilizando otro método adecuado.
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\textbf{Ejercicio 2.} Sea la matriz
+\[
+A = \begin{pmatrix}
+1 & 2 & -1 \\
+2 & 4 & 1 \\
+0 & 0 & 1
+\end{pmatrix}
+\quad \text{y el vector} \quad
+b = \begin{pmatrix} a \\ b \\ c \end{pmatrix}.
+\]
+\begin{enumerate}
+    \item ¿Para qué valores de $a$, $b$ y $c$ el sistema $Ax = b$ tiene solución?
+    \item Determinar una relación entre $a$, $b$, y $c$ que garantice que $b$ pertenezca al espacio columna de $A$.
+    \item Escribir un código que, dado un vector $b$, verifique si pertenece al espacio columna de $A$.
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\textbf{Ejercicio 3.} Sea $A \in \mathbb{R}^{50 \times 20}$ una matriz con entradas aleatorias. Sea $x_{\text{true}} \in \mathbb{R}^{20}$ un vector también aleatorio, y se define
+\[
+b = Ax_{\text{true}}.
+\]
+\begin{enumerate}
+    \item Verificar computacionalmente si $b$ pertenece al espacio columna de $A$.
+    \item Resolver el sistema $Ax = b$ y comparar con $x_{\text{true}}$.
+    \item Modificar el vector $b$ sumándole una pequeña perturbación aleatoria: $\tilde{b} = b + \varepsilon$, con $\varepsilon \in \mathbb{R}^{50}$ pequeño. ¿Sigue estando $\tilde{b}$ en el espacio columna de $A$?
+    \item ¿Cómo se puede aproximar una solución en ese caso? Comparar con el caso sin perturbación.
+\end{enumerate}
+
+\textbf{Ejercicio 4.}
+
+Sea la matriz
+\[
+A =
+\begin{pmatrix}
+1 & 2 & 3 \\
+2 & 4 & 6 \\
+1 & 1 & 0 \\
+\end{pmatrix}.
+\]
+
+\begin{enumerate}
+    \item Determinar una base del espacio columna de \( A \), denotado por \( \mathcal{C}(A) \).
+    \item Determinar una base del espacio fila de \( A \), es decir, del espacio generado por las filas de \( A \).
+    \item Determinar el rango de \( A \).
+    \item Elegir las columnas de \( A \) que forman una base del espacio columna y definir la matriz \( C \) formada por esas columnas.
+    \item Hallar una matriz \( R \) tal que \( A = C R \).
+    \item Verificar que la matriz \( R \) representa las coordenadas de las columnas de \( A \) en la base dada por \( C \).
+    \item Discutir: ¿El espacio columna de \( A \) coincide con el de \( C \)? ¿Y el espacio fila?
+\end{enumerate}
+
+
+\section{Sección I.2}
+
+\subsection*{Videos}
+
+\begin{itemize}
+\item \href{https://youtu.be/Rsk_sYM_C6g}{\bf Video 3: Multiplicación matriz-matriz como suma de matrices de rango uno} (17 minutos)
+
+Una nueva forma de multiplicar matrices $AB$: como suma de matrices de rango 1: suma de columnas de $A$
+por filas de $B$. Comparaci\'on con la forma tradicional. ?`Por qu\'e es mas util?. 
+
+Espacio columna de $A$: $C(A)$. Espacio columna de $A^T= $ espacio fila de $A$: $C(A^T)$. Rango de filas = rango de columna.
+
+
+
+
+
+
+\item \href{https://youtu.be/Iq0QD9kXz_8}{\bf Video 4: Factorizaciones útiles. Interpretación como suma de matrices de rango uno} (18 minutos)
+
+Todas las factorizaciones de materices  que veremos en el curso con sus interpretaciones y formas:
+
+\begin{itemize}
+    \item ele$U$: $A=LU$
+    \item cu-erre: $A=QR$
+    \item teorema espectral: $S=Q \Lambda Q^T$
+    \item diagonalizaci\'on de matrices cuadradas: $A=X \Lambda X^{-1}$
+    \item SVD (es-vi-di o ese-ve-de): $A=U\Sigma V^T$
+\end{itemize}
+
+\end{itemize}
+
+\subsection*{Ejercicios}
+\begin{enumerate}
+\item Supogamos que $A\bi{x}= \bi{0}$ y $A\bi{y}= \bi{0}$ (donde $\bi{x}$, $\bi{y}$ y $\bi{0}$ son vectores).
+Escriba estas dos afirmaciones juntas como una ecuaci\'on matricial $AB=C$. ¿\,Quiénes son esas matrices $B$ y $C$? Si la matriz $A$ es de $m \times n$, ¿\,cuáles son los tamaños de $B$ y $C$\,?
+
+
+%\item Suppose $\bi{a}$ and $\bi{b}$ are column vectors with components $a_1,\ldots,a_m$ and $b_1,\ldots,b_p$. Can you multiply $\bi{a}$ times $\bi{b}\transp$ (yes or no)\,? What is the shape of the answer $\bi{ab}\transp$\,? What number is in row $i$, column $j$ of $\bi{ab}\transp$\,? What can you say about $\bi{aa}\transp$\,?
+\item Sean $\bi{a}$ y $\bi{b}$ vectores columna con   componentes $a_{1},\dots, a_{m}$ y $b_{1}, \dots ,b_{p}$.
+¿\,Es posible multiplicar $\bi{a}$ por $\bi{b}^{\mathrm{T}}$\,? ?`\,Cuál es el tamaño de la respuesta $\bi{a}\bi{b}^{\mathrm{T}}$\,?
+¿\,Qué número se encuentra en la fila $i$, columna $j$ de $\bi{a}\bi{b}^{\mathrm{T}}$\,? ¿\,Qué puede decir sobre $\bi{a}\bi{a}^{\mathrm{T}}$\,?
+
+%\item (Extension of Problem \textbf{2}\,: Practice with subscripts) Instead of that one vector $\bi{a}$, suppose you have $n$ vectors $\bi{a}_1$ to $\bi{a}_n$ in the columns of $A$. Suppose you have $n$ vectors $\bi{b}_1\transp,\ldots,\bi{b}_n\transp$ in the rows of $B$.
+\item Continuación del Problema 2\,: Práctica con subíndices. En lugar de un vector $\bi{a}$, suponga que hay $n$ vectores $\bi{a}_{1},\dots,\bi{a}_{n}$ en las columnas de $A$. Suponga que hay $n$ vectores $\bi{b}_{1}^{\mathrm{T}},\dots,,\bi{b}_{n}^{\mathrm{T}}$ en las filas de $B$.
+
+
+\begin{enumerate}\itemsep=0pt
+%\item [(a)] Give a ``sum of rank one'' formula for the matrix-matrix product $AB$.
+\item [(a)] Halle una fórmula de tipo \emph{suma de matrices de rango uno} para el producto matriz-matriz~$AB$.
+
+%\item [(b)] Give a formula for the $i,j$ entry of that matrix-matrix product $AB$. Use sigma notation to add the $i,j$ entries of each matrix $\bi{a}_k\bi{b}_k\transp$, found in Problem 2.\linebreak\vspace{-11pt}
+\item [(b)] Halle la fórmula para el elemento  $i, j$ de ese producto matriz-matriz $AB$. Use notación de sumatoria ($\Sigma$) para sumar los elementos $i, j$ de cada matriz $\bi{a}_{k}\bi{b}_{k}^{\mathrm{T}}$ del Problema 2.
+
+\end{enumerate}
+
+%\item Suppose $B$ has only one column ($p=1$). So each row of $B$ just has one number.\linebreak $A$ has columns $\bi{a}_1$ to $\bi{a}_n$ as usual. Write down the column times row formula\linebreak for $AB$. In words, the $m$ by $1$ column vector $AB$ is a combination of the $\1$.\linebreak\vspace{-11pt}
+\item  Sea $B$ una matriz con una sola columna $(p = 1)$, cada fila tiene un solo número. $A$ tiene columnas $\bi{a}_{1},\dots,\bi{a}_{n}$. Escriba la fórmula tipo columnas por filas de $AB$. En palabras, el vector columna $AB$ de $m$ por 1 es una combinación de \1.
+
+
+%\item Start with a matrix $B$. If we want to take combinations of its rows, we premultiply by $A$ to get $AB$. If we want to take combinations of its columns, we postmultiply by $C$ to get $BC$. For this question we will do both.
+\item Consideremos una matriz $B$. Si queremos tomar combinaciones de sus filas, hay que premultiplicar por $A$ para obtener $AB$. Si se quiere tomar combinaciones de sus columnas, hay que postmultiplicar por $C$ para obtener $BC$. Para este ejercicio tenemos que hacer ambos\,:
+%
+%\hspace{20pt}\textbf{Row operations then column operations}\quad First $AB$ then $(AB)C$
+%
+%\hspace{20pt}\textbf{Column operations then row operations}\quad First $BC$ then $A(BC)$
+\begin{align*}
+&\textbf{Primero por filas y luego por columnas}
+& &\text{primero $AB$ y luego $(AB)C$}
+\\
+&\textbf{Primero por columnas y luego por filas}
+& &\text{primero $BC$ y luego $A(BC)$}
+\end{align*}
+%The \textbf{associative law}\index[indx]{Associative Law} says that we get the same final result both ways.
+La \textbf{ley asociativa}\index[indx]{Ley asociativa} establece que obtendremos el mismo resultado final con ambos métodos.
+
+%Verify $\bi{(AB)C=A(BC)}$ for $A=\left[\begin{array}{@{\;}cc@{\;}}1&a\\0&1\\\end{array}\right]\quad B=\left[\begin{array}{@{\;}cc@{\;}}b_1&b_2\\b_3&b_4\\\end{array}\right]\quad C=\left[\begin{array}{@{\;}cc@{\;}}1&0\\c&1\\\end{array}\right]$.
+Verifique que $\bi{(AB)C = A(BC)}$ para
+$A=\left[\begin{array}{@{\;}cc@{\;}}1&a\\0&1\\\end{array}\right]\quad B=\left[\begin{array}{@{\;}cc@{\;}}b_1&b_2\\b_3&b_4\\\end{array}\right]\quad C=\left[\begin{array}{@{\;}cc@{\;}}1&0\\c&1\\\end{array}\right]$.
+
+%\item If $A$ has columns $\bi{a}_1,\bi{a}_2,\bi{a}_3$ and $B=I$ is the identity matrix, what are the rank one matrices $\bi{a}_1\bi{b}_1^\ast$ and $\bi{a}_2\bi{b}_2^\ast$ and $\bi{a}_3\bi{b}_3^\ast$\,? They should add to $AI=A$.
+\item Si $A$ tiene columnas $\bi{a}_{1}, \bi{a}_{2}, \bi{a}_{3}$ y $B=I$ es la matriz identidad, ¿\,Cuáles son las matrices de rango uno $\bi{a}_{1}\bi{b}_{1}^{*}$, $\bi{a}_{2}\bi{b}_{2}^{*}$ y $\bi{a}_{3}\bi{b}_{3}^{*}$\,? Corroborar que la suma de estas 3 matrices coincide con el producto 
+$AI=A$.
+
+%\item \emph{Fact}\,: The columns of $AB$ are combinations of the columns of $A$. Then the column \emph{space} of $AB$ is \emph{contained in} the column space\index[indx]{Column space} of $A$. Give an example of $A$ and $B$ for which $AB$ has a smaller column space than $A$.
+\item Afirmación\,: Las columnas de $AB$ son combinaciones de las columnas de $A$. Por lo tanto, el \emph{espacio} columna de $AB$ está \emph{contenido} en el espacio columna de $A$. De ejemplos de matrices $A$ y $B$ donde el espacio columna de $AB$ sea menor que el espacio columna de $A$.
+\index[indx]{Espacio columna}
+%\item To compute $C=AB=(m\text{ by } n)\,(n\text{ by } p)$, what order of the same three commands leads to columns times rows (outer products)\,?
+\item Este ejercicio busca analizar el modo en que calculamos $C=AB=(m \times n) (n \times p)$, de forma computacional. Debajo se presentan las órdenes que podrían formar un algorito para realizar el producto a través del producto interno filas por columnas ¿\,Cómo pueden reordenarse las mismas tres instrucciones ``Para'' de modo que se realicen los productos externos columnas por filas\,?
+
+% \begin{center}
+% \begin{tabular}{c@{\hspace{2cm}}c}
+% \textbf{Rows times columns}&\textbf{Columns times rows}\\
+% For $i=1$ to $m$&For\ldots\\
+% For $j=1$ to $p$&For\ldots\\
+% For $k=1$ to $n$&For\ldots\\
+% $C(i, j)=C(i, j)+A(i, k)\ast B(k, j)$&$C=$\\
+% \end{tabular}
+% \index[indx]{Matrix multiplication}
+% \end{center}
+\begin{center}
+\begin{tabular}{c@{\hspace{2cm}}c}
+\textbf{Filas por columnas}&\textbf{Columnas por filas}\\
+Para $i=1$ a $m$ &Para\ldots\\
+Para $j=1$ a $p$ &Para\ldots\\
+Para $k=1$ a $n$ &Para\ldots\\
+$C(i, j)=C(i, j)+A(i, k)\ast B(k, j)$&$C=$\\
+\end{tabular}
+\index[indx]{Multiplicación matricial}
+\end{center}
+\end{enumerate}
+
+
+\section{Sección I.3}
+
+\subsection*{Videos}
+
+\begin{itemize}
+\item \href{https://youtu.be/n0r3I1fTE64}{\bf Video 5: Los cuatro subespacios fundamentales}
+(10 minutos)
+
+Espacio columna de $A$: $C(A)$. Espacio fila de $A$: $C(A^T)$. Espacio nulo de $A$: $N(A)$. Espacio nulo a izquierda de $A$: $C(A^T)$.
+
+Interpretaci\'on geom\'etrica en $\mathbb{R}^2$. Relaci\'on entre los 4 subespacios. Relaci\'on con sistema de ecuaciones. ?`En qué espacio viven dichos subspacios?. Dimensiones de los subespacios fundamentales. 
+
+\item \href{https://youtu.be/E3SiS27K7AE}{\bf Video 6: El rango de $AB$ y el rango de $A+B$}
+(13 minutos) 
+
+?`Cuándo están definidas dichas operaciones? Definici\'on rango (rango del espacio columna). 
+\begin{eqnarray*}
+\hbox{rango}(AB) & \le &\min \{ \hbox{rango}(A), \hbox{rango}(B)\}\\
+\hbox{rango}(A+ B) &\le &\hbox{rango}(A) + \hbox{rango}(B) \\
+\hbox{rango} (A A^T) &=& \hbox{rango} (A^T A)\\
+&=& \hbox{rango}(A)\\
+&=& \hbox{rango}(A^T)
+\end{eqnarray*}
+
+
+$A$ de $m\times r$ de rango $r$ y $B$ de $r\times n$
+de rango $r$ entonces $AB$ tiene rango $r$.
+
+
+
+
+
+
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+    % \item Show that the nullspace of $AB$ contains the nullspace of $B$. \textbf{If $\bi{Bx=0}$ then\ldots}
+\item Demuestre que el espacio nulo de $AB$ contiene al espacio nulo de $B$. \textbf{Si $\bi{Bx=0}$ entonces\ldots}
+% \item Find a square matrix with $\hbox{rank}\,(A^2)<\hbox{rank}\,(A)$. Confirm that $\hbox{rank}\,(A\transp A)=\hbox{rank}\,(A)$.
+\item Encuentre una matriz cuadrada A, que satisfaga que $\hbox{rango}\,(A^2)<\hbox{rango}\,(A)$. Confirme, para tal matriz,  que $\hbox{rango}\,(A\transp A)=\hbox{rango}\,(A)$.
+% \item How is the nullspace of $C$ related to the nullspaces of $A$ and $B$, if $C=\left[\begin{array}{r}A\\B\\\end{array}\right]$\,?
+\item ¿\,Cómo se relaciona el espacio nulo de $C$ con los espacios nulos de $A$ y $B$ si ${C=\left[\begin{array}{r}A\\B\\\end{array}\right]}$\,?
+% \item If row space of $A=$ column space of $A$, and also $\hbox{\textbf{N}}(A)=\hbox{\textbf{N}}(A\transp)$, is $A$ symmetric\,?
+\item Si espacio fila de $A=$ espacio columna de $A$, y  $\hbox{\textbf{N}}(A)=\hbox{\textbf{N}}(A\transp)$, ¿\ $A$ es simétrica\,?
+
+% \item Four possibilities for the rank\index[indx]{Rank} $r$ and size $m,n$ match four possibilities for $A\bi{x}=\bi{b}$.
+\item Existen cuatro posibilidades para el los valores de: rango\index[indx]{Rango} $r$ y tamaño $m,n$. Cada una de ellas, coincide con una posibilidad para los tipos de soluciones de $A\bi{x}=\bi{b}$.
+
+% Find four matrices $A_1$ to $A_4$ that show those possibilities\,:
+Encuentre cuatro matrices $A_1$ a $A_4$ que muestren esas posibilidades:
+
+\begin{center}
+\begin{tabular}{|p{3cm}l|}\hline
+\;&\;\\[-9pt]
+% $\bi{r=m=n}$&$A_1\bi{x}=\bi{b}$\; tiene $\bi{1}$ \textbf{solución para cada} $\bi{b}$\\
+$\bi{r=m=n}$&$A_1\bi{x}=\bi{b}$\; tiene $\bi{1}$ \textbf{soluci\'on para cada} $\bi{b}$\\
+% $\bi{r=m<n}$&$A_2\bi{x}=\bi{b}$\; has $\bi{1}$ \textbf{or $\bi{\infty}$ solutions}\\
+$\bi{r=m<n}$&$A_2\bi{x}=\bi{b}$\; tiene \textbf{$\bi{\infty}$ soluciones}\\
+% $\bi{r=n<m}$&$A_3\bi{x}=\bi{b}$\; has $\bi{0}$ \textbf{or} $\bi{1}$ \textbf{solution}\\
+$\bi{r=n<m}$&$A_3\bi{x}=\bi{b}$\; tiene $\bi{0}$ \textbf{o} $\bi{1}$ \textbf{solución}\\
+% $\bi{r<m,\; r<n}$&$A_4\bi{x}=\bi{b}$\; has $\bi{0}$ \textbf{or} $\bi{\infty}$
+$\bi{r<m,\; r<n}$&$A_4\bi{x}=\bi{b}$\; tiene $\bi{0}$ \textbf{o} $\bi{\infty}$ \textbf{soluciones}\\[5pt]\hline
+\end{tabular}
+\end{center}
+
+%\item Suppose $A\bi{x}=\bi{0}$ whenever $C\bi{x}=\bi{0}$. ``The nullspace of $A\;\1$ the nullspace of $C$.''\linebreak Is there always a matrix $B$ so that $A=BC$\,? Give an example where $A$ and $C$ have different nullspaces. \ceci{ESTE ESTÁ EN EL ORIGINAL? O YA VENIA EN EL ARCHIVO ESCONDIDO CON EL PORCIENTO}
+% \item (\emph{Important}) Show that $\bi{A\transp A}$ \textbf{has the same nullspace as} $\bi{A}$. Here is one approach\,:\linebreak\vspace{-11pt}
+\item (\emph{Importante}) Demuestre que $\bi{A\transp A}$ \textbf{tiene el mismo espacio nulo que} $\bi{A}$. Esta es una manera\,:
+
+
+% First, if $A\bi{x}$ equals zero then $A\transp A\bi{x}$ equals \1. This proves $\hbox{\textbf{N}}(A)\,\bi{\subset}\,\hbox{\textbf{N}}(A\transp A)$.\linebreak\vspace{-11pt}
+Primero, si $A\bi{x}$ es cero entonces $A\transp A\bi{x}$ es igual a \1. Esto prueba que $\hbox{\textbf{N}}(A)\,\bi{\subset}\,\hbox{\textbf{N}}(A\transp A)$.\linebreak\vspace{-8pt}
+
+% Second, if $A\transp A\bi{x}=\bi{0}$ then $\bi{x}\transp A\transp A\bi{x}=||A\bi{x}||^2=0$. Deduce $\hbox{\textbf{N}}(A\transp A)=\,\hbox{\textbf{N}}(A)$.\index[smbl]{$\hbox{\textbf{N}}(A\transp A)=\,\hbox{\textbf{N}}(A)$}\linebreak\vspace{-11pt}
+Segundo, si $A\transp A\bi{x}=\bi{0}$, entonces $\bi{x}\transp A\transp A\bi{x}=||A\bi{x}||^2=0$. Deduzca $\hbox{\textbf{N}}(A\transp A)=\,\hbox{\textbf{N}}(A)$.\index[smbl]{$\hbox{\textbf{N}}(A\transp A)=\,\hbox{\textbf{N}}(A)$}\linebreak\vspace{-11pt}
+% \item Do $A^2$ and $A$ always have the same nullspace\,? $A$ is a square matrix.
+\item ¿\,Tienen $A^2$ y $A$ siempre el mismo espacio nulo\,? Donde  $A$ es una matriz cuadrada.
+% \item Find the column space $\hbox{\textbf{C}}(A)$ and the nullspace $\hbox{\textbf{N}}(A)$ of  $A=\left[\begin{array}{cc}\bi{0}&\bi{1}\\\bi{0}&\bi{0}\\\end{array}\right]$. Remember that those are vector spaces, not just single vectors. This is an unusual example with $\hbox{\textbf{C}}(A)=\textbf{N}(A)$. It could not happen that $\hbox{\textbf{C}}(A)=\hbox{\textbf{N}}(A\transp)$ because those two subspaces are orthogonal.
+\item Encuentre el espacio columna $\hbox{\textbf{C}}(A)$ y el espacio nulo $\hbox{\textbf{N}}(A)$ de  $A=\left[\begin{array}{cc}\bi{0}&\bi{1}\\\bi{0}&\bi{0}\\\end{array}\right]$. Recuerde que son espacios vectoriales, no vectores aislados. Este es un ejemplo inusual en el que $\hbox{\textbf{C}}(A)=\textbf{N}(A)$. Notar que no podría ocurrir que $\hbox{\textbf{C}}(A)=\hbox{\textbf{N}}(A\transp)$, porque estos dos subespacios son ortogonales.
+%\item Give examples $A_1$ to $A_4$ of all possible relations of the rank $r$ to the size $m, n$\,:
+%
+%\vspace{-16pt}
+%$$
+%\begin{array}{cccc}
+%\bi{r=m=n}\qquad&\bi{r=n<m}\qquad&\bi{r=m<n}\qquad&\bi{r<m, r<n}\\
+%\multicolumn{4}{l}{\text{In each case, how many solutions to } A\bi{x}=\bi{b} (\text{ possibly depending on }\bi{b})\,?}\\
+%\bi{1}\textbf{ solution } \bi{x=A^{-1}b}&\hspace{-22pt}?&\hspace{-22pt}?&\hspace{5pt}?\\
+%\end{array}
+%$$
+%	\item Suppose the $m$ by $n$ matrices $A$ and $B$ have the \emph{same nullspace}. Remember that each vector $\bi{x}$ in that nullspace is orthogonal to the rows of $A$ and also orthogonal to the rows of $B$\,:
+
+%	\vspace{-9pt}
+%	$$A\bi{x}=\!\left[\begin{array}{@{\;}c@{\;}}\text{row } 1\text{ of }A\\[-3pt]\bfcdot\\[-6pt]\bfcdot\\[-2pt]\text{row } m\text{ of }A\end{array}\right]\left[\begin{array}{@{\,}c@{\,}}\\\bi{x}\\\\\end{array}\right]\!=\!\left[\begin{array}{@{\;}c@{\;}}0\\[-3pt]\bfcdot\\[-6pt]\bfcdot\\[-2pt]0\\\end{array}\right] \quad\text{and}\quad B\bi{x}=\!\left[\begin{array}{@{\;}c@{\;}}\text{row } 1\text{ of } B\\[-3pt]\bfcdot\\[-6pt]\bfcdot\\[-2pt]\text{row } m\text{ of } B\end{array}\right]\left[\begin{array}{@{\,}c@{\,}}\\\bi{x}\\\\\end{array}\right]\!=\!\left[\begin{array}{@{\;}c@{\;}}0\\[-3pt]\bfcdot\\[-6pt]\bfcdot\\[-2pt]0\\\end{array}\right]$$
+
+%Those rows are the columns of $A\transp$ and $B\transp$. Why are the column spaces of $A\transp$ and $B\transp$ the same\,? Can we conclude that $A=B$\,?%\linebreak\vspace{-11pt}
+
+% \item Draw a square and connect its corners to the center point\,: $5$ nodes and $8$ edges.\linebreak Find the $8$ by $5$ incidence matrix $A$ of this graph (rank $r=5-1=4$).\linebreak Find a vector $\bi{x}$ in $\hbox{\textbf{N}}(A)$ and $8-4$ independent vectors $\bi{y}$ in $\hbox{\textbf{N}}(A\transp)$.
+\item Dibuje un cuadrado y conecte sus esquinas con el punto central: $5$ nodos y $8$ aristas.
+Halle la matriz de incidencia de $A$ de $8$ por $5$ de este grafo (rango $r=5-1=4$).\linebreak Encuentre un vector $\bi{x}$ perteneciente a $\hbox{\textbf{N}}(A)$ y $8-4$ vectores independientes $\bi{y}$ pertenecientes a $\hbox{\textbf{N}}(A\transp)$.
+
+
+% \item If $\hbox{\textbf{N}}(A)$ is the zero vector, what vectors are in the nullspace of $B=[A\;\;A\;\;A]$\,?
+\item Si $\hbox{\textbf{N}}(A)$ es el subespacio que contiene solamente al vector cero, ¿\,Qué vectores se encuentran en el espacio nulo de $B=[A\;\;A\;\;A]$\,?
+
+%\item Every column of $AB$ is a combination of the columns of $A$.
+%\begin{itemize}
+%\item [(a)] What does this say about the column spaces $\hbox{\textbf{C}}(AB)$ and $\hbox{\textbf{C}}(A)$\,?
+%\item [(b)] What can you say about the nullspaces $\hbox{\textbf{N}}(AB)$ and $\hbox{\textbf{N}}(B)$---not about  $\hbox{\textbf{N}}(A)$\,?
+%\end{itemize}
+
+% \item For subspaces $\hbox{\textbf{S}}$ and $\hbox{\textbf{T}}$ of $\hbox{\textbf{R}}^{10}$ with dimensions $2$ and $7$, what are all the possible dimensions of%\linebreak
+\item Si $\hbox{\textbf{S}}$ y $\hbox{\textbf{T}}$ son subespacios de $\hbox{\textbf{R}}^{10}$ con dimensiones $2$ y $7$, ?`\,Cuáles son las posibles dimensiones de los siguientes subespacios\,? %\linebreak
+
+\vspace{-3pt}
+\begin{itemize}
+% 	\item [(i)] $\hbox{\textbf{S}}\bi{\,\cap\,} \hbox{\textbf{T}}=$\index[smbl]{$\hbox{S}\,+\,\hbox{T}, \hbox{S}\,\cap\,\hbox{T},\hbox{S}^{\bot}$} \{all vectors that are in both subspaces\}
+	\item [(i)] $\hbox{\textbf{S}}\bi{\,\cap\,} \hbox{\textbf{T}}=$\index[smbl]{$\hbox{S}\,+\,\hbox{T}, \hbox{S}\,\cap\,\hbox{T},\hbox{S}^{\bot}$} \{todos los vectores que están en ambos subespacios\}
+% 	\item [(ii)] $\hbox{\textbf{S}}\bi{\,+\,}\hbox{\textbf{T}}=$\,\index[smbl]{$\hbox{S}\,+\,\hbox{T}, \hbox{S}\,\cap\,\hbox{T},\hbox{S}^{\bot}$} \{all sums $s+t$ with $s$ in $\hbox{\textbf{S}}$ and $t$ in $\hbox{\textbf{T}}$\}
+\item [(ii)] $\hbox{\textbf{S}}\bi{\,+\,}\hbox{\textbf{T}}=$\,\index[smbl]{$\hbox{S}\,+\,\hbox{T}, \hbox{S}\,\cap\,\hbox{T},\hbox{S}^{\bot}$} \{todas las sumas de $s+t$ con $s$ en $\hbox{\textbf{S}}$ y $t$ en $\hbox{\textbf{T}}$\}
+% 	\item [(iii)] $\bi{\hbox{\textbf{S}}^{\pmb{\bot}}}=$\index[smbl]{$\hbox{S}\,+\,\hbox{T}, \hbox{S}\,\cap\,\hbox{T},\hbox{S}^{\bot}$} \{all vectors in $\hbox{\textbf{R}}^{10}$ that are perpendicular to every vector in $\hbox{\textbf{S}}$\}.
+\item [(iii)] $\bi{\hbox{\textbf{S}}^{\pmb{\bot}}}=$\index[smbl]{$\hbox{S}\,+\,\hbox{T}, \hbox{S}\,\cap\,\hbox{T},\hbox{S}^{\bot}$} \{todos los vectores de $\hbox{\textbf{R}}^{10}$ que son perpendiculares a todos los vectores de $\hbox{\textbf{S}}$\}.
+\end{itemize}
+
+\end{enumerate}
+
+
+
+
+
+
+
+\section{Sección I.4}
+
+\subsection*{Videos}
+
+\begin{itemize}
+\item \href{https://youtu.be/xufm3lvZqaw}{\bf Video 7: eliminaci\'on gaussiana. Resolver $Ax=b$.} (18 minutos)
+
+Interpretaci\'on geom\'etrica.  Soluci\'on \'unica con columnas linealmente independientes. Resolviendo $Ax=b$ via eliminaci\'on gaussiana.
+
+
+\item \href{https://youtu.be/nIZDjqLbCHk}{\bf Video 8: factorizaci\'on $A=LU$.} (35 minutos)
+
+Desde eliminaci\'on gaussiana a factorizaci\'on $A=LU$. ?`La descomposici\'on nos dice que sistemas equivalente resolvemos? Pasos para eliminaci\'on gaussiana y factorizaci\'on $A=LU$
+
+
+
+\item \href{https://youtu.be/thrYutfux9Q}{\bf Video 9: factorizaci\'on $A=LU$ con intercambio de filas} (36 minutos) 
+
+Permutaciones. Pivoteo parcial. $PA=LU$.
+
+
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+    
+% \item Factor these matrices into $A=LU$\,:
+\item Halle la factorización $A=LU$ de las siguientes matrices\,:
+
+\vspace{-7pt}
+$$
+A=\left[\begin{array}{rr}2&1\\6&7\\\end{array}\right]\qquad A=\left[\begin{array}{rrr}1&1&1\\1&1&1\\1&1&1\\\end{array}\right]\qquad A=\left[\begin{array}{rrr}2&-1&0\\-1&2&-1\\0&-1&2\\\end{array}\right]
+$$
+% \item If $a_{11},\ldots,a_{1n}$ is the first row of a rank-$1$ matrix $A$ and $a_{11},\ldots,a_{m1}$ is the first column, \emph{find a formula for} $a_{ij}$. Good to check when $a_{11}=2, a_{12}=3, a_{21}=4$. When will your formula break down\,? %Then rank $1$ is impossible or not unique.\linebreak\vspace{-11pt}
+\item Si $a_{11},\ldots,a_{1n}$ es la primera fila de una matriz $A$ de rango $1$ y $a_{11},\ldots,a_{m1}$ es la primera columna, \emph{encuentre una fórmula para} $a_{ij}$. Verifique la fórmula en el caso $a_{11}=2, a_{12}=3, a_{21}=4$. ?`Cuándo no funcionará la fórmula?
+%Then rank $1$ is impossible or not unique.\linebreak\vspace{-11pt}
+% \item What lower triangular matrix $E$ puts $A$ into upper triangular form $EA=U$\,?\linebreak Multiply by $E^{-1}=L$ to factor $A$ into $LU$\,:
+\item ¿\,Qué matriz triangular inferior $E$ transforma $A$ en una triangular superior $EA=U$\,?
+%Multiplique por $E^{-1}=L$ para factorizar $A$ como $LU$\,:
+%
+% \vspace{-7pt}
+$$
+A=\left[\begin{array}{rrr}2&1&0\\0&4&2\\6&3&5\\\end{array}\right]
+$$
+
+% \item \textbf{This problem shows how the one-step inverses multiply to give $\bi{L}$}. You see this best when $A=L$ is already lower triangular with 1's on the diagonal. \textbf{Then $\bi{U=I}$}\,:\linebreak\vspace{-4pt}
+\item \textbf{Este problema muestra cómo se multiplican las inversas de cada paso para obtener $\bi{L}$}. Esto es claro cuando $A=L$ ya es una matriz triangular inferior con unos en la diagonal.
+En este caso,  $\bi{U=I}$: 
+
+\begin{displaymath}
+% \text{Multiply }  A=\begin{bmatrix}
+\hbox{Premultiplique }  A=\begin{bmatrix}
+    1 & 0 & 0\\ a & 1 & 0\\ b & c & 1
+  \end{bmatrix} \text{ por } E_1=
+  \begin{bmatrix}
+  1& 0& 0\\-a&1&0\\-b&0&1
+\end{bmatrix}
+\end{displaymath}
+
+\begin{displaymath}
+\hbox{Luego, premultiplique ese resutado por } E_2=
+  \begin{bmatrix}1&0&0\\0&1&0\\0&-c&1\\
+  \end{bmatrix}.
+\end{displaymath}
+
+Observar que el resultado es una matriz triagular superior.
+
+%
+%The elimination matrices $E_{21},E_{31},E_{32}$ contain $-a$ then
+%$-b$ then $-c$.
+%
+
+\begin{itemize}
+% \item[(a)] Multiply $E_{2}E_{1}$ to find the single
+%   matrix $E$ that produces $EA=I$.
+\item[(a)] Multiplique $E_{2}E_{1}$ para encontrar la matriz $E$ que produce $EA=I$.
+\item[(b)] Calcule $(E_2E_1)^{-1}$ para encontrar la matriz $A=L$.
+\end{itemize}
+
+% \textbf{The multipliers\index{Multiplier} $\bi{a, b, c}$ are mixed up in $\bi{E=L^{-1}}$ but they are perfect in $\bi{L}$}.
+\textbf{Los multiplicadores\index{Multiplicador} $\bi{a, b, c}$ están mezclados en $\bi{E=L^{-1}}$ pero est\'an perfectos en $\bi{L}$}.
+%\pagebreak
+
+%\eject
+
+% \item \emph{When zero appears in a pivot position}, $A=LU$\index[smbl]{$A=LU$} \emph{is
+% not possible}! (We are requiring nonzero pivots in $U$.) Show
+% directly why these $LU$ equations are both impossible:\linebreak\vspace{-2pt}
+\item \emph{La factorización} $A=LU$\index[smbl]{$A=LU$} \emph{no es posible cuando aparece cero en una posición pivote} (es necesario que los pivotes sean distintos de cero en $U$). Demuestre por qué en estos ejemplos las descomposiciones $LU$ son imposibles\,: %\linebreak\vspace{-2pt}
+%
+\begin{displaymath}
+  \begin{bmatrix} 0 & 1\\ 2 & 3\end{bmatrix}=
+  \begin{bmatrix} 1 & 0\\ \ell & 1\end{bmatrix}
+  \begin{bmatrix} d & e\\ 0 & f\end{bmatrix}
+  \qquad\begin{bmatrix} 1 & 1 & 0\\ 1 & 1 & 2\\
+    1 & 2 & 1\end{bmatrix}=\begin{bmatrix} 1\\
+    \ell & 1\\ m & n & 1\end{bmatrix}
+  \begin{bmatrix} d & e & g\\
+    & f & h\\ && i\end{bmatrix}.
+\end{displaymath}
+% These matrices need a row exchange by a \emph{permutation matrix} $P$.
+Estas matrices necesitan un intercambio de filas utilizando una \emph{matriz de permutación} $P$.
+
+% \item Which number $c$ leads to zero in the second pivot
+%   position? A row exchange is needed and $A=LU$ will not be possible.
+%   Which $c$ produces zero in the third pivot position?
+%   Then a row exchange can't help and elimination fails\,:
+
+
+\item
+Considere la siguiente matriz:
+\begin{displaymath}
+  A=\begin{bmatrix}
+    1 & c & 0\\ 2 & 4 & 1\\ 3 & 5 & 1
+  \end{bmatrix}.
+\end{displaymath}
+
+\begin{itemize}
+\item[(a)]¿\,Qué número $c$ hace que sea cero la segunda posición pivote\,?
+  En este caso, se necesitaría un intercambio de filas ya que no sería posible realizar $A=LU$.
+  
+\item[(b)]¿\,Qué $c$ produce un cero en la tercera posición pivote\,?
+  En este caso, un intercambio de filas no sirviría y la eliminación fallaría\,:
+\end{itemize}
+%
+%\item (\emph{Recommended})\, Compute $L$ and $U$ for this symmetric
+%matrix $A$:
+%
+
+\item (\emph{Recomendado})\, Calcule $L$ y $U$ para la matriz sim\'etrica $A$\,:
+\begin{displaymath}
+  A=\begin{bmatrix} a & a & a & a\\ a & b & b & b\\
+    a & b & c & c\\ a & b & c & d\end{bmatrix}.
+\end{displaymath}
+%
+%Find four conditions on $a,b,c,d$ to get $A=LU$ with four nonzero pivots.
+Encuentre condiciones sobre $a,b,c,d$ para obtener $A=LU$ con cuatro pivotes no nulos.\linebreak\vspace{-11pt}
+%\item \emph{Tridiagonal
+%    matrices}\index[indx]{Tridiagonal} have zero entries except
+%  on the main diagonal and the two adjacent diagonals. Factor
+%  these into $A=LU$. Symmetry further produces $A=LDL\transp $:
+
+\item Las \emph{matrices tridiagonales}\index[indx]{Tridiagonal} tienen ceros en todas las posiciones excepto en la diagonal principal y las dos diagonales adyacentes. Factorice las siguientes matrices como $A=LU$.
+Luego, corrobore que se satisface que $A=LDL\transp$, para alguna matriz diagonal $D$\,:
+
+\vspace{-11pt}
+\begin{displaymath}
+  A=\begin{bmatrix}
+    1 & 1 & 0\\ 1 & 2 & 1\\ 0 & 1 & 2\end{bmatrix}
+  \quad\hbox{y}\quad A=
+  \begin{bmatrix} a & a & 0\\ a & a+b & b\\
+    0 & b & b+c\end{bmatrix}.
+\end{displaymath}
+
+
+%\item \emph{Easy but important.}
+%If $A$ has pivots $5,9,3$ with no row exchanges,
+%what are the pivots for the upper left $2$ by $2$
+%submatrix $A_2$ (without row $3$ and column $3$)?
+\item \emph{F\'acil pero importante.}
+Si $A$ tiene pivotes $5,9,3$ sin hacer intercambio de filas,
+?`Cuales son los pivotes para la submatriz superior izquierda de
+$2$ por $2$ $A_2$ (es decir, la matriz que resulta de quitarle a $A$ la fila $3$ y la columna $3$)?
+
+%\item Which invertible matrices allow $A=LU$
+%(elimination without row exchanges)? \emph{Good question}\,!
+%Look at each of the square upper left submatrices $A_1, A_2,\ldots,A_n$.\linebreak\vspace{-11pt}
+\item Este ejercicio propone estudiar qu\'e matrices invertibles permiten la descomposici\'on $A=LU$
+(eliminaci\'on sin intercambio de filas) ¡Es una buena pregunta!
+Observe cada una de las submatrices cuadradas superiores izquierdas $A_1, A_2,\ldots,A_n$. %\linebreak\vspace{-11pt}
+
+
+% \vspace{2ex}
+% \noindent
+%\mbox{\embf{\color{bleu}
+%All upper left submatrices $\bi{A_k}$
+%must be invertible\,: \textbf{sizes} $\bi{1}$ by $\bi{1, 2}$ by  %$\bi{2,\ldots,n}$ by $\bi{n}$.}}
+\vspace{-9pt}
+\begin{center}
+\begin{tabular}{c}\embf{
+Todas las submatrices superiores izquierdas $\bi{A_k}$
+deben ser invertibles\,:} \\
+\embf{
+la de tamaño $1 \times 1$, la de $2 \times 2$, $\ldots$, la de $\bi{n} \times \bi{n}$.
+}
+\end{tabular}
+\end{center}
+% \mbox{\embf{\color{bleu}
+% Todas las submatrices superiores izquierdas $\bi{A_k}$
+% deben ser invertibles\,: la de $\bi{1}$ por $\bi{1, 2}$ por  $\bi{2,\ldots,n}$ por $\bi{n}$.}}
+
+\vspace{-9pt}
+%\vspace{1.5ex}\noindent
+%Explain that answer: $A_k$ factors into \1 because $LU=\left[
+%\begin{array}{ll}
+%L_k & 0	\\
+%\ast & \ast
+%\end{array}
+%\right]\left[
+%\begin{array}{ll}
+%U_k & \ast	\\
+%0 & \ast
+%\end{array}
+%\right]$.
+
+
+%\vspace{1.5ex}
+\noindent
+Explique la respuesta\,: $A_k$ se factoriza como  \1  ya que $LU=\left[
+\begin{array}{ll}
+L_k & 0	\\
+\ast & \ast
+\end{array}
+\right]\left[
+\begin{array}{ll}
+U_k & \ast	\\
+0 & \ast
+\end{array}
+\right]$.
+
+
+%\item
+%In some data science applications, the first pivot is the \emph{largest number $|a_{ij}|$ in} $A$.\linebreak Then row $i$ becomes the first pivot row $\bu_1^*$. Column $j$ is the first pivot column. Divide that column by $a_{ij}$ so $\bi{\ell}_1$ has $1$ in row $i$. Then remove that $\bi{\ell_1}\bu_1^\ast$ from $A$.\linebreak\vspace{-11pt}
+
+
+\item En algunas aplicaciones de ciencia de los datos, el primer pivote es el \emph{mayor n\'umero $|a_{ij}|$ de} $A$. %\linebreak
+La fila $i$ se convierte en la primera fila pivote $\bu_1^*$. La columna $j$ es la primera columna pivote. Se divide esta columna por $a_{ij}$ de manera que $\bi{\ell}_1$ tiene un $1$ en la fila $i$. Luego se resta
+  $\bi{\ell_1}\bu_1^\ast$ de $A$. %\linebreak\vspace{-11pt}
+
+\hspace{6pt}
+En este ejemplo $a_{22}=4$ es el primer pivote $(i=j=2)$. Dividiendo por $4$ se obtiene $\bi{\ell}_1$\,:%\linebreak
+\vspace{-4pt}
+$$
+\!\left[\begin{array}{@{\,}rr@{\,}}1&2\\3&\bi{4}\\\end{array}\right]\!=\!\left[\begin{array}{@{\,}c@{\,}}1/2\\1\end{array}\right]\begin{array}{@{\!}c}\left[\begin{array}{@{\,}rr@{\,}}3&\bi{4}\\\end{array}\right]\\\\\end{array}\!+\left[\begin{array}{@{\,}cc@{\,}}-1/2&0\\0&0\\\end{array}\right]\!=\bi{\ell}_1\bu_1^*+\bi{\ell}_2\bu_2^*=\!\left[\begin{array}{@{\,}cc@{\,}}1/2&1\\1&0\\\end{array}\right]\!\left[\begin{array}{@{\,}cc@{\,}}3&4\\-1/2&0\\\end{array}\right]
+$$
+%For this $A$, both $L$ and $U$ involve permutations.\index[indx]{Permutation} $P_1$ exchanges the rows to give $L$.\linebreak $P_2$ exchanges the columns to give an upper triangular $U$. Then $\bi{P_1AP_2=LU}$.\linebreak\vspace{-22pt}
+Observar que las matrices $A$, $L$ y $U$ contienen permutaciones.\index[indx]{Permutación} $P_1$ intercambia las filas para obtener $L$. %\linebreak
+$P_2$ intercambia las columnas para obtener la matriz triangular superior $U$. Entonces $\bi{P_1AP_2=LU}$. %\linebreak\vspace{-22pt}
+\vspace{-7pt} %
+$$\textbf{Permutadas de antemano}\qquad \bi{P_1AP_2}=\left[\begin{array}{@{\;}cc@{\;}}1&0\\1/2&1\\\end{array}\right]\left[\begin{array}{@{\;}cc@{\;}}4&3\\0&-1/2\\\end{array}\right]=\left[\begin{array}{@{\;}cc@{\;}}\bi{4}&\bi{3}\\\bi{2}&\bi{1}\\\end{array}\right]$$
+ %
+%\vspace{-5pt}
+%Question for $A=\left[\begin{array}{@{\,}rr@{\,}}\bi{1}&\bi{3}\\\bi{2}&\bi{4}\\\end{array}\right]$\,: Apply complete pivoting to produce $P_1AP_2=LU$.
+%
+\vspace{-9pt}
+Sea $A=\left[\begin{array}{@{\,}rr@{\,}}\bi{1}&\bi{3}\\\bi{2}&\bi{4}\\\end{array}\right]$\,. Aplique pivoteo completo para producir $P_1AP_2=LU$.
+
+
+\vspace{5pt}
+%\item If the short wide matrix $A$ has $m<n$, how does elimination show that there are\linebreak nonzero solutions to $A\bi{x}=\bi{0}$\,? What do we know about the dimension of that\linebreak ``nullspace of $A$'' containing all solution vectors $\bi{x}$\,? The nullspace dimension is at least \1.
+
+
+\item Decimos que una matriz $A$ de $m\times n$  es baja y ancha cuando $m<n$, ?`C\'omo se ve a partir del proceso de eliminaci\'on que hay soluciones no nulas de  $A\bi{x}=\bi{0}$\,? ?`Qu\'e sabe acerca de la dimensi\'on del espacio nulo de $A$? La dimensi\'on del espacio nulo es al menos \1.
+
+%\emph{Suggestion}\,: First create a specific $2$ by $3$ matrix $A$ and ask those questions about $A$.
+
+
+\emph{Sugerencia}\,: Primero construya una matriz $A$ de $2 \times 3$ y h\'agase esas preguntas sobre $A$.
+
+\end{enumerate}
+
+
+\section{Sección I.5}
+
+\subsection*{Videos}
+
+\begin{itemize}
+    \item \href{https://youtu.be/TsGFpKJCimk}{\bf Video 10: Ortogonalidad} (24 minutos)
+    
+    
+    Definici\'on de vectores ortogonales reales y complejos. Producto interno. Norma. Pit\'agoras. 
+    
+    Bases ortogonales. Bases ortonormales. Base can\'onica. Matrices de Hadamard. Conjetura de Hadamard.
+    
+    Proyecciones ortogonales sobre subspacios. Forma matricial de la misma. 
+    
+    Proceso de ortogonalizaci\'on de Gram-Smith.
+    
+    El espacio fila de $A$ es ortogonal al espacio nulo de $A$: $C(A)$ ortogonal a $N(A)$. El espacio columna de $A$ es ortogonal al espacio nulo de $A^T $
+    
+    Matrices ortogonales: definici\'on y equivalencia $Q^T=Q^{-1}$
+    
+    
+    \item \href{https://youtu.be/pMY5LI-1c-Q}{\bf Video 11: Matrices ortogonales} (25 minutos)
+    
+    Matrices ortogonales: definici\'on y equivalencia $Q^T=Q^{-1}$
+    
+    Matrices altas y delgadas con columnas ortogonales. Semiortogonales. Proyecciones: $P=QQ^T$ satisface $P=P^T=P^2$.  
+    
+    Matrices ortogonales famosas: rotaciones, reflexiones, reflexiones de Householder, interpretaci\'on geom\'etrica. 
+    
+    Coeficientes en una base ortonormal.
+\end{itemize}
+
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+% \item If $\bu$ and $\bv$ are orthogonal unit vectors, show that $\bu+\bv$ is orthogonal to $\bu-\bv$.\linebreak What are the lengths of those vectors\,?
+\item Si $\bu$ y $\bv$ son vectores unitarios ortogonales, demuestre que $\bu+\bv$ es ortogonal a $\bu-\bv$.\linebreak\vspace{-5pt}
+¿Cuáles son las magnitudes de esos vectores\,?
+
+% \item Draw unit vectors $\bu$ and $\bv$ that are \emph{not} orthogonal. Show that $\bw=\bv-\bu(\bu\transp\bv)$ is orthogonal to $\bu$ (and add $\bw$ to your picture).
+\item Dibuje dos vectores unitarios $\bu$ y $\bv$ que \emph{no sean} ortogonales. Muestre que $\bw=\bv-\bu(\bu\transp\bv)$ es ortogonal a $\bu$ (y agregue $\bw$ al gráfico).
+
+% \item Draw any two vectors $\bu$ and $\bv$ out from the origin $(0,0)$. Complete two more sides\linebreak to make a parallelogram with diagonals $\bw=\bu+\bv$ and $\bi{z}=\bu-\bv$. Show that\linebreak $\bw\transp\bw+\bi{z}\transp\bi{z}$ is equal to $2\bu\transp\bu+2\bv\transp\bv$.
+\item Dibuje dos vectores $\bu$ y $\bv$ cualesquiera a partir del origen $(0,0)$. Complete dos lados más para hacer un paralelogramo con diagonales $\bw=\bu+\bv$ y $\bi{z}=\bu-\bv$. Muestre que $\bw\transp\bw+\bi{z}\transp\bi{z}$ es igual a $2\bu\transp\bu+2\bv\transp\bv$.
+
+% \item Key property of every orthogonal matrix\,:\index[indx]{Orthogonal matrix} $||Q\bi{x}||^2=||\bi{x}||^2$ for every vector $\bi{x}$.\linebreak More than this, show that $(Q\bi{x})\transp(Q\bi{y})=\bi{x}\transp\bi{y}$ for every vector $\bi{x}$ and $\bi{y}$. So\linebreak \emph{lengths and angles are not changed by $Q$}. \textbf{Computations with $\bi{Q}$ never overflow\,!}\linebreak\vspace{-11pt}
+\item Propiedad clave de toda matriz ortogonal\,:\index[indx]{Matriz ortogonal} $||Q\bi{x}||^2=||\bi{x}||^2$ para todo vector $\bi{x}$. Más aún, muestre que $(Q\bi{x})\transp(Q\bi{y})=\bi{x}\transp\bi{y}$ para todo vector $\bi{x}$ y $\bi{y}$. Entonces \emph{$Q$ no modifica las magnitudes ni los ángulos}. \textbf{!`Los cálculos con $\bi{Q}$ nunca se desbordan\,!} %\linebreak\vspace{-11pt}
+
+% \item If $Q$ is orthogonal, how do you know that $Q$ is invertible and $Q^{-1}$ is also orthogonal\,?
+\item Si $Q$ es ortogonal, ¿cómo sabe que $Q$ es invertible y que $Q^{-1}$ también es ortogonal\,?
+
+% \vspace{-6pt}
+% If $Q_1\transp=Q_1^{-1}$ and $Q_2\transp=Q_2^{-1}$, show that $Q_1Q_2$ is also an orthogonal matrix.
+Si $Q_1\transp=Q_1^{-1}$ y $Q_2\transp=Q_2^{-1}$, demuestre que $Q_1Q_2$ también es una matriz ortogonal.
+
+% \item A \textbf{permutation matrix}\index[indx]{Permutation} has the same columns as the identity matrix (in some order).\linebreak \emph{Explain why this permutation matrix and every permutation matrix is orthogonal}\,:\linebreak\vspace{-4pt}
+\item Una \textbf{matriz de permutación}\index[indx]{Permutación} tiene las mismas columnas que una matriz identidad (en algún orden). %\linebreak
+\emph{Explique por qué esta y todas las matrices de permutación son ortogonales}\,:\linebreak\vspace{-4pt}
+%
+%\vspace{-21pt}
+$$
+P\!=\!\!\left[\begin{array}{@{\,}rrrr@{\,}}0&1&0&0\\0&0&1&0\\0&0&0&1\\1&0&0&0\\\end{array}\right] \text{tiene columnas ortonormales entonces } P\transp P\!=\!\1\text{ y } P^{-1}\!=\!\1.
+$$
+%
+%\vspace{-2pt}
+% When a matrix is symmetric or orthogonal, \textbf{it will have orthogonal eigenvectors}.\linebreak This is the most important source of orthogonal vectors in applied mathematics.\linebreak\vspace{-11pt}
+Cuando una matriz es simétrica u ortogonal, \textbf{tendrá autovectores ortogonales}. %\linebreak
+Esta es la fuente más importante de vectores ortogonales en matemática aplicada. %\linebreak\vspace{-11pt}
+
+% \item Four eigenvectors of that matrix $P$ are $\bi{x}_1=(1,1,1,1), \bi{x}_2=(1, i, i^2, i^3),\linebreak \bi{x}_3=(1, i^2, i^4,i^6),$ and $\bi{x}_4=(1, i^3, i^6, i^9)$. Multiply $P$ times each vector to find $\lambda_1, \lambda_2, \lambda_3, \lambda_4$. The eigenvectors are the columns of the $4$ by $4$ \textbf{Fourier matrix $\bi{F}$}\index[indx]{Fourier matrix}.\linebreak%\vspace{-11pt}
+\item Cuatro autovectores de esa matriz $P$ son $\bi{x}_1=(1,1,1,1)$, $\bi{x}_2=(1, i, i^2, i^3)$, $\bi{x}_3=(1, i^2, i^4,i^6),$ y $\bi{x}_4=(1, i^3, i^6, i^9)$. Multiplique $P$ por cada uno de esos vectores para encontrar $\lambda_1, \lambda_2, \lambda_3, \lambda_4$. Los autovectores son las columnas de la \textbf{matriz de Fourier $\bi{F}$} de $4$ por $4$ \index[indx]{Matriz de Fourier}.
+
+\vspace{-10pt}
+$$
+\text{Muestre que } Q=\dfrac{F}{2}=\dfrac{1}{2}\left[\begin{array}{llrr}1&1&1&1\\1&i&-1&i^3\\1&i^2&1&i^6\\1&i^3&-1&i^9\\\end{array}\right]\text{ tiene columnas ortonormales}\,:\bi{\overline{Q}\transp Q=I}
+$$
+
+%\newpage
+%The Fourier matrix is the most important complex orthogonal matrix in applied mathematics. Because it is complex, the correct test for orthogonal columns is $\overline{\bi{x}}_j\transp\bi{x}_k=0$. Change $i$ to $-i$ in the first vector\,!
+%
+%\vspace{-11pt}
+%$$
+%\overline{\bi{x}}_1\bi{x}_2=(1, i, -1, -i) \bfcdot (1, i,\, i^2,\, i^3)=\bi{0}.
+%$$
+
+% \item \index[authors]{Haar}\index[indx]{Haar wavelet}\textbf{Haar wavelets are orthogonal vectors (columns of $\bi{W}$) using only $\bi{1, -1,}$ and $\bi{0}$}.% Here they are for $n=4$\,:
+\item \index[authors]{Haar}\index[indx]{Ondícula de Haar}\textbf{Las wavelets de Haar son vectores ortogonales (columnas de $\bi{W}$) que usan solo $\bi{1, -1}$, $\bi{0}$}.
+
+\vspace{-3pt}
+$$
+\hspace{-30pt}\begin{array}{c}n=4\\\\\\\\\end{array}
+W=\left[\begin{array}{rrrr}1&1&1&0\\1&1&-1&0\\1&-1&0&1\\1&-1&0&-1\\\end{array}\right]\quad\begin{array}{c}\textbf{Encuentre }\bi{W\transp W}\textbf{, }\bi{W^{-1}}\textbf{ y las }\\\textbf{ ocho wavelets de Haar para }\bi{n=8}.\\\end{array}
+$$
+
+Las wavelets de Haar pueden pensarse como funciones con soporte en el intervalo $[0,1]$. Son estudiadas en diferentes campos de la matemática y resultan una herramienta útil en informática e ingeniería, por ejemplo para la codificación de señales.
+
+
+\begin{tabular}{c@{\hspace{25pt}}c@{\hspace{25pt}}c@{\hspace{25pt}}c}
+\hspace{-1.1 cm}
+\begin{tikzpicture}[scale=1.2]
+\tkzInit[xmin=-0.5,xmax=1.5,ymin=-1.5,ymax=1.5]
+\tkzGrid[sub,color=gray, subxstep=.5,subystep=.5]
+\tkzAxeXY[very thick]
+\draw[very thick,gray] (0,0)--(0,1);
+\draw[blue] (0,1)--(1,1);
+\draw [very thick,gray] (1,1)--(1,0);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[scale=1.2]
+\tkzInit[xmin=-0.5,xmax=1.5,ymin=-1.5,ymax=1.5]
+\tkzGrid[sub,color=gray, subxstep=.5,subystep=.5]
+\tkzAxeXY[very thick]
+\draw[very thick,gray] (0,0)--(0,1);%X-axis, 2
+\draw[blue] (0,1)--(0.5,1);
+\draw[very thick,gray] (0.5,1)--(0.5,-1);
+\draw[blue] (0.5,-1)--(1,-1);
+\draw[very thick,gray] (1,-1)--(1,0);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[scale=1.2]
+\tkzInit[xmin=-0.5,xmax=1.5,ymin=-1.5,ymax=1.5]
+\tkzGrid[sub,color=gray, subxstep=.5,subystep=.5]
+\tkzAxeXY[very thick]
+\draw[very thick,gray] (0,0)--(0,1);
+\draw[blue] (0,1)--(0.25,1);
+\draw[very thick,gray] (0.25,1)--(0.25,-1);
+\draw[blue] (0.25,-1)--(0.5,-1);
+\draw[very thick,gray] (0.5,-1)--(0.5,0);
+\draw[blue] (0.5,0)--(1,0);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[scale=1.2]
+\tkzInit[xmin=-0.5,xmax=1.5,ymin=-1.5,ymax=1.5]
+\tkzGrid[sub,color=gray, subxstep=.5,subystep=.5]
+\tkzAxeXY[very thick]
+\draw[blue] (0,0)--(0.5,0);
+\draw[very thick,gray] (0.5,0)--(0.5,1);
+\draw[blue] (0.5,1)--(0.75,1);
+\draw[very thick,gray] (0.75,1)--(0.75,-1);
+\draw[blue] (0.75,-1)--(1,-1);
+\draw[very thick,gray] (1,-1)--(1,0);
+\end{tikzpicture}
+\end{tabular}
+
+    
+\end{enumerate}
+
+
+\section{Sección I.6}
+
+\subsection*{Videos}
+
+\begin{itemize}
+    \item \href{https://youtu.be/WTG1rsEQEIU}{\bf Video 12: Autovalores y autovectores} (21 minutos)
+    
+    
+    
+    Definici\'on de autovalores y autovectores. Propiedades: suma de todos los autovalores de una matriz es igual a la traza. Producto de autovalores es igual al determinante. Matrices simétricas: todos los autovalores son reales. Matries simétricas: autovalores diferentes corresponden a autovectores ortgonales. 
+    
+    Base de autovectores. Autovalores y autovectores de potencia de matrices. Matrices de $n\times n$ con $n$ autovectores linealmente independientes. 
+    
+    Autovalores de matrices ortogonales: todos los autovalores tienen m\'odulo 1.
+    
+    Cuidado: autovalores de la suma de matrices no necesariamente es la suma de autovalores. Autovalores de $AB$ no son el producto de autovalores de $A$ por autovalores de $B$. Los autovectores de una matriz $A$ son ortogonales si y solo si $AA^T=A^T A $ (matrices normales).
+    
+    Autovalores, autovectores y ecuaciones diferenciales. 
+    
+    
+    
+    
+    
+    
+    \item \href{https://youtu.be/RYye5mbDPoQ}{\bf Video 13: C\'alculo de autovalores a mano}
+    (13 minutos)
+    
+    Usando la definici\'on (determinante) c\'alculo de autovalores y autovectores. Relaci\'on entre los autovalores de la matriz $A$ y $A + \delta I$. 
+    
+    
+    \item \href{https://youtu.be/fxE84IVKss4}{\bf Video 14: Matrices semejantes y diagonalización} (26 minutos)
+    
+    
+    Definici\'on de matrices semejantes: $ A$ semejante a $B AB^{-1}$ para $B $ invertible. Relaci\'on de equivalencia en el conjunto de matrices. 
+    
+    Relaci\'on entre los autovalores de matrices semejantes.
+    
+    Autovalores de matrices triangulares. ?`Para qu\'e sirve?
+    
+    Matrices diagonalizables (las que tienen autovectores independientes). Potencias de matrices diagonalizables. 
+    
+    Matrices no diagonalizables: dos enfoques: geom\'etrico y algebraico. Multiplicaidad geom\'etrica y algebraica.
+
+
+
+\item \href{https://youtu.be/TOZZPyvzpqU}{\bf Video 15: Triangularizaci\'on de Schur} (20 minutos)
+
+$A= U T U^{-1}$ con $T $ triangular y $U$ unitaria. Schur para matrices reales. Schur para matrices reales sim\'etrica. Teorema espectral.
+
+
+
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+    \item La rotación\index[indx]{Rotación} $Q=\left[\begin{array}{rr}
+\cos\theta&-\sen\theta\\
+\sen\theta&\cos\theta
+\end{array}\right]$ tiene autovalores complejos $\lambda=\cos\theta\pm i\sen\theta$\,:
+ $$Q\left[\begin{array}{r}1\\-i\end{array}\right]=(\cos\theta+i\sen\theta)\left[\begin{array}{r}1\\-i\end{array}\right]
+ \quad\text{ y\; }\quad
+ Q\left[\begin{array}{r}1\\i\end{array}\right]=(\cos\theta-i\sen\theta)\left[\begin{array}{r}1\\i\end{array}\right].$$
+
+\noindent
+% Check that $\lambda_1+\lambda_2$ equals the trace of $Q$ (sum $Q_{11}+Q_{22}$ down the diagonal). Check that $(\lambda_1)(\lambda_2)$ equals the determinant. Check that those complex eigenvectors are orthogonal, using the complex dot product $\bi{\overline{x}}_1\bfcdot\bi{x}_2$ (not just $\bi{x}_1\bfcdot\bi{x}_2$\,!).
+Verifique que $\lambda_1+\lambda_2$ es igual la traza de $Q$. Verifique que $(\lambda_1)(\lambda_2)$ es igual al determinante. Verifique que esos autovectores complejos son ortogonales, usando el producto punto complejo $\bi{\overline{x}}_1\bfcdot\bi{x}_2$ (¡\,no solo $\bi{x}_1\bfcdot\bi{x}_2$\,!).
+
+% What is $Q^{-1}$ and what are its eigenvalues\,?
+¿Qué es $Q^{-1}$ y cuáles son sus autovalores\,?
+% \item Compute the eigenvalues and eigenvectors of $A$ and   $A^{-1}$. Check the trace\:!
+\item Calcule los autovalores y autovectores de $A$ y   $A^{-1}$. ¡\,Verifique la traza\,!
+%
+\[
+A=\begin{bmatrix}
+                 0 & 2 \\
+                 1 & 1 \end{bmatrix} \og
+A^{-1}=
+\begin{bmatrix}
+            -1/2  & 1 \\
+             1/2  & 0\end{bmatrix}.
+\]
+%
+% $A^{-1}$ has the $\1$ eigenvectors as $A$.  When $A$ has eigenvalues $\la_1$ and $\la_2$, its inverse has eigenvalues $\1$.
+$A^{-1}$ tiene $\1$ autovectores que $A$.  Cuando $A$ tiene autovalores $\la_1$ y $\la_2$, su inversa tiene autovalores $\1$.
+
+% \item Find the eigenvalues of $A$ and $B$ (easy for triangular
+% matrices) and $A+B$:
+\item Encuentre los autovalores de $A$ y $B$ (fácil en matrices triangulares) y $A+B$:
+$$
+A=\begin{bmatrix} 3&0\\ 1&1\end{bmatrix}\og
+B=
+\begin{bmatrix} 1&1\\ 0&3\end{bmatrix}
+\og
+A+B=\begin{bmatrix} 4&1\\ 1&4\end{bmatrix}.
+$$
+% Eigenvalues of $A+B$ (\emph{are equal to})(\emph{are not equal to}) eigenvalues of $A$ plus eigenvalues of $B$.
+¿ Los autovalores de $A+B$ coinciden con los autovalores de $A$ mas los autovalores de $B$?
+
+% \item Find the eigenvalues of $A$ and $B$ and $AB$ and $BA$:
+\item Encuentre los autovalores de $A$, $B$, $AB$ y $BA$:
+\[
+\def\quad{\hskip .8em}
+A=\begin{bmatrix} 1&0\\ 1&1\end{bmatrix}\og
+B=\begin{bmatrix} 1&2\\ 0&1\end{bmatrix}\og
+AB=\begin{bmatrix} 1&2\\ 1&3\end{bmatrix}\og
+BA=\begin{bmatrix} 3&2\\ 1&1\end{bmatrix}. \]
+\begin{itemize}
+% 	\item [(a)] Are the eigenvalues of $AB$ equal to eigenvalues of $A$ times eigenvalues of $B$?
+% 	\item [(b)] Are the eigenvalues of $AB$ equal to the eigenvalues of $BA$?
+	\item [(a)] ¿Son los autovalores de $AB$ iguales a los autovalores de $A$ por los autovalores de $B$?
+	\item [(b)] ¿Son los autovalores de $AB$ iguales a los autovalores de $BA$?
+	\end{itemize}
+
+\item
+\begin{itemize}
+% \item[(a)] If you know that $\bi x$ is an eigenvector, the way to find $\la$ is to $\1$.
+% \item[(b)] If you know that $\la$ is an eigenvalue, the way to find  $\bi x$ is to $\1$.
+\item[(a)] Si sabe que $\bi x$ es un autovector, la manera de encontrar $\la$ es $\1$.
+\item[(b)] Si sabe que $\la$ es un autovalor, la manera de encontrar  $\bi x$ es $\1$.
+\end{itemize}
+
+% \item Find the eigenvalues and eigenvectors for both of these Markov matrices $A$ and $A^\infty$. Explain from those answers why $A^{100}$ is close to $A^\infty$:
+\item Encuentre los autovalores y autovectores para las dos matrices de Markov $A$ y $A^\infty$. Explique a partir de las respuestas por qué $A^{100}$ es cercana a $A^\infty$:
+%
+$$
+A=
+\begin{bmatrix} 0.6&0.2\\ 0.4&0.8\end{bmatrix}
+\quad \hbox{y} \quad
+A^\infty=
+\begin{bmatrix} 1/3&1/3\\ 2/3&2/3\end{bmatrix}.
+$$
+
+% \item {\bf The determinant\index[indx]{Determinant} of $A$ equals the product} $\la_1  \la_2\dotsb \la_n$. Start with the polynomial $\det (A-\la I)$  separated into its $n$ factors (always possible). Then  set $\la=0$\,:
+\item {\bf El determinante\index[indx]{Determinante} de $A$ es igual al producto} $\la_1  \la_2\dotsb \la_n$. Comience escribiendo el polinomio $\det (A-\la I)$  separado en sus $n$ factores (siempre posible). Luego tome $\la=0$\,:
+$$
+\det(A-\la I)=(\la_1-\la)
+(\la_2-\la)\dotsb (\la_n-\la)
+\quad\hbox{entonces}\quad\det A=\1.
+$$
+% Check this rule in Example 1 where the Markov matrix has $\la
+% =1$ and $\half$.
+Verifique esta regla en el Ejemplo 4 donde la matriz de Markov tiene $\la_1 =1$ y $\la_2=\half$.
+
+% \item The sum of the diagonal entries (the \emph{trace})\index{Trace}\index{Sum of eigenvalues} equals the sum of the eigenvalues:
+\item La suma de los elementos de la diagonal (la \emph{traza})\index[indx]{Traza}\index[indx]{Suma de autovalores} es igual a la suma de sus autovalores\,:
+$$
+%
+A=\begin{bmatrix} a&b\\ c&d\end{bmatrix}
+\quad\hbox{tiene}\quad
+\det(A-\la I)=
+\la^2-(a+d)\la+ad-bc=0.
+$$
+%
+% The~quadratic~formula~gives~the~eigenvalues
+La~fórmula~cuadrática~da~los~autovalores
+$\la\!=\!(a\!+\!d\!+\!\sqrt{\quad\mathstrut}\,)
+/2$~y~$\la\!=\!\1$.\linebreak
+% Their sum is $\1$. If $A$ has $\la_1=3$ and $\la_2=4$ then $\det (A-\la I)=\1$.
+Su suma es $\1$. Si $A$ tiene $\la_1=3$ y $\la_2=4$ entonces $\det (A-\la I)=\1$.
+
+% \item If $A$ has $\la_1=4$ and $\la_2=5$ then $\det (A-\la  I)=(\la-4)(\la-5)=\la^2-9\la+20$. Find three matrices that have  trace $a+d=9$ and determinant $20$ and $\la=4,5$.
+\item Sea $A$ con $\la_1=4$ y $\la_2=5$, luego $\det (A-\la  I)=(\la-4)(\la-5)=\la^2-9\la+20=0$. Encuentre tres matrices diferentes de $2\times 2$ que tengan autovalores $\la=4,5$. Notar que debe cumplirse que la traza es $9$ y su determinante $20$.
+
+% \item Choose the last rows of $A$ and $C$ to give eigenvalues $4,7$ and $1,2,3$:
+\item Elija las últimas filas de $A$ y $C$ para que tengan autovalores $4,7$ y $1,2,3$ respectivamente:
+\begin{displaymath}
+% \mbox{\bf Companion matrices}\index[indx]{Companion matrix}\qquad\qquad\qquad A=
+\mbox{\bf Matrices compañeras}\index[indx]{Matriz compañera}\qquad\qquad\qquad A=
+  \begin{bmatrix}
+  0 & 1 \\ \ast & \ast
+	\end{bmatrix} \quad C=
+	\begin{bmatrix}
+	0 & 1 & 0 \\
+	0 & 0 & 1 \\
+	\ast & \ast & \ast
+	\end{bmatrix} .
+\end{displaymath}
+% \item \bmembf{The eigenvalues of $A$ equal the eigenvalues of  $A\transp $}.\index[indx]{Eigenvalues of $A\transp$ and $A^k$} This is because $\det (A-\la I)$ equals  $\det(A\transp -\la I)$. That is true because $\1$. Show by an  example that the eigenvectors of $A$ and $A\transp $ are  \emph{not} the same.
+\item \bmembf{Los autovalores de $A$ son iguales a los autovalores de  $A\transp $}.\index[indx]{Autovalores de $A\transp$ y $A^k$} Esto se debe a que $\det (A-\la I)$ es igual a  $\det(A\transp -\la I)$. Esto se cumple porque $\1$. Muestre con un ejemplo que los autovectores de  $A$ y $A\transp $  \emph{no} son los mismos.
+
+% \item This matrix is singular with rank one. Find three $\la$'s  and three eigenvectors:
+\item La siguiente matriz es singular de rango uno. Encuentre tres $\la$ y tres autovectores:
+$$
+A=\begin{bmatrix} 1\\ 2\\ 1\end{bmatrix}
+\begin{bmatrix}2 & 1 & 2\end{bmatrix}=
+\begin{bmatrix} 2&1&2\\ 4&2&4\\ 2&1&2\end{bmatrix}.
+$$
+
+% \item Suppose $A$ and $B$ have the same eigenvalues  $\la_1,\dots,\la_n$ with the same independent eigenvectors $\bi  x_1,\dots,\bi x_n$. Then $A=B$. \emph{Reason}: Any vector $\bi  x$ is a combination $c_1\bi x_1+\cdots+c_n\bi x_n$. What  is~$A\bi x$? What is~$B\bi x$?
+\item Sabemos que si $A$ y $B$ tienen los mismos autovalores  $\la_1,\dots,\la_n$ con los mismos autovectores independientes $\bi  x_1,\dots,\bi x_n$, entonces $A=B$. Cualquier vector $\bi  x$ se puede escribir como una combinación $c_1\bi x_1+\cdots+c_n\bi x_n$. ¿\, Cómo se relacionan los coeficientes $c_i$ con el producto $A\bi x$\,? ¿\,Y con $B\bi x$\,?
+% \item Suppose $A$ has eigenvalues $0,3,5$ with independent  eigenvectors $\bi u,\bv,\bi w$.
+
+\item Suponga que $A$ tiene autovalores $0,3,5$ con autovectores independientes $\bi u,\bv,\bi w$.
+%
+\begin{itemize}
+% \item[(a)] Give a basis for the nullspace and a basis for the  column space.
+\item[(a)] Dé una base para el espacio nulo y una base para el espacio columna.
+% \item[(b)] Find a particular solution to $A\bi x=\bv+\bi w$.  Find all solutions.
+\item[(b)] Encuentre una solución particular para $A\bi x=\bv+\bi w$.  Encuentre todas las soluciones.
+% \item[(c)] $A\bi x\!=\!\bi u$~has~no~solution.~If~it~did~then~$\1$~would~be~in~the~column~space.
+\item[(c)] $A\bi x\!=\!\bi u$~no~tiene~solución.~Si~la~tuviera~entonces~$\1$~estaría~en~el~espacio~columna.
+\end{itemize}
+
+\item
+\begin{itemize}
+%   \item[(a)] Factor these two matrices into $A=X\Lambda X^{-1}$:
+\item[(a)] Factorice estas dos matrices en $A=X\Lambda X^{-1}$:
+  \begin{displaymath}
+  A=\begin{bmatrix} 1&2\\ 0&3\end{bmatrix} \OG A=
+  \begin{bmatrix} 1&1\\ 3&3\end{bmatrix}.
+\end{displaymath}
+\item[(b)] Si $A=X\Lambda X^{-1}$ entonces $A^3=(\quad )(\quad )(\quad )$
+  y $A^{-1}=(\quad )(\quad )(\quad )$.
+\end{itemize}
+
+
+% \item Suppose $A=X\Lambda X^{-1}$. What is the eigenvalue matrix  for $A+2I$? What is the eigenvector matrix? Check that  $A+2I=(\quad ) (\quad )(\quad )^{-1}$.
+\item Suponga que $A=X\Lambda X^{-1}$. ¿\,Cuál es la matriz de autovalores para $A+2I$\,? ¿\,Cuál es la matriz de autovectores\,? Verifique que  $A+2I=(\quad ) (\quad )(\quad )^{-1}$.
+
+% \item True or false: If the columns of $X$ (eigenvectors of $A)$   are linearly independent, then
+\item Verdadero o falso: Si las columnas de $X$ (autovectores de $A)$ son linealmente independientes, entonces
+\begin{itemize}
+  \settowidth\dima{$A$}
+  \def\S{\leavevmode\hbox to\dima{\hfil$S$\hfil}}
+%   \item[(a)] $A$ is invertible
+\item[(a)] $A$ es invertible,
+%   \hitem[(b)] $A$ is diagonalizable\index[indx]{Diagonalization}
+\hitem[(b)] $A$ es diagonalizable\index[indx]{Diagonalización},
+%   \item[(c)] \ $X$\ is invertible
+\item[(c)] $X$ es invertible,
+%   \!\!\!\hitem[(d)] $X$\ is diagonalizable.
+\!\!\!\hitem[(d)] $X$\ es diagonalizable.
+\end{itemize}
+
+% \item Write down the most general matrix that has eigenvectors
+\item Escriba la matriz más general que tiene autovectores
+  $\bigl[\begin{smallmatrix} \bm{1}\\
+    \bm{1}\end{smallmatrix}\bigr]$ y $\bigl[\begin{smallmatrix}
+    \ph \bm{1}\\ 
+    \bold{-1}\end{smallmatrix}\bigr]$.
+
+% \item True or false: If the eigenvalues of $A$ are $2,2,5$ then  the matrix is certainly
+\item Verdadero o falso: Si los autovalores de $A$ son $2,2,5$ entonces la matriz es sin dudas
+\begin{itemize}
+% \item[(a)] invertible
+\item[(a)] invertible,
+% \hitem[(b)] diagonalizable
+\hitem[(b)] diagonalizable,
+% \hitem[(c)] not diagonalizable.
+\hitem[(c)] no diagonalizable.
+\end{itemize}
+
+% \item True or false: If the only eigenvectors of $A$ are
+%   multiples of $(1,4)$ then $A$ has{\sm
+\item Verdadero o falso: Si los únicos autovectores de $A$ son  múltiplos de $(1,4)$ entonces $A$:
+%   {\sm
+% \begin{itemize}
+% \item[(a)] no inverse\kern-3.6pt
+% \hitem[(b)] a repeated eigenvalue\kern-3.6pt
+% \hitem[(c)]\hspace*{-.5em} no diagonalization $X\Lambda X^{-1}$.
+% \end{itemize}}
+
+\vspace{6pt}
+\centerline{(a) no tiene inversa,\qquad
+(b) tiene un autovalor repetido,\qquad
+(c) no tiene diagonalización $X\Lambda X^{-1}$.}
+
+% \item $A^k=X\Lambda^k X^{-1}$ approaches the zero matrix as   $k\to\infty$ if and only if every  $\lambda$ has absolute value less than $\1$. Which of these   matrices has $A^k\to0$?
+
+\item $A^k=X\Lambda^k X^{-1}$ se acerca a la matriz cero cuando $k\to\infty$ si y solo si todo  $\lambda$ tiene valor absoluto menor a $\1$. ¿\,Cuál de estas matrices cumple $A^k\to0$\,?
+\begin{displaymath}
+  A_1=\begin{bmatrix} .6&.9\\ .4&.1\end{bmatrix}\OG
+  A_2=\begin{bmatrix} .6&.9\\ .1&.6\end{bmatrix}.
+\end{displaymath}
+
+
+% \item Diagonalize $A$ and compute $X\Lambda^k X^{-1}$ to prove  this formula for $A^k$:
+\item Diagonalice $A$ y calcule $X\Lambda^k X^{-1}$ y demuestre la fórmula presentada para $A^k$:
+\begin{displaymath}
+  A=\begin{bmatrix} 2 & -1\\
+    -1 & 2\end{bmatrix}
+    \qquad\hbox{tiene}\qquad
+  A^k=\dfrac12\begin{bmatrix} 1+3^k & 1-3^k\\
+    1-3^k & 1+3^k\end{bmatrix}.
+\end{displaymath}
+
+% \item The eigenvalues of $A$ are 1 and 9, and the eigenvalues of $B$  are $-1$ and 9:
+\item Los autovalores de $A$ son 1 y 9, y los autovalores de $B$  son $-1$ y 9:
+\begin{displaymath}
+  A=\begin{bmatrix} 5&4\\ 4&5\end{bmatrix}\OG
+  B=\begin{bmatrix} 4&5\\ 5&4\end{bmatrix}.
+\end{displaymath}
+% Find a matrix square root of $A$ from $R=X\sqrt{\Lambda}\,X^{-1}$. Why is there no real matrix square root of $B$?
+Encuentre una matriz raíz cuadrada de $A$ a partir de $R=X\sqrt{\Lambda}\,X^{-1}$. ¿\,Por qué no hay una matriz real que sea raíz cuadrada de $B$\,?
+
+% \item Suppose the same $X$ diagonalizes both $A$ and $B$. They have the \emph{same eigenvectors} in $A=X\Lambda_1 X^{-1}$ and $B=X\Lambda_2 X^{-1}$. Prove that $AB=BA$.\index{Commuting matrices}
+\item Suponga que la misma $X$ diagonaliza a ambas matrices $A$ y  $B$. Tienen \emph{los mismos autovectores} en $A=X\Lambda_1 X^{-1}$ y $B=X\Lambda_2 X^{-1}$. Demuestre que $AB=BA$.\index[indx]{Matrices que conmutan}
+
+% \item The transpose of $A=X\Lambda X^{-1}$ is $A^{\trans}=(X^{-1})^{\trans}\Lambda X^{\trans}$. The eigenvectors in $A^{\trans} \bi y=\la \bi y$ are the columns of that matrix $(X^{-1})^\trans$. They are often called \embf{left eigenvectors\index[indx]{Left eigenvectors} of $\bi{A}$}, because $\bi{y}\transp A=\la\bi{y}\transp$. How do you multiply matrices to find this formula for~$A$?
+\item La traspuesta de $A=X\Lambda X^{-1}$ es $A^{\trans}=(X^{-1})^{\trans}\Lambda X^{\trans}$. Los autovectores en $A^{\trans} \bi y=\la \bi y$ son las columnas de la matriz $(X^{-1})^\trans$. Se los conoce como \embf{autovectores a izquierda \index[indx]{Autovectores a izquierda} de $\bi{A}$}, porque $\bi{y}\transp A=\la\bi{y}\transp$. ¿\,Cómo multiplicaría matrices para encontrar esta fórmula para~$A$\,?
+
+\vspace{-5pt}
+\begin{displaymath}
+\setlength{\fboxrule}{0.5pt}
+\fbox{$
+\hbox{\bf Suma de matrices de rango $\bm{1}$}\quad
+A=X\Lambda X^{-1}=\la_1\bi x_1\bi y^{\trans}_1+\cdots+\la_n\bi x_n\bi
+y^{\trans}_n.$}\index[indx]{Matrices de rango uno}
+\end{displaymath}
+
+% \item \textbf{When is a matrix $\bi{A}$ similar\index[indx]{Similar matrices} to its eigenvalue matrix $\bi{\La}$}\,?
+\item \textbf{¿Cuándo es una matriz $\bi{A}$ semejante\index[indx]{Matrices semejantes} a su matriz de autovalores $\bi{\La}$}\,?
+
+% $A$ and $\La$ always have the same eigenvalues. But similarity requires a matrix $B$ with $A=B\La B^{-1}$. Then $B$ is the \1 matrix and $A$ must have $n$ independent \1.
+$A$ y $\La$ siempre tienen los mismos autovalores. Pero para que sean semejantes se requiere de una matriz $B$ con $A=B\La B^{-1}$. Entonces $B$ es la matriz \1 y $A$ debe tener $n$ \1 independientes.
+
+\end{enumerate}
+
+\section{Sección I.7}
+
+\subsection*{Videos}
+
+\begin{itemize}
+    \item \href{https://youtu.be/CMxZy8y8Fz8}{\bf Video 16: Matrices sim\'etricas. 22 min.}
+    
+    Repaso de Schur para matrices sim\'etricas reales y teorema espectral. 
+    
+    
+    Matrices sim\'etricas reales: todos los autovalores son reales. Idem para matrices Hermitaneas.
+    Matrices simétricas: autovalores diferentes corresponden a autovectores perpendiculares. 
+    
+    Matriz sim\'etrica definida positiva. 
+    
+    \item \href{https://youtu.be/sMO7EdDc3x8}{\bf Video 17: Matrices simétricas y definidas positivas. 39 min}
+    
+    Definici\'on de matrices definidas positivas: usando energ\'ia. Equivalencia: todos los autovalores son positivos. $S=A^TA$ con $A$ con columnas independientes. Todos los determinantes de los menores principales de $S$ son positivos. Todos los pivotes de eliminaci\'on de $S$ son positivos. Descomposici\'on de Cholesky. Unicidad de esta descomposici\'on.
+    
+   Propiedades: Suma de matrices PD es PD. Si $S$ es PD y $C$ invertible entonces $CSC^T$ PD. 
+    
+    
+    \item \href{https://youtu.be/_uWEJ98xHTk}{\bf Video 18: Matrices definidas positivas, minimos y elipses. 22 min}
+    
+    Funci\'on de energ\'ia. Relaci\'on entre funciones cuadraticas, minimos, maximos, y derivadas y matrices DP. Graficos en geogebra. Matriz hessiana (matriz de derivadas segundas). Problemas de optimizacion en general. Matrices convexas y matrices definidas positivas.
+    
+    Ecuacion de la elipse. Relacion con matrices DP.
+    
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+% \item Suppose $S\transp=S$ and $S\bi{x}=\lambda\bi{x}$ and $S\bi{y}=\alpha\bi{y}$ are all real. Show that
+\item Suponga que $S\transp=S\,$ y $\,S\bi{x}=\lambda\bi{x}\,$ y $\,S\bi{y}=\alpha\bi{y}\,$ son reales. Muestre que
+% \vspace{-9pt}
+$$
+\bi{y}\transp S\bi{x}=\lambda\bi{y}\transp\bi{x}\quad\text{, }\quad\bi{x}\transp S\bi{y}=\alpha\bi{x}\transp\bi{y}\quad\text{y}\quad\bi{y}\transp S\bi{x}=\bi{x}\transp S\bi{y}.$$
+% $\text{Show that }\bi{y}\transp\bi{x}\text{ must be zero if } \lambda\neq\alpha\,: \textbf{ orthogonal eigenvectors.}$ \index[indx]{Orthogonal}
+$\text{Además, muestre que }\bi{y}\transp\bi{x}\text{ debe ser cero si } \lambda\neq\alpha\,: \textbf{ autovectores ortogonales.}$ \index[indx]{Ortogonal}
+
+% \item Which of $S_1$, $S_2$, $S_3$, $S_4$ has two positive eigenvalues?  Use a test, don't compute the $\la$'s. Also find an $\bi x$ so that $\bi x\transp S_1 \bi x < 0$, so $S_1$ is not positive definite.
+\item ¿\,Cuál o cuáles de $S_1$, $S_2$, $S_3$, $S_4$ tiene dos autovalores positivos\,? Use una condición, no calcule los $\la$. Encuentre también un $\bi x$ para el que $\bi x\transp S_1 \bi x < 0$ y de este modo probar que $S_1$ no es definida positiva.
+%
+\[
+S_1=\begin{bmatrix} 5&6\\ 6&7\end{bmatrix}\quad
+S_2=\begin{bmatrix}  -1 & -2 \\  -2 &
+    -5\end{bmatrix}\quad S_3=\begin{bmatrix} 1&10\\
+  10&100\end{bmatrix} \quad S_4=\begin{bmatrix} 1&10\\
+  10&101\end{bmatrix}.
+\]
+%
+% \item For which numbers $b$ and $c$ are these matrices positive definite?
+\item ¿\,Para qué números $b$ y $c$ las siguientes matrices son definidas positivas\,?
+%
+\[
+S=\begin{bmatrix} 1&b\\ b&9\end{bmatrix}\qquad
+S=\begin{bmatrix} 2&4\\ 4&c\end{bmatrix}\qquad
+S=\begin{bmatrix} c&b\\ b&c\end{bmatrix}.
+\]
+%
+% With the pivots in $D$ and multiplier in $L$, factor each $A$ into $LDL\transp$.
+Con los pivotes en $D$ y los multiplicadores en $L$, factorice cada $A$ en $LDL\transp$.
+
+% \item Here is a quick ``proof'' that the eigenvalues of every real matrix $A$ are real:
+\item He aquí una ``prueba'' rápida de que los autovalores de toda matriz real $A$ son reales\,:
+%
+\[
+\hbox{\bf Prueba falsa}\index{Prueba falsa}\quad
+A\bi x=\la\bi x\quad\hbox{da}\quad \bi x\transp A\bi x=\la\bi
+x\transp \bi x \quad\hbox{as\'i}\quad\la= \frac{\bi{x}\transp
+  A\bi{x}}{\bi{x}\transp \bi{x}} = \frac{\hbox{real}}{\hbox{real}}.
+\]
+%
+% Find the flaw in this reasoning---a hidden assumption that is not justified. You could test those steps on the $90\degree$ rotation matrix $\textrow{0&-1;&1&0}$ with $\la=i$ and $\bi x=(i,1)$.
+Encuentre la falla en este razonamiento, una suposici\'on oculta injustificada. Puede seguir esos pasos con la matriz de rotación de $90 \degree$ $\begin{bmatrix}0 & -1\\ 1& 0\end{bmatrix}$ con $\la=i$ y $\bi x=(i,1)$.
+
+% \item Write $S$ and $B$ in the form $\la_1\bi x_1\bi x\transp   _1+\la_2 \bi x_2 \bi x\transp _2$ of the spectral theorem $Q\La  Q^T$:
+\item Escriba $S$ y $B$ como $\la_1\bi x_1\bi x\transp   _1+\la_2 \bi x_2 \bi x\transp _2$ del teorema espectral $Q\La  Q^T$:
+%
+\[
+S = \begin{bmatrix} 3&1\\ 1&3\end{bmatrix} \qquad B =
+\begin{bmatrix} 9&12\\ 12&16\end{bmatrix} \quad
+\hbox{(mantenga  }\|\bi x_1\|=\|\bi x_2\|=1).
+\]
+
+% \item (Recommended) This matrix $M$ is antisymmetric\index[indx]{Antisymmetric} and also $\1$.
+% Then all its\linebreak eigenvalues are pure imaginary and they also have $|\la|=1$. ($\|M\bi x\|=\|\bi x\|$ for every\linebreak $\bi x$ so $\|\la\bix\|=\|\bi x\|$ for eigenvectors.) Find all four eigenvalues from the trace of $M$:
+\item (Recomendado) La siguiente matriz $M$ es antisimétrica\index[indx]{Antisimétrica} y también $\1$.
+Luego, todos sus autovalores son imaginarios puros y tienen $|\la|=1$. ($\|M\bi x\|=\|\bi x\|$ para todo $\bi x$ entonces $\|\la\bi x\|=\|\bi x\|$ para los autovectores.) Encuentre los cuatro autovalores a partir de la traza de $M$:
+%
+\[
+M = \frac{1}{\sqrt 3}\begin{bmatrix} 0 & 1 & 1 & 1\\
+    -1 & 0 &  -1 & 1\\   -1 & 1 & 0
+  &  -1\\   -1 &   -1 & 1 &
+%   0\end{bmatrix}\quad \hbox{can only have
+%   eigenvalues}~i~\hbox{or}~-i\hbox{.}\index{Complex symmetry}
+0\end{bmatrix}\quad \hbox{solo puede tener autovalores}~i~\hbox{o}~-i\hbox{.}\index{Simetría compleja}
+\]
+%
+% \item Show that this $A$ (\textrm{\bfseries{symmetric but complex}}) has only one line of eigenvectors:
+\item Muestre que la siguiente matriz $A$ (\textrm{\bfseries{simétrica pero compleja}}) tiene solo una recta de autovectores:
+%
+\[
+% A = \begin{bmatrix}{rr} i&1\\ 1&-i\end{bmatrix} \; \hbox{is not even diagonalizable: eigenvalues }\index[indx]{Diagonalization} \la=0 \text{ and }0.
+A = \begin{bmatrix} i&1\\ 1&-i\end{bmatrix} \; \hbox{no es ni siquiera diagonalizable: autovalores }\index[indx]{Diagonalización} \la=0 \text{ y }0.
+\]
+%
+% $A\transp =A$ is not such a special property for complex matrices. The good property is $\bi{\overline A\transp =A}$.  Then all eigenvalues are real and $A$ has $n$ orthogonal eigenvectors.
+$A\transp =A$ no es una propiedad especial para las matrices complejas. La buena propiedad es $\bi{\overline A\transp =A}$.  Entonces todos los autovalores son reales y $A$ tiene $n$ autovectores ortogonales.
+
+% \item This $A$ is nearly symmetric. But its eigenvectors are far  from orthogonal:
+\item Esta $A$ es casi simétrica pero sus autovectores están lejos de ser ortogonales:
+%
+  $$ A=\begin{bmatrix}1 & 10^{-15}\\
+  0 & 1\! +\!  10^{-15}
+    \end{bmatrix}\quad \hbox{tiene autovectores}\quad
+  \begin{bmatrix}1\\0\end{bmatrix}\quad \hbox{y}\quad
+  \begin{bmatrix}?\end{bmatrix}
+$$
+%
+% What is the angle between the eigenvectors?
+¿\,Cuál es el ángulo entre los autovectores\,?
+
+% \item \emph{Which symmetric matrices $S$ are also orthogonal}\,? Then $S\transp=S$ and $S\transp=S^{-1}$.
+\item \emph{¿\,Qué matrices simétricas $S$ también son ortogonales}\,? Las que tienen $S\transp=S$ y $S\transp=S^{-1}$.
+\begin{itemize}
+% \item[(a)] Show how symmetry and orthogonality lead to $S^2=I$.
+\item[(a)] Muestre cómo la simetría y la ortogonalidad llevan a $S^2=I$.
+% \item[(b)] What are the possible eigenvalues of $S$\,? Describe all possible $\Lambda$.
+\item[(b)] ¿\,Cuáles son los autovalores posibles de $S$\,? Describa todos los $\Lambda$ posibles.
+\end{itemize}
+% Then $S=Q\La Q\transp$ for one of those eigenvalue matrices $\La$ and an orthogonal $Q$.
+Entonces $S=Q\La Q\transp$ para una de esas matrices de autovalores $\La$ y una $Q$ ortogonal.
+% \item If $S$ is symmetric, show that $A\transp SA$ is also symmetric (take the transpose of $A\transp SA$). Here $A$ is $m$ by $n$ and $S$ is $m$ by $m$. Are eigenvalues of $S=$ eigenvalues of $A\transp SA$\,?
+\item Si $S$ es simétrica, muestre que $A\transp SA$ también es simétrica (tome la traspuesta de $A\transp SA$). Aquí $A$ es de $m \times n$ y $S$ es de $m\times m$. ¿\,Es cierto que los autovalores de $S$ coinciden con los de $A\transp SA$\,?
+
+\vspace{5pt}
+% \quad\; In case $A$ is square and invertible, $A\transp SA$ is called \emph{congruent} \index[indx]{Congruent} to $S$. They have\linebreak
+\quad\; En caso de que $A$ sea cuadrada e invertible, se dice que $A\transp SA$ es \emph{congruente} \index[indx]{Congruente} con $S$.
+
+%\vspace{-12pt}
+% \quad\; the same number of positive, negative, and zero eigenvalues: \embf{Law of Inertia}\index[indx]{Law of Inertia}\index{Interlacing}.
+\quad\; Tienen la misma cantidad de autovalores positivos, negativos y cero: \embf{Ley de inercia}\index[indx]{Ley de inercia}\index{Entrelazado/Entrelazamiento}.
+
+% \item Here is a way to show that $a$ is \emph{in between} the eigenvalues $\la_1$ and $\la_2$ of $S$\,:
+\item He aquí una manera de mostrar que $a$ está \emph{entre} los autovalores $\la_1$ y $\la_2$ de $S$\,:
+
+\vspace{-5pt}
+$$
+S=\left[\begin{array}{ll}
+a&b\\
+b&c\\
+\end{array}\right]\qquad \begin{array}{l}
+\det\,(S-\la I)=\la^2-a\la-c\la+ac-b^2\\
+\text{es una parábola hacia arriba (debido a $\la^2$)}\\
+\end{array}
+$$
+
+\noindent
+% Show that $\det\,(S-\la I)$ is negative at $\la=a$. So the parabola crosses the axis left and right of $\la=a$. It crosses at the two eigenvalues of $S$ so they must enclose $a$.
+Muestre que $\det\,(S-\la I)$ es negativa en $\la=a$. Entonces la parábola cruza el eje a la izquierda y a la derecha de $\la=a$. Lo cruza en los dos autovalores de $S$, que entonces deben encerrar a $a$.
+
+% The $n-1$ eigenvalues of $A$ always fall between the $n$ eigenvalues of $S=\left[\begin{array}{@{\;}ll@{\;}}
+Los $n-1$ autovalores de $A$ siempre se encuentran entre los $n$ autovalores de $S=\left[\begin{array}{@{\;}ll@{\;}}
+A&\bi{b}\\
+\bi{b}\transp&c\\
+% \end{array}\right]$.\linebreak Section III.2 will explain this interlacing\index[indx]{Interlacing} of eigenvalues.
+\end{array}\right]$.\linebreak La Sección III.2 explica el entrelazado\index[indx]{Entrelazado} de autovalores.
+
+% \item The energy $\bi{x}\transp S\bi{x}=2x_1x_2$ certainly has a saddle point\index{Saddle point} and not a minimum at $(0,0)$. What symmetric matrix $S$ produces this energy? What are its eigenvalues?
+\item La energía $\bi{x}\transp S\bi{x}=2x_1x_2$ tiene ciertamente un punto de ensilladura\index[indx]{Punto de ensilladura} y no un mínimo en $(0,0)$. ¿\,Qué matriz simétrica $S$ produce esta energía\,?\,¿\,Cuáles son sus autovalores\,?
+
+% \item Test to see if $A\transp A$ is positive definite in each  case: $A$ needs independent columns.
+\item Verifique alguna condición para ver si $A\transp A$ es definida positiva en cada caso: $A$ necesita columnas independientes.
+%
+\[
+A=\begin{bmatrix} 1&2\\ 0&3\end{bmatrix}\og
+A=\begin{bmatrix} 1&1\\ 1&2\\ 2&1\end{bmatrix} \og
+A=\begin{bmatrix} 1&1&2\\ 1&2&1\end{bmatrix}.
+\]
+% \item Find the $3$ by $3$ matrix $S$ and its pivots, rank,
+%   eigenvalues, and determinant:
+\item Encuentre la matriz $S$ de $3$ por $3$ y sus pivotes, rango,
+  autovalores, y determinante que satisface:
+%
+\[\begin{bmatrix} x_1 & x_2 & x_3\end{bmatrix}
+     \begin{bmatrix}
+       \vphantom{x_1}\\ \quad S\quad\vphantom{_1}\\
+       \vphantom{x_1}\end{bmatrix}
+       \begin{bmatrix} x_1\\
+              x_2\\ x_3\end{bmatrix}
+                =4(x_1-x_2+2x_3)^2.\]
+%   \item Compute the three upper left determinants of $S$ to establish positive definiteness. Verify that their ratios give the second and third pivots.
+ \item Calcule los tres determinantes superiores izquierdos de $S$ para establecer si es definida positiva. Verifique que sus cocientes den el segundo y tercer pivote.
+%
+% \[ \hbox{\bf Pivots $=$ ratios of determinants\qquad}
+\[ \hbox{\bf Pivotes $=$ cocientes de determinantes\qquad}
+S=\begin{bmatrix} 2&2&0\\ 2&5&3\\ 0&3&8\end{bmatrix}.
+\]
+%
+% \item For what numbers $c$ and $d$ are $S$ and $T$ positive%   definite?  Test their $3$ determinants:\linebreak
+\item ¿\,Para qué números $c$ y $d$ son $S$ y $T$ definidas positivas\,?  Verifique sus $3$ determinantes\,:\linebreak
+%
+\[
+S=\begin{bmatrix} c&1&1\\ 1&c&1\\ 1&1&c\end{bmatrix}\OG
+T=\begin{bmatrix} 1&2&3\\ 2&d&4\\ 3&4&5\end{bmatrix}.
+\]
+
+% \item Find a matrix with $a>0$ and $c>0$ and $a+c>2b$ that has a  negative eigenvalue.
+\item Encuentre una matriz $A$ cuyos componentes satisfagan que $a>0$ , $c>0$ y $a+c>2b$. Además, que tenga un autovalor negativo. Donde
+
+\[ A=\begin{bmatrix}
+  a&b\\ c&d
+\end{bmatrix}.
+\]
+% \item A positive definite matrix cannot have a zero (or even  worse, a negative number)\linebreak on its main diagonal. Show that this  matrix fails to have $\bi x\transp S \bi x > 0$:
+\item Una matriz definida positiva no puede tener un cero (o peor, un número negativo)\linebreak en su diagonal principal. Muestre que esta matriz no verifica $\bi x\transp S \bi x > 0$:
+%
+\[\begin{bmatrix}x_1 & x_2 & x_3\end{bmatrix}
+        \begin{bmatrix} 4&1&1\\ 1&0&2
+        \\ 1&2&5  \end{bmatrix}
+        \begin{bmatrix} x_1\\ x_2\\ x_3 \end{bmatrix}
+        \hbox{ no es positiva cuando } (x_1,x_2,x_3)=(\quad
+        ,\quad ,\quad ).
+\]
+%
+% \item A diagonal entry $s_{jj}$ of a symmetric matrix cannot be  smaller than all the $\la$'s. If it were, then $S-s_{jj}I$ would  have $\1$ eigenvalues and would be positive definite.  But $S -  s_{jj}I$ has a $\1$ on the main diagonal, impossible by Problem $18$.
+\item Un elemento $s_{jj}$ en la diagonal de una matriz simétrica no puede ser menor a todos los $\la$. Si lo fuera, entonces $S-s_{jj}I$ tendría autovalores $\1$ y sería definida positiva. Pero $S -  s_{jj}I$ tiene un $\1$ en la diagonal principal, imposible según el Problema $18$.
+% \item From $S=Q\La Q\transp $ compute the positive definite  symmetric square root $Q\sqrt{\La}Q\transp $\linebreak of each matrix. Check that this square root gives $A\transp A=S$:
+\item A partir de $S=Q\La Q\transp $ calcule la raíz cuadrada simétrica y definida positiva $Q\sqrt{\La}Q\transp$ de cada matriz. Verifique que la raíz cuadrada cumple $A\transp A=S$:
+%
+\[
+S=\begin{bmatrix} 5&4\\ 4&5\end{bmatrix}\OG
+S=\begin{bmatrix} 10&6\\ 6&10\end{bmatrix}.
+\]
+% \item Draw the tilted ellipse $x^2+xy+y^2=1$ and find the  half-lengths of its axes from the eigenvalues of the  corresponding matrix $S$.
+\item Dibuje la elipse inclinada $x^2+xy+y^2=1$ y encuentre las longitudes de sus ejes a partir de los autovalores de la matriz $S$ correspondiente.
+% \item In the \index[authors]{Cholesky}Cholesky factorization $S=A\transp A$, with  $A=\sqrt{D}L\transp$, the square roots of the pivots are on the  diagonal of $A$. Find $A$ (upper triangular) for
+\item En la \index[authors]{Cholesky} factorización de Cholesky $S=A\transp A$, con  $A=\sqrt{D}L\transp$, las raices cuadradas de los pivotes están en la diagonal de $A$. Encuentre $A$ (triangular superior) para
+%
+\[
+S=\begin{bmatrix} 9&0&0\\ 0&1&2\\ 0&2&8\end{bmatrix} \OG
+S=\begin{bmatrix} 1&1&1\\ 1&2&2\\ 1&2&7\end{bmatrix}.
+\]
+
+% \item Suppose $C$ is positive definite (so $\bi y\transp C\bi y>0$ whenever $\bi y\neq \bm{0}$) and $A$ has independent columns (so $A\bi x\neq\bm{0}$ whenever $\bi x\neq\bm{0}$). Apply the energy test to $\bi x\transp A\transp CA\bi x$ to show that $\bi{S=A\transp CA}$\index[smbl]{$S=A\transp CA$} \embf{is positive definite: the crucial matrix in engineering}.\linebreak
+\item Suponga que $C$ es definida positiva ($\bi y\transp C\bi y>0$ para todo $\bi y\neq \bm{0}$) y $A$ tiene columnas independientes ($A\bi x\neq\bm{0}$ para todo $\bi x\neq\bm{0}$). Aplique la condición de la energía a $\bi x\transp A\transp CA\bi x$ para mostrar que $\bi{S=A\transp CA}$\index[smbl]{$S=A\transp CA$} \embf{es definida positiva: matriz crucial en ingeniería}. %\linebreak
+% \vspace{-11pt}
+
+\begin{tabular}{|@{\;}p{14.8cm}@{\;}|}\hline
+\begin{center}
+\vspace{-10pt}
+% \textbf{The Minimum of a Function $\bi{F(x, y, z)}$}\index[indx]{Minimum}
+\textbf{El mínimo de una función $\bi{F(x, y, z)}$}\index[indx]{Minimo@Mínimo}
+\end{center}
+
+\vspace{-5pt}
+% What tests would you expect for a minimum point\,?\;  First come zero slopes\,:
+¿\,Qué condición esperaría para un punto mínimo\,?\;  Primero que haya pendientes nulas\,:
+
+\vspace{2pt}
+% \textbf{First derivatives are zero}\quad $\dfrac{\partial F}{\partial x}=\dfrac{\partial F}{\partial y}=\dfrac{\partial F}{\partial z}=\bi{0}$ at the minimum point.
+\textbf{Las primeras derivadas son cero}\quad $\dfrac{\partial F}{\partial x}=\dfrac{\partial F}{\partial y}=\dfrac{\partial F}{\partial z}=\bi{0}$ en el punto mínimo.
+
+% Next comes the linear algebra version of the usual calculus test $d^2f/dx^2>0$\,:
+Luego le sigue la versión del álgebra lineal de la típica condición de cálculo $d^2f/dx^2>0$\,:
+
+% \textbf{Second derivative matrix $\bi{H}$ is positive definite}\quad
+\textbf{La matriz de derivadas segundas $\bi{H}$ es definida positiva}\quad $H\!=\!\left[\begin{array}{@{\;\,}lll@{\;\,}} \bi{F_{xx}}&\bi{F_{xy}}&\bi{F_{xz}}\\\bi{F_{yx}}&\bi{F_{yy}}&\bi{F_{yz}}\\\bi{F_{zx}}&\bi{F_{zy}}&\bi{F_{zz}}\\
+\end{array}
+\right]$
+
+% Here $\bi{F_{xy}}=\dfrac{\partial}{\partial x}\left(\dfrac{\partial F}{\partial y}\right)=\dfrac{\partial}{\partial y}\left(\dfrac{\partial F}{\partial x}\right)=\bi{F_{yx}}$ is a `mixed'' second derivative.
+Aquí $\bi{F_{xy}}=\dfrac{\partial}{\partial x}\left(\dfrac{\partial F}{\partial y}\right)=\dfrac{\partial}{\partial y}\left(\dfrac{\partial F}{\partial x}\right)=\bi{F_{yx}}$ es una derivada segunda ``mixta''.
+\\[15pt]\hline
+\end{tabular}
+
+\begin{comment}
+% \item For $F_1(x,y)=\tfrac14 x^4+x^2y+y^2$ and  $F_2(x,y)=x^3+xy-x$ find the second derivative matrices $H_1$  and $H_2$ (the \textbf{Hessian matrices})\,:\index[indx]{Hessian}
+\item Para $F_1(x,y)=\tfrac14 x^4+x^2y+y^2$ y  $F_2(x,y)=x^3+xy-x$ encuentre las matrices de derivadas segundas $H_1$ y $H_2$ (las \textbf{matrices hessianas})\,:\index[indx]{Hessiano}
+
+\vspace{-12pt}
+
+% \[\hbox{\bf Test for minimum\quad}\index{Test for minimum}
+\[\hbox{\bf Condición para el mínimo\quad}\index{Condición para el mínimo}
+H=\begin{bmatrix}
+\pa^2\! F/ \pa x^2&  \pa^2\! F/ \pa x \pa y\\[\jot]
+ \pa^2\! F/ \pa y \pa x&
+ \pa^2\! F/ \pa y^2\end{bmatrix} \hbox{ es definida positiva}
+\]
+
+\vspace{-6pt}
+% \mbox{$H_1$\! is positive definite so $F_1$\! is concave up $(=$ convex). Find the minimum point of~$F_1$.}\linebreak \emph{Find the saddle point\index{Saddle point} of} $F_2$ (look only where first derivatives are zero).
+$H_1$\! es definida positiva así que $F_1$\! es cóncava hacia arriba $(=$ convexa). Encuentre el punto mínimo de~$F_1$. \emph{Encuentre el punto de ensilladura\index{Punto de ensilladura} de} $F_2$ (busque solo donde las primeras derivadas son cero).
+
+\end{comment}
+
+% \item Which values of $c$ give a bowl\index{Bowl} and which $c$ give a saddle point for the graph of $z=4x^2+12xy+cy^2$? Describe this graph at the borderline value of $c$.
+\item ¿\,Qué valores de $c$ dan un bol\index{Bol} y cuáles $c$ dan un punto de ensilladura para el gr\'afico de $z=4x^2+12xy+cy^2$\,? Describa este gr\'afico para el valor de $c$ donde se produce el cambio.
+
+% \item Without multiplying $S={\left[\begin{matrix}
+\item Sin multiplicar $S={\left[\begin{matrix}
+      \cos\theta & -\sin\theta\\ \sin\theta & \ph
+      \cos\theta\end{matrix}\right]}
+  {\left[\begin{matrix} 2&0\\ 0&5\end{matrix}\right]}
+  {\left[\begin{matrix}  \ph\cos\theta &
+      \sin\theta\\  -\sin\theta & \cos\theta
+    \end{matrix}\right]}$,\; encontrar
+
+\vspace{-9pt}
+\begin{table}[h]
+\begin{tabular}{ll}
+%   \hs2\quad (a) the determinant of $S$ \hs2 & (b) the eigenvalues  of $S$ \\ \hs2\quad (c) the eigenvectors of $S$ \hs2 & (d) a  reason why $S$ is symmetric positive definite. \\
+\hs2\quad (a) el determinante de $S$ \hs2 & (b) los autovalores de $S$ \\ \hs2\quad (c) los autovectores de $S$ \hs2 & (d) una razón por la que $S$ es simétrica y definida positiva. \\
+\end{tabular}
+\end{table}
+
+\vspace{-8pt}
+% \item For which $a$ and $c$ is this matrix positive definite\,? For which $a$ and $c$ is it positive semidefinite (this includes definite)\,?
+\item ¿\,Para cuáles $a$ y $c$ es esta matriz definida positiva\,? \, ¿\,Para cuáles $a$ y $c$ es semidefinida positiva (esto incluye definida)\,?
+
+\index[smbl]{$\bi{x}\transp S\bi{x}$}
+\vspace{-5pt}
+$$
+S=\left[\begin{array}{ccc}
+a&a&a\\[3pt] a&a+c&a-c\\[3pt] a&a-c&a+c\\
+\end{array}\right]\qquad \begin{array}{l}
+\text{Las 5 condiciones son posibles.}\\[3pt]
+\text{La energ\'ia } \bi{x}\transp S\bi{x} \text{ es igual a}\\[3pt]
+a\,(x_1+x_2+x_3)^2+c\,(x_2-x_3)^2.\\
+\end{array}
+$$
+
+% \item \textbf{Important}! Suppose $S$ is positive definite with eigenvalues $\lambda_1\geq\lambda_2\geq\ldots\geq\lambda_n$.
+\item ¡\textbf{Importante}! Sea $S$ definida positiva con autovalores $\lambda_1\geq\lambda_2\geq\ldots\geq\lambda_n$.
+
+% (a) What are the eigenvalues of the matrix $\la_1 I-S$? Is it positive semidefinite?
+(a) ¿\,Cuáles son los autovalores de la matriz $\la_1 I-S$? ¿\,Es semidefinida positiva?
+
+% (b) How does it follow that $\la_1\bi{x}\transp\bi{x}\geq\bi{x}\transp S\bi{x}$ for every \bi{x}?
+(b) ¿\,Cómo se sigue que $\la_1\bi{x}\transp\bi{x}\geq\bi{x}\transp S\bi{x}$ para todo \bi{x}?
+
+% (c) Draw this conclusion: \textbf{The maximum value of} $\bi{x\transp Sx}/\bi{x}\transp \bi{x}$ \textbf{is} $\lambda_1$.
+(c) Llegue a la siguiente conclusión: \textbf{El valor máximo de} $\bi{x\transp Sx}/\bi{x}\transp \bi{x}$ \textbf{es} $\lambda_1$.
+
+\hspace{-33pt}
+\begin{tabular}{l@{\hspace{6pt}}l}
+% \emph{Note}&Another way to \textbf{28} (c)\,:\quad \textbf{Maximize} $\bi{x}\transp\bi{Sx}$ subject to the condition $\bi{x}\transp\bi{x}=\bi{1}$.\\
+\emph{Observación}&Otra manera de llegar a \textbf{27} (c)\,:\quad \textbf{Maximizar} $\bi{x}\transp\bi{Sx}$ sujeto a la condición $\bi{x}\transp\bi{x}=\bi{1}$.\\
+% &This leads to $\dfrac{\partial}{\partial\bi{x}}\left[\bi{x}\transp\bi{S}\bi{x}\!-\!\lambda\left(\bi{x}\transp\bi{x}\!-\!1\right)\right]\!=\!\bi{0}$ and then $S\bi{x}\!=\!\lambda\bi{x}$ and $\lambda=\lambda_1$.
+&Esto nos lleva a $\dfrac{\partial}{\partial\bi{x}}\left[\bi{x}\transp\bi{S}\bi{x}\!-\!\lambda\left(\bi{x}\transp\bi{x}\!-\!1\right)\right]\!=\!\bi{0}$ y luego $S\bi{x}\!=\!\lambda\bi{x}$ y $\lambda=\lambda_1$.
+\end{tabular}
+
+    
+\end{enumerate}
+
+\section{Sección I.8}
+
+\subsection*{Videos}
+
+\begin{itemize}
+    \item \href{https://youtu.be/0UtmPGTwLFw}{\bf Video 19:  Descomposición en Valores Singulares. Parte 1. 22 min}
+    
+    SVD: la descomposici\'on que hay que saber. Buenas matrices: reales simétricas, tienen autovalores reales y autovectores ortogonales.
+    
+    Las menos buenas: cuadrdas y que tal vez los autovalores no son reales, con autovectores no necesarimaente ortogonales.
+    
+    Las no cuadradas. Ni siquiera tenemos el concepto de autovectores y autovalores. Ahi aparece la SVD. Dos conjuntos de autovectores (a derecha y izquierda).
+    
+    $X\in {\mathbb R}^{n\times p}$, $X= U \Lambda V^T$ con $U\in \mathbb{R}^{n\times n}$, $V \in \mathbb{R}^{p\times p}$ con $U^T U=I$, $V^T V=I$, and $\Lambda $ casi diagonal (con la casi diagonal de numeros reales). Hay en $\Lambda $, $r  $ reales no 0 (el resto 0). $r $ es el rango de $X$. ?`Donde esta el espacio nulo de $X$, el espacio nulo de $X^T$, etc?
+    Escritura de $X$ como suma de matrices de rango 1. Forma reducida de la SVD, propiedades de las nuevas matrices $U$ y $V$ y $\Sigma$.
+    
+    \item \href{https://youtu.be/Hn26OMADcnM}{\bf Video 20:  Descomposición en Valores Singulares. Parte 2. 23 min}   
+    
+    Prueba de la descomposici\'on en valores singulares. Relaci\'on con la descomposici\'on de $XX^T$ y de $X^T X$. 
+    
+    {\color{blue}{Al final del video hay preguntas que debemos contestar.}}
+    
+    \item \href{https://youtu.be/JRwlW0vrcF4}{\bf Video 21:  Descomposición en Valores Singulares. Parte 3. 4 min} 
+    
+    Geometr\'ia de la SVD: ortogonal $+$ diagonal $+ $ ortogonal = rotaci\'on $+$ estiramiento $+$ rotaci\'on
+    
+    
+    Aprende a contar la cantidad de par\'ametros comparando los par\'ametros de la matriz y de la SVD.
+    
+    
+     \item \href{https://youtu.be/YAZ1RrBcyzE}{\bf Video 22:  Descomposición en Valores Singulares. Parte 4. 10 min.} 
+     
+     
+    % {\color{blue}{Antes de ver este video debe hacer la pr\'actica en conjunto con C\'alculo II}}
+     
+     Ver a $\sigma_1$ y a $v_1$ como soluci\'on de una maximizaci\'on. Idem el resto de valores y vectores singulares.
+     
+     Conexi\'on entre la SVD de $A$ y $A^T$
+     
+     \item \href{https://youtu.be/cIH0yTo32lM}{\bf Video 23:  Descomposición en Valores Singulares. Parte 5. 20 min} 
+     
+     Las submatrices tienen valores singulares mas peque\~nos.
+     
+     $\sigma_1$ es una norma en las matrices de $\mathbb{R}^{m\times n}$
+     
+     Como se escribe una submatriz $B$ de $A$ como $B=S A S_T^T$ con $S $ y $S_T$ con ceros y unos.
+     
+     Descomposici\'on polar $A=QS=S_1 Q_1$ (comparaci\'on con la descomposici\'on polar de n\'umeros complejos)
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+    
+\item Una matriz sim\'etrica $S=S\transp$ tiene autovectores ortonomales $\bv_1$ a $\bv_n$. Entonces cualquier vector $\bi{x}$ se puede escribir como una combinaci\'on   $\bi{x}=c_1\bv_1+\cdots+c_n\bv_n$. Explique estas dos f\'ormulas\,:
+
+$$
+\bi{x}\transp\bi{x}=c_1^2+\cdots+c_n^2\qquad\qquad \bi{x}\transp S\bi{x}=\lambda_1c_1^2+\cdots+\lambda_n c_n^2.
+$$
+
+
+
+%\item Problem $1$ gives a neat form for the \index[authors]{Rayleigh}\index[indx]{Rayleigh quotient}Rayleigh quotient $\bi{x}\transp S\bi{x}/\bi{x}\transp\bi{x}$\,:
+%
+%\begin{center}
+%{\setlength{\fboxrule}{0.5pt}
+%\fbox{$R(\bi{x})=\dfrac{\bi{x}\transp S\bi{x}}{\bi{x}\transp\bi{x}}=\dfrac{\lambda_1c_1^2+\cdots+\lambda_nc_n^2}{c_1^2+\cdots+c_n^2}$.}}
+%\end{center}
+%
+%\textbf{Why is the maximum value of that ratio equal to the largest eigenvalue $\bi{\lambda_1}$\,?} This may be the simplest way to understand the ``second construction'' of the SVD in equation ($\ref{eq:010815}$). You can see why the ratio $R(\bi{x})$ is a maximum when $c_1=1$ and $c_2=c_3=\cdots=c_n=0$.
+
+
+
+\item El Problema $1$ da una forma clara para el cociente de Rayleigh \index[authors]{Rayleigh}\index[indx]{Cociente de Rayleigh}  $\bi{x}\transp S\bi{x}/\bi{x}\transp\bi{x}$\,:
+
+\begin{center}
+{\setlength{\fboxrule}{0.5pt}
+\fbox{$R(\bi{x})=\dfrac{\bi{x}\transp S\bi{x}}{\bi{x}\transp\bi{x}}=\dfrac{\lambda_1c_1^2+\cdots+\lambda_nc_n^2}{c_1^2+\cdots+c_n^2}$.}}
+\end{center}
+
+\textbf{?`\,Por qu\'e el valor m\'aximo de este cociente es igual al autovalor más grande  $\bi{\lambda_1}$\,?}
+Esta debe ser la forma más simple de entender la  ``segunda construcci\'on'' de la SVD en la ecuaci\'on  $15$, de la Sección I.8. Puede verse por qué el cociente $R(\bi{x})$ es m\'aximo cuando $c_1=1$ y $c_2=c_3=\cdots=c_n=0$.
+
+%\item Next comes $\lambda_2$ when $\bi{x}=\bv_2$. We maximize $R(\bi{x})=\bi{x}\transp S\bi{x}/\bi{x}\transp\bi{x}$ under the condition that $\bi{x}\transp\bv_1=0$. \emph{What does this condition mean for} $c_1$\,? Why is the ratio in Problem $2$ now maximized when $c_2=1$ and $c_1=c_3=\cdots=c_n=0$\,?
+
+
+\item Luego viene $\lambda_2$ cuando $\bi{x}=\bv_2$. Maximizamos $R(\bi{x})=\bi{x}\transp S\bi{x}/\bi{x}\transp\bi{x}$ con la condici\'on que $\bi{x}\transp\bv_1=0$. ?`\,\emph{Qué significa esta condici\'on para} $c_1$\,? ?`Por qu\'e el cociente del Problema $2$ ahora se maximiza cuando $c_2=1$ y $c_1=c_3=\cdots=c_n=0$\,?
+
+
+%\item Following Problem 3, what maximum problem\index[indx]{Maximum problem} is solved by $\bi{x}=\bv_3$\,? The best $\bi{c}$'s are\linebreak $c_3=1$ and  $c_1=c_2=c_4\cdots=0$.
+%
+%\vspace{-5pt}
+%$$
+%\text{The maximum of } R(\bi{x})=\dfrac{\bi{x}\transp S\bi{x}}{\bi{x}\transp\bi{x}}\text{ \;is\; }\bi{\lambda_3}\text{ subject to what two conditions on } \bi{x}\,?
+%$$
+
+\item Siguiendo al  Problema 3, ?`\,Qu\'e problema de m\'aximo resuelve \index[indx]{Problema de máximo}  $\bi{x}=\bv_3$\,? Los mejores $\bi{c}$ son  $c_3=1$ y  $c_1=c_2=c_4\cdots=0$.
+
+% \vspace{-5pt}
+$$
+\text{?`\,Sujeto a qué dos condiciones en \;$\bi{x}$\; es el m\'aximo de } \;R(\bi{x})=\dfrac{\bi{x}\transp S\bi{x}}{\bi{x}\transp\bi{x}}\text{ \;igual a\;  }\bi{\lambda_3}\,?
+$$
+
+
+%\item Show that $A\transp$ has the same (nonzero) singular values as $A$. Then $||A||=||A\transp||$ for all matrices. But it's not true that $||A\bi{x}||=||A\transp\bi{x}||$ for all vectors. That needs $A\transp A=AA\transp$.
+
+\item Consideremos una matriz cuadrada $A$ y sea $||A||$ la norma definida como el módulo del m\'aximo valor singular. Muestre que $A\transp$ tiene los mismos valores singulares (no nulos) que $A$ y luego resulta que $||A||=||A\transp||$ para todas las matrices. Demuestre que no es cierto que para todos los vectores $||A\bi{x}||=||A\transp\bi{x}||$ (aquí hablamos de la norma euclídea---norma 2---usual de vectores). Demuestre que si $A$ conmuta con su transpuesta, entonces sí es cierto que $||A\bi{x}||=||A\transp\bi{x}||$ para todo vector $\bi{x}$.
+
+ 
+
+
+
+%\item Find the $\sigma$'s and $\bv$'s and $\bu$'s in the SVD for $A=\left[\begin{array}{ll}3&4\\0&5\\\end{array}\right]$. Use equation (12).
+
+
+\item Encuentre los $\sigma$, los $\bv$ y los $\bu$ en la  SVD para  $A=\left[\begin{array}{ll}3&4\\0&5\\\end{array}\right]$. Use la ecuaci\'on (12).
+
+
+
+%\item What is the norm $||A-\sigma_1\,\bu_1\bv_1\transp||$ when that largest rank one piece of $A$ is removed\,?\linebreak What are all the singular values of this reduced matrix, and its rank\,?
+
+\item Sea $A$ una matriz con máximo valor singular $\sigma_1$ y consideremos la matriz \emph{reducida} $B=A-\sigma_1\,\bu_1\bv_1\transp$ que se obtiene de $A$ quitándole la matriz \emph{más grande} de rango uno. 
+
+?`\,Cu\'al es la norma del máximo valor singular de la matriz reducida $B$? 
+
+% $||A-\sigma_1\,\bu_1\bv_1\transp||$ cuando se le quita la matriz de rango uno m\'as grande de $A$\,?
+
+?`\,Cu\'ales son todos los valores singulares de esta matriz reducida\,?
+
+?`\,Y su rango\,? 
+
+
+%\item Find the $\sigma$'s and $\bv$'s and $\bu$'s, and verify that $A=\left[\begin{array}{lll}0&2&0\\0&0&3\\0&0&0\\\end{array}\right]=U\Sigma V\transp$. For this matrix, the orthogonal matrices $U$ and $V$ are permutation matrices.
+
+
+\item  Encuentre los $\sigma$, $\bv$ y $\bu$, y verifique que $A=\left[\begin{array}{lll}0&2&0\\0&0&3\\0&0&0\\\end{array}\right]=U\Sigma V\transp$. Para esta matriz, las matrices ortogonales  $U$ y $V$ son matrices de permutaci\'on.
+
+%\item To maximize $\bi{x}\transp S\bi{x}$ with $\bi{x}\transp\bi{x}=1$, \index[authors]{Lagrange}Lagrange would work with $L=\bi{x}\transp S\bi{x}+\lambda(\bi{x}\transp\bi{x}-1)$. Show that $\bi{\nabla L}=(\partial L/\partial x_1,\ldots,\partial L/\partial x_n)=0$ is exactly $2S\bi{x}=2\lambda\bi{x}$. Once again $\hbox{max\;}\hbox{R}(\bi{x})=\lambda_1$.
+
+% \newpage
+
+\item Para maximizar $\bi{x}\transp S\bi{x}$ con  $\bi{x}\transp\bi{x}=1$, \index[authors]{Lagrange}Lagrange trabajar\'ia con $L=\bi{x}\transp S\bi{x}+\lambda(\bi{x}\transp\bi{x}-1)$. Muestre que la ecuación 
+\[\bi{\nabla L}=(\partial L/\partial x_1,\ldots,\partial L/\partial x_n)=0 \]
+es exactamente la ecuación $2S\bi{x}=2\lambda\bi{x}$. Nuevamente $R(\bi{x})=\lambda_1$.
+
+
+
+
+%\item Prove $||B||\leq||A||$ in equation ($\ref{eq:010822}$) by a slightly different approach. Remove first the $N-n$ columns of $A$. The new matrix has $||C||\leq||A||$. (Why\,?). Then transpose $C$\,: no change in norm. Finally remove $M-m$ columns of $C\transp$ to produce $B\transp$\linebreak with no increase in norm. Altogether $||B||=||B\transp||\leq|| C\transp||=||C||\leq||A||$.
+
+\item Pruebe que $||B||\leq||A||$ en la ecuaci\'on ($22$) de la Sección I.8, con un enfoque ligeramente diferente. Elimine primero las $n-N$ columnas de $A$. La nueva matriz tiene  $||C||\leq||A||$. (?`\,Por qu\'e\,?). Luego trasponga $C$: no cambia su norma. Finalmente elimine   $m-M$ columnas de $C\transp$ para generar $B\transp$ que no crece en norma. Todo junto
+ $||B||=||B\transp||\leq|| C\transp||=||C||\leq||A||$.
+
+
+%\item Check that the trace of $S=\left[\begin{array}{cc}0&A\\A\transp&0\\\end{array}\right]$ from adding up its diagonal entries agrees with the sum of its eigenvalues in equation ($\ref{eq:010821}$). If $A$ is a square diagonal matrix with entries $1,2,\ldots,n$, what are the $2n$ eigenvalues and eigenvectors of $S$\,?
+
+
+\item Corrobore que la traza de $S=\left[\begin{array}{cc}0&A\\A\transp&0\\\end{array}\right]$ sumando los elementos de la diagonal sea igual a la suma de sus autovalores en la ecuaci\'on   ($21$) de esta Sección. 
+
+Si $A$ es una matriz diagonal cuadrada con elementos $1,2,\ldots,n$, ?`\,Cu\'ales son los  $2n$ autovalores y autovectores de $S$\,?
+
+
+
+%\item Find the SVD of the rank $1$ matrix $A=\left[\begin{array}{cc}2&4\\1&2\\\end{array}\right]$. Factor $A\transp A$ into $Q\Lambda Q\transp$.
+
+
+\item Encuentre la  SVD  de la matriz de rango  uno $A=\left[\begin{array}{cc}2&4\\1&2\\\end{array}\right]$. Factorice $A\transp A$ como $Q\Lambda Q\transp$.
+
+%\item Here is my homemade proof of the SVD. Step $\bi{2}$ uses the factorizations\linebreak $A\transp A=V\Lambda V\transp$ and $AA\transp=U\Lambda U\transp$ (same eigenvalues in $\Lambda$).
+%
+%\begin{center}
+%\index[indx]{Proof of the SVD}
+%\begin{tabular}{l|ll@{\quad}l|l}\cline{2-4}
+%&&&\multicolumn{1}{c|}{\;}\\[-5pt]
+%&$\bi{1}$&$A(A\transp A)$&$=(AA\transp)A$&\\
+%&$\bi{2}$&$AV\Lambda V\transp$&$=U\Lambda U\transp A$&\\
+%&$\bi{3}$&$(U\transp AV)\Lambda$&$=\Lambda(U\transp AV)$&\\
+%&$\bi{4}$&\multicolumn{2}{l|}{$U\transp AV$ must be diagonal}&\\[5pt]\cline{2-4}
+%\end{tabular}
+%\end{center}
+%
+%\noindent
+%Step $3$ multiplied Step $2$ on the left by \1 and on the right by \1.\linebreak Then the matrix $U\transp AV$ commutes with the diagonal matrix $\Lambda$ in Step $3$. How\linebreak does this force the matrix $U\transp AV=\Sigma$ to be also a diagonal matrix\,? Try $3$ by $3$.\linebreak\vspace{-11pt}
+%
+%\vspace{-11pt}
+%$$
+%\bi{\Sigma\Lambda}=\!\!\left[\begin{array}{@{\;}rrr@{\;}}\sigma_{11}&\sigma_{12}&\sigma_{13}\\\sigma_{21}&\sigma_{22}&\sigma_{23}\\\sigma_{31}&\sigma_{32}&\sigma_{33}\\\end{array}\right]\!\!\left[\begin{array}{@{\;}r@{\;}r@{\;}r@{\;}}\lambda_1&&\\&\lambda_2&\\&&\lambda_3\\\end{array}\right]\!=\!\left[\begin{array}{@{\;}r@{\;}r@{\;}r@{\;}}\lambda_1&&\\&\lambda_2&\\&&\lambda_3\\\end{array}\right]\!\!\left[\begin{array}{@{\;}rrr@{\;}}\sigma_{11}&\sigma_{12}&\sigma_{13}\\\sigma_{21}&\sigma_{22}&\sigma_{23}\\\sigma_{31}&\sigma_{32}&\sigma_{33}\\\end{array}\right]\!\!=\bi{\Lambda\Sigma}
+%$$
+%
+%\noindent
+%Compare the first rows. When can you conclude that $\sigma_{12}=0$ and $\sigma_{13}=0$\,? This\linebreak shows the limitation on my proof\,: \emph{It needs the eigenvalues of $A\transp A$ to be} \1.\linebreak\vspace{-11pt}
+%
+%\hspace{10pt}
+%The same bug appears in simple proofs of the spectral theorem $S=Q\Lambda Q\transp$.\linebreak This is easy when $S$ has no repeated $\lambda$'s.\! \mbox{The SVD is easy when $A$ has no repeated  $\sigma$'s.}
+%
+%\hspace{10pt}
+%\index[smbl]{$A=U\Sigma V\transp$}Both $S=Q\Lambda Q\transp$ and $A=U\Sigma V\transp$ remain true when $\lambda$'s or $\sigma$'s happen to be\linebreak repeated. The problem is that this produces a whole plane of eigenvectors\linebreak or singular vectors. You have to choose the singular vectors $\bu$ specifically as $A\bv/\sigma$---which is the real proof in equation (9).\index[indx]{Repeated eigenvalue}
+
+
+
+\item He aqu\'i mi prueba casera de la SVD. El Paso $\bi{2}$ usa la factorizaci\'on %\linebreak
+$A\transp A=V\Lambda V\transp$ y $AA\transp=U\Lambda U\transp$ (con los mismos autovalores en $\Lambda$).
+
+\begin{center}
+\index[indx]{Prueba de la SVD}
+\begin{tabular}{l|ll@{\quad}l|l}\cline{2-4}
+&&&\multicolumn{1}{c|}{\;}\\[-5pt]
+&$\bi{1}$&$A(A\transp A)$&$=(AA\transp)A$&\\
+ &$\bi{2}$&$AV\Lambda V\transp$&$=U\Lambda U\transp A$&\\
+&$\bi{3}$&$(U\transp AV)\Lambda$&$=\Lambda(U\transp AV)$&\\
+&$\bi{4}$&\multicolumn{2}{l|}{$U\transp AV$ debe ser diagonal}&\\[5pt]\cline{2-4}
+\end{tabular}
+\end{center}
+
+\noindent
+El Paso $3$ multiplica el Paso $2$ a la izquierda por \1 y a la derecha por \1.\linebreak Entonces la matriz $U\transp AV$ commuta con la matriz diagonal $\Lambda$ en Paso $3$. ?`\,Por qué esto implica que $U\transp AV=\Sigma$ debe ser una matriz diagonal\,? Pruebe el caso $3$ por $3$. %\linebreak\vspace{-11pt}
+
+\vspace{-11pt}
+$$
+\bi{\Sigma\Lambda}=\!\!\left[\begin{array}{@{\;}rrr@{\;}}\sigma_{11}&\sigma_{12}&\sigma_{13}\\\sigma_{21}&\sigma_{22}&\sigma_{23}\\\sigma_{31}&\sigma_{32}&\sigma_{33}\\\end{array}\right]\!\!\left[\begin{array}{@{\;}r@{\;}r@{\;}r@{\;}}\lambda_1&&\\&\lambda_2&\\&&\lambda_3\\\end{array}\right]\!=\!\left[\begin{array}{@{\;}r@{\;}r@{\;}r@{\;}}\lambda_1&&\\&\lambda_2&\\&&\lambda_3\\\end{array}\right]\!\!\left[\begin{array}{@{\;}rrr@{\;}}\sigma_{11}&\sigma_{12}&\sigma_{13}\\\sigma_{21}&\sigma_{22}&\sigma_{23}\\\sigma_{31}&\sigma_{32}&\sigma_{33}\\\end{array}\right]\!\!=\bi{\Lambda\Sigma}
+$$
+
+\noindent
+Compare las primeras filas. ?`Cuándo podemos concluir que $\sigma_{12}=0$ y $\sigma_{13}=0$\,? Esta es la limitaci\'on de mi prueba\,: \emph{Necesita que los autovalores de $A\transp A$ sean} \1. %\linebreak\vspace{-11pt}
+
+\hspace{10pt}
+El mismo problema aparece en las pruebas simples del teorema espectral  $S=Q\Lambda Q\transp$. %\linebreak
+Es f\'acil cuando  $S$ no tiene  $\lambda$ repetidos. La SVD es f\'acil cuando $A$ no tiene  $\sigma$ repetidos.
+
+\hspace{10pt}
+\index[smbl]{$A=U\Sigma V\transp$}
+\index[smbl]{$A=U\Sigma V\transp$}Ambas factorizaciones $S=Q\Lambda Q\transp$ y $A=U\Sigma V\transp$ siguen siendo v\'alidas si $\lambda$ o $\sigma$ aparecen repetidos.
+El problema es que esto produce un plano completo de autovectores o vectores singulares. Hay que elegir  espec\'ificamente
+los vectores singulares   $\bu$ iguales a $A\bv/\sigma$, que es la prueba en la ecuaci\'on  (9).\index[indx]{Autovalores repetidos}
+
+
+
+%
+%\newpage
+%\item Figure I.10 showed how a $2$ by $2$ matrix with four entries $a, b, c, d$ produces an SVD with four parameters $\theta, \phi, \sigma_1, \sigma_2$. Move to $A=U\Sigma V\transp=2$ by $3$ with six entries.\linebreak\vspace{-11pt}
+%\hspace{10pt}
+%How many $\sigma$'s for a $2$ by $3$ matrix\,? Then $U$ ($2$ by $2$) only needs one angle.\linebreak To recover $A$, that leaves how many angles for the $3$ by $3$ orthogonal matrix $V$\,?
+%
+%The row space of $A$ is a plane in $\hbox{\textbf{R}}^3$.\! \mbox{It takes\1 angles for the position of that plane.}\linebreak It takes\1 angle in the plane to find $\bv_1$ and $\bv_2$. A total of \1 angles for $V$.\linebreak\vspace{-11pt}
+
+
+
+% \newpage
+\item La Figura I.10 muestra cómo una matriz de $2\times 2$ con elementos $a, b, c, d$ produce una SVD con cuatro par\'ametros $\theta, \phi, \sigma_1, \sigma_2$. Tome ahora $A=U\Sigma V\transp$ de tamaño $2\times 3$ con 6 elementos.
+
+% \hspace{10pt}
+?`Cu\'antos valores singulares tiene una matriz de $2 \times 3$\,? 
+Luego $U$ ($2 \times 2$) s\'olo necesita un \'angulo.
+Para recuperar $A$,  ?`cu\'antos \'angulos determinan la matriz ortogonal $V$ de $3\times 3$\,?
+
+El espacio fila de $A$ es un plano en $\hbox{\textbf{R}}^3$.{Hace falta conocer \1 \'angulos para la posici\'on de ese plano.}
+Hace falta conocer \1 \'angulo en el plano para encontrar $\bv_1$ y $\bv_2$.  
+Un total de   \1 \'angulos para  $V$. %\linebreak\vspace{-11pt}
+
+%\item Every $3$ by $3$ matrix has $9$ entries. So $U\Sigma V\transp$ must have $9$ parameters. How many parameters\index[indx]{Parameters} in $U$ and $\Sigma$ and $V$\,? \emph{Answer the same questions for $4$ by $4$}. How many parameters describe a rotation in $4$-dimensional space\,?
+
+\item Cada matriz de $3 \times 3$ tiene $9$ elementos. Entonces $U\Sigma V\transp$ debe tener $9$ parametros. ?`\,Cu\'antos par\'ametros\index[indx]{Parámetros} en $U$, en $\Sigma$ y en $V$\,? \emph{Responda las mismas preguntas para una de $4$ por $4$}. ?`Cu\'antos par\'ametros describen una rotación en el espacio de dimensi\'on $4$\,?
+
+
+
+%\item \1 numbers will give the direction of a unit vector $\bv_1$ in $\hbox{\textbf{R}}^5$. Then the direction of an orthogonal unit vector $\bv_2$ takes \1 numbers. How many for $\bv_3$, $\bv_4$, $\bv_5$\,? Total \1.
+
+
+\item \1 n\'umeros dar\'an la direcci\'on de un vector unitario  $\bv_1$ en $\hbox{\textbf{R}}^5$. Luego la direcci\'on de un vector unitario ortogonal  $\bv_2$ necesita \1 n\'umeros. ?`Cu\'antos para  $\bv_3$, $\bv_4$, $\bv_5$\,?\linebreak
+Total \1.
+
+%\item \textbf{If $\bv$ is an eigenvector of $\bi{A\transp A}$ with $\bi{\lambda\neq 0}$, then \1 is an eigenvector of $\bi{AA\transp}$.}
+
+\item \textbf{Si $\bv$ es un autovector de $\bi{A\transp A}$ con $\bi{\lambda\neq 0}$, entonces \1 es un autovector de $\bi{AA\transp}$.}
+
+%\item If $A=U\Sigma V\transp$ is square and invertible, then $A^{-1}=\1$. Find all singular values of $A\transp A$ (not of $A$).
+
+\item Si $A=U\Sigma V\transp$ es cuadrada e invertible, entonces $A^{-1}=\1$. Encuentre todos los valores singulares de  $A\transp A$ (no de $A$).
+
+
+%\item If $A=A\transp$ has orthogonal columns $\bu_1, \bu_2, \bu_3$ in $\hbox{\textbf{R}}^3$ of lengths $2, 3, 4$, find its SVD.
+
+\item Si $A=A\transp$ tiene columnas ortogonales $\bx_1, \bx_2, \bx_3$ en  $\hbox{\textbf{R}}^3$ de magnitudes $2, 3, 4$, encuentre su~SVD.
+
+%\item The reasons for the success of eigenvalues and eigenvectors are in $\bi{A^k=X\Lambda^kX^{-1}}$\,:
+%\begin{enumerate}
+%\item [a)] The eigenvalues of $A^k$\index[indx]{Eigenvalues of $A\transp$ and $A^k$} are $\lambda_1^k,\ldots,\lambda_n^k$
+%
+%\item [b)] An eigenvector $\bi{x}$ of $A$ is also an eigenvector of $A^k$.
+%
+%\end{enumerate}
+%\hspace{-17pt}
+%\textbf{Show that a) and b) are false for singular values and singular vectors of $\left[\begin{array}{@{\,}rr@{\,}}-2&-6\\6&2\\\end{array}\right]$.}
+
+\item Las razones para el \'exito de autovalores y autovectores es que $\bi{A^k=X\Lambda^kX^{-1}}$\,:
+\begin{enumerate}
+\item [a)] Los autovalores de $A^k$\index[indx]{Autovalores de $A\transp$ y $A^k$} son $\lambda_1^k,\ldots,\lambda_n^k$
+
+\item [b)] Un autovector $\bi{x}$ de $A$ es tambi\'en autovector de $A^k$.
+
+\end{enumerate}
+\textbf{Muestre que a) y b) son falsas para valores singulares y vectores singulares de  $\left[\begin{array}{@{\,}rr@{\,}}-2&-6\\6&2\\\end{array}\right]$.}
+
+
+
+%\item Show that the singular values of $AA\transp A$ are $(\sigma_1)^3$ to $(\sigma_r)^3$.
+
+\item Si los valores singulares de $A$ son $\sigma_1,\dots,\sigma_r$, ?`cuáles son los valores singulares de $AA\transp A$?
+
+
+%\item Equation (5) is $AV_r=U_r\Sigma_r$. Multiply by $V\transp_r$ to get $A=U_r\Sigma_r V_r\transp$ (\textbf{reduced SVD}).
+%
+%\vspace{5pt}
+%For that step we cannot use $V_rV_r\transp=I$ (which is false when $m>r$). Show instead that this matrix $A=U_r\Sigma_r V_r\transp$ satisfies equation (1).
+
+%\vspace{5pt}
+%For that step we cannot use $V_rV_r\transp=I$ (which is false when $m>r$). Show instead that this matrix $A=U_r\Sigma_r V_r\transp$ satisfies equation (1).
+
+\item La ecuaci\'on (5) es $AV_r=U_r\Sigma_r$. Mutiplique por $V\transp_r$  para obtener $A=U_r\Sigma_r V_r\transp$ (\textbf{SVD reducida}).
+
+\vspace{5pt}
+Para ese paso no podemos usar $V_rV_r\transp=I$ (que es falso cuando $m>r$). Muestre en cambio que la matriz $A=U_r\Sigma_r V_r\transp$ satisface la ecuaci\'on (1).
+%\item Show that an $m$ by $n$ matrix of rank $r$ has $r(m+n-r)$ free parameters\index[indx]{Parameters} in its SVD\,: $A=U\Sigma V\transp=(m\times r)\,(r\times r)\,(r\times n)$. Why do $r$ orthonormal vectors $\bu_1$ to $\bu_r$ have $(m-1)+(m-2)+\cdots+(m-r)$ parameters\,?
+%
+%Another approach uses $A=CR=(m\times r)\,(r\times n)$ from Section I.1. The matrix $R$\linebreak contains an $r$ by $r$ identity matrix, removing $r^2$ parameters from $rm+rn$. That\linebreak count is repeated in an appendix of this book.
+
+
+\item Muestre que una matriz de $m$ por $n$ de rango $r$ tiene $r(m+n-r)$ par\'ametros libres\index[indx]{Parámetros} en su SVD\,: $A=U\Sigma V\transp=(m\times r)\,(r\times r)\,(r\times n)$. ?`\,Por qu\'e  $r$ vectores ortonormales $\bu_1$ a $\bu_r$ tienen $(m-1)+(m-2)+\cdots+(m-r)$ par\'ametros\,?
+
+Otro enfoque utiliza $A=CR=(m\times r)\,(r\times n)$ de la Secci\'on I.1. La matriz $R$\linebreak contiene una matriz identidad de $r$ por $r$, eliminando   $r^2$ par\'ametros de los  $rm+rn$. Este conteo se repite en un ap\'endice de este libro.
+
+
+\end{enumerate}
+
+
+\section{Sección I.9}
+
+\subsection*{Videos}
+
+\begin{itemize}
+   \item       \href{https://youtu.be/4sDhapuTXZQ}{\bf Video 24:  Componentes principales.   13 min} 
+     
+     SVD: podemos escribir una matriz como suma de matrices de rango 1. Teorema de Eckart-Young. Enunciado. Gracias a SVD podemos conseguir la matriz de rango $k$ mas cercana a la matriz original. 
+     
+     Reproducci\'on del tigre. ?`De tama\~no? Hacer la cuenta de cuanta informaci\'on transmitimos si reducimos la foto.
+     
+       \item       \href{https://youtu.be/5Pc2umjAkGQ}{\bf Video 25:   Teorema de Eckart-Young. 19 min} 
+       
+       
+       Prueba del teorema de Eckart-Young para la norma (en el libro esta probado para la norma de Frobenious, la norma nuclear y la norma espectral). 
+       (en realidad es cierto para cualquier norma que es invariante bajo transformaciones ortogonales). La prueba en el video es en la norma espectral y una idea en la norma de Frobenious. Un hecho importante, estas normas son diferentes a\'un para la matriz identidad. 
+       
+       
+         
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+   \item ¿\,Cuáles son los valores singulares (en orden descendente) de $\bi{A-A_k}$\,? Omita los ceros.
+% \item Find a closest rank-$1$ approximation to these matrices ($L^2$ or Frobenius norm)\,:
+\item Encuentre la aproximación de rango $1$ más cercana a estas matrices ($L^2$ o norma de Frobenius)\,:
+
+\vspace{-5pt}
+$$
+A=\left[\begin{array}{ccc}3&0&0\\0&2&0\\0&0&1\\\end{array}\right]\qquad
+A=\left[\begin{array}{cc}0&3\\2&0\\\end{array}\right]\qquad
+A=\left[\begin{array}{cc}2&1\\1&2\\\end{array}\right]
+$$
+
+\vspace{-8pt}
+% \item Find a closest rank-$1$ approximation in the $L^2$ norm to $A=\left[\begin{array}{rr}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{array}\right]$
+\item Encuentre la aproximación de rango $1$ más cercana en la norma $L^2$ a $A=\left[\begin{array}{rr}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{array}\right]$
+% \item The Eckart-Young theorem is false in the matrix norm $||A||_\infty=$ max row sum\,:
+\item El teorema de Eckart-Young es falso en la norma matricial $||A||_\infty=$ máx de las sumas por filas\,:
+
+\vspace{-5pt}
+$$
+A=\left[\begin{array}{cc}a&b\\c&d\\\end{array}\right]\text{ \;tiene\; } ||A||_\infty=\hbox{max}\dfrac{||A\bi{x}||_\infty}{||\bi{x}||_\infty}=\hbox{max}(|a|+|b|, |c|+|d|)
+$$
+
+
+\vspace{-5pt}
+% Find a rank-$1$ matrix closer to $A=\left[\begin{array}{cc}3&0\\4&5\\\end{array}\right]$ than $A_1=\dfrac{3}{2}\left[\begin{array}{cc}1&1\\3&3\\\end{array}\right]$.
+Encuentre una matriz de rango $1$ más cercana a $A=\left[\begin{array}{cc}3&0\\4&5\\\end{array}\right]$ que $A_1=\dfrac{3}{2}\left[\begin{array}{cc}1&1\\3&3\\\end{array}\right]$, considerando la norma infinito.
+% \item Show that this norm $||A||_\infty=\hbox{max}(|a|+|b|, |c|+|d|)$ is not orthogonally invariant\,:
+\item Muestre que esta norma $||A||_\infty=\hbox{max}(|a|+|b|, |c|+|d|)$ no es ortogonalmente invariante\,:
+
+% \quad\; Find a diagonal matrix $A$ where $||QA||_\infty\neq ||A||_\infty$ for $Q=\left[\begin{array}{@{\,}r@{\;\;}r@{\,}}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{array}\right]$.
+\quad\; Encuentre una matriz diagonal $A$ donde $||QA||_\infty\neq ||A||_\infty$ con $Q=\left[\begin{array}{@{\,}r@{\;\;}r@{\,}}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{array}\right]$.
+% \item If $S=Q\Lambda Q\transp$ is a symmetric positive definite matrix, explain from Eckart-Young why $\bi{q}_1\lambda_1\bi{q}_1\transp$ is the closest rank-$1$ approximation in the $L^2$ matrix norm $||S||_2$.
+\item Si $S$
+%=Q\Lambda Q\transp$
+es una matriz simétrica definida positiva, explique usando Eckart-Young por qué $\bi{q}_1\lambda_1\bi{q}_1\transp$ es la aproximación de rango $1$ más cercana en la norma matricial $L^2$. % \lili{, o :}  $||S||_2$.
+% \item Explain the derivatives $\partial E/\partial C$ and $\partial E/\partial R$ in equation (19) for size $n=2$.
+\item Explique las derivadas $\partial E/\partial C$ y $\partial E/\partial R$ en la ecuación (19) para $n=2$.
+% \item Which rank-$3$ matrices have $||A-A_1||_2=||A-A_2||_2$\,? $A_2$ is $\sigma_1\bu_1\bv_1\transp+\sigma_2\bu_2\bv_2\transp$.\linebreak\vspace{-11pt}
+\item ¿\,Qué matrices de rango $3$ tienen $||A-A_1||_2=||A-A_2||_2$\,? Donde $A_2$ es $\sigma_1\bu_1\bv_1\transp+\sigma_2\bu_2\bv_2\transp$.\linebreak\vspace{-11pt}
+% \item Replace the quarter circle in Figure I.13 by the parabola $\bi{y}=\bi{1-x^2}$. Estimate the rank $CN$ with all $1$'s under the parabola ($N\;1$'s along the axes). First remove\linebreak a rectangle of $1$'s, touching the parabola where slope $=-1$.
+\item Reemplace el cuarto de círculo en la Figura I.13 con la parábola $\bi{y}=\bi{1-x^2}$. Estime el rango $CN$ con todos los $1$ debajo de la parábola ($N\;$ unos sobre los ejes). Primero quite un rectángulo de unos, tocando la parábola donde la pendiente es $=-1$.
+% \item If $A$ is a $2$ by $2$ matrix with $\sigma_1\geq\sigma_2>0$, find $||A^{-1}||_2$ and $||A^{-1}||^2_F$.
+\item Si $A$ es una matriz de $2 \times 2$ con $\sigma_1\geq\sigma_2>0$, encuentre $||A^{-1}||_2$ y $||A^{-1}||^2_F$.
+\end{enumerate}
+
+
+\section{Sección I.10}
+
+
+\subsection*{Videos}
+
+\begin{itemize}
+
+
+  \item       \href{https://youtu.be/HgtUtNUQ4tk}{\bf Video 26:    Cociente de Rayleigh y autovalores generalizados. 18 min} 
+         
+         
+         Definici\'on de cociente de Rayleigh. Equivalencia en la maximizaci\'on y minimizaci\'on con el cociente de Reyleigh con denominador igual a la identidad. ?`C\'omo se traduce la ortogonalidad en del caso cl\'asico en este caso?
+         
+  
+       
+       
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+
+\item Resuelva $(S-\lambda M)\,\bi{x}=\bi{0}$ y $(H-\lambda I)\,\bi{y}=\bi{0}$, luego de calcular la matriz $H=M^{-1/2}SM^{-1/2}$, con :
+
+\vspace{-9pt}
+$$
+S=\left[\begin{array}{rr}5&4\\4&5\\\end{array}\right]\qquad\qquad
+M=\left[\begin{array}{rr}1&0\\0&4\\\end{array}\right]
+$$
+
+% Step 1 is to find $\lambda_1$ and $\lambda_2$ from $\hbox{det}\,(S-\lambda M)=0$. The equation $\hbox{det}\,(H-\lambda I)=0$ \linebreak should produce the same $\lambda_1$ and $\lambda_2$. Those eigenvalues will produce two eigenvectors $\bi{x}_1$ and $\bi{x}_2$ of $S-\lambda M$ and two eigenvectors $\bi{y}_1$ and $\bi{y}_2$ of $H-\lambda I$.%\linebreak\vspace{-11pt}
+Procedimiento: El primer paso es encontrar $\lambda_1$ y $\lambda_2$ a partir de $\hbox{det}\,(S-\lambda M)=0$. La ecuación $\hbox{det}\,(H-\lambda I)=0$ debería producir los mismos $\lambda_1$ y $\lambda_2$. Esos autovalores producirán dos autovectores $\bi{x}_1$ y $\bi{x}_2$ de $S-\lambda M$ y dos autovectores $\bi{y}_1$ y $\bi{y}_2$ de $H-\lambda I$.%\linebreak\vspace{-11pt}
+
+% Verify that $\bi{x}_1\transp\bi{x}_2$ is not zero but $\bi{x}_1\transp M\bi{x}_2=0$. $H$ is symmetric so $\bi{y}_1\transp\bi{y}_2=0$.
+Verifique que $\bi{x}_1\transp\bi{x}_2$ no es cero pero que $\bi{x}_1\transp M\bi{x}_2=0$. $H$ es simétrica así que $\bi{y}_1\transp\bi{y}_2=0$.
+
+\item
+\begin{itemize}
+% 	\item [(a)]For $\bi{x}=(a,b)$ and $\bi{y}=(c,d)$ write the \index[authors]{Rayleigh}\index[indx]{Rayleigh quotient}Rayleigh quotients in Problem $1$ as
+\item [(a)]Para $\bi{x}=(a,b)$ e $\bi{y}=(c,d)$ escriba  \index[authors]{Rayleigh}\index[indx]{Cociente de Rayleigh}los cocientes de Rayleigh del Problema $1$ como
+\end{itemize}
+
+\vspace{-11pt}
+\hspace{-16pt}
+$$R^\ast(\bi{x})=\dfrac{\bi{x}\transp S\bi{x}}{\bi{x}\transp M\bi{x}}=\dfrac{(5a^2+8ab+5b^2)}{(\cdots+\cdots+\cdots)} \text{\; y \;} R(\bi{y})=\dfrac{\bi{y}\transp H\bi{y}}{\bi{y}\transp \bi{y}}=\dfrac{5c^2+4cd+\frac54 d^2}{(\cdots+\cdots)}$$
+
+\begin{itemize}
+% 	\item [(b)] Take the $c$ and $d$ derivatives of $R(\bi{y})$ to find its maximum and minimum.\linebreak\vspace{-11pt}
+\item [(b)] Derive $R(\bi{y})$ con respecto a $c$ y $d$ para encontrar su máximo y mínimo. %\linebreak\vspace{-11pt}
+% 	\item [(c)] Take the $a$ and $b$ derivatives of $R^\ast(\bi{x})$ to find its maximum and minimum.\linebreak\vspace{-11pt}
+\item [(c)] Derive $R^\ast(\bi{x})$ con respecto a $a$ y $b$ para encontrar su máximo y mínimo. %\linebreak\vspace{-11pt}
+% 	\item [(d)] Verify that those maxima occur at eigenvectors from $(S-\lambda M)\,\bi{x}=\bi{0}$ and $(H-\lambda I)\,\bi{y}=\bi{0}.$%\linebreak\vspace{-11pt}
+\item [(d)] Verifique que esos máximos se alcanzan en autovectores de $(S-\lambda M)\,\bi{x}=\bi{0}$ y\linebreak\vspace{-11pt}
+$(H-\lambda I)\,\bi{y}=\bi{0}.$%\linebreak\vspace{-11pt}
+\end{itemize}
+
+% \item How are the eigenvectors $\bi{x}_1$ and $\bi{x}_2$ related to the eigenvectors $\bi{y}_1$ and $\bi{y}_2$\,?
+\item ¿\,Cómo se relacionan los autovectores $\bi{x}_1$ y $\bi{x}_2$ con los autovectores $\bi{y}_1$ e $\bi{y}_2$\,?
+% \item Change $M$ to $\left[\begin{array}{rr}1&0\\0&0\\\end{array}\right]$ and solve $S\bi{x}=\lambda M\bi{x}$. Now $M$ is singular and one of the eigenvalues $\lambda$ is infinite. But its eigenvector $\bi{x}_2$ is still $M$-orthogonal to the other eigenvector $\bi{x}_1$.
+\item Cambie $M$ a $\left[\begin{array}{rr}1&0\\0&0\\\end{array}\right]$ y resuelva $S\bi{x}=\lambda M\bi{x}$. Ahora $M$ es singular y uno de los autovalores $\lambda$ es infinito, pero su autovector $\bi{x}_2$ todavía es $M$-ortogonal al otro autovector $\bi{x}_1$.
+% \item Start with symmetric positive definite matrices $S$ and $M$. Eigenvectors of $S$ fill an orthogonal matrix $Q$ so that $Q\transp SQ=\Lambda$ is diagonal. What is the diagonal matrix $D$ so that $D\transp\Lambda D=I$\,? Now we have $D\transp Q\transp SQD=I$ and we look at $D\transp Q\transp MQD$.
+\item Comience con   matrices  $S$ y $M$ simétricas y definidas positivas. Los autovectores de $S$ conforman una matriz ortogonal $Q$ de manera que $Q\transp SQ=\Lambda$ sea diagonal. ¿\,Cuál es la matriz diagonal $D$ tal que $D\transp\Lambda D=I$\,? Ahora tenemos $D\transp Q\transp SQD=I$ y miramos a $D\transp Q\transp MQD$.
+
+% Its eigenvector matrix $Q_2$ gives $Q_2\transp IQ_2=I$ and $Q_2\transp D\transp Q\transp MQDQ_2=\Lambda_2.$\linebreak\vspace{-11pt}
+Su matriz de autovectores $Q_2$ da $Q_2\transp IQ_2=I$ y $Q_2\transp D\transp Q\transp MQDQ_2=\Lambda_2.$ %\linebreak\vspace{-11pt}
+
+% \emph{Show that $Z=QDQ_2$ diagonalizes both congruences $Z\transp SZ$ and $Z\transp MZ$ in the GSVD}.% \emph{Congruence not similarity}.
+\emph{Muestre que $Z=QDQ_2$ diagonaliza ambas congruencias $Z\transp SZ$ y $Z\transp MZ$ en la SVD generalizada}.% \emph{Congruence not similarity}.
+\item
+\begin{itemize}
+% 	\item [(a)] Why does every congruence\index[indx]{Congruent} $Z\transp SZ$ preserve the symmetry of $S$\,?
+\item [(a)] ¿\,Por qué toda congruencia \index[indx]{Congruente} $Z\transp SZ$ preserva la simetría de $S$\,?
+% 	\item [(b)] Why is $Z\transp SZ$ positive definite when $S$ is positive definite and $Z$ is square and invertible\,? Apply the energy test to $Z\transp SZ$. Be sure to explain why $Z\bi{x}$ is\linebreak not the zero vector.
+\item [(b)] ¿\,Por qué es $Z\transp SZ$ definida positiva cuando $S$ es definida positiva y $Z$ es cuadrada e invertible\,? Aplique el test de energía a $Z\transp SZ$. No se olvide de explicar por qué $Z\bi{x}$ no es el vector cero.
+\end{itemize}
+
+% \item Which matrices $Z\transp IZ$ are congruent to the identity matrix for invertible $Z$\,?
+\item Para $Z$ invertible, ¿\,qué matrices $Z\transp IZ$ son congruentes a la matriz identidad\,?
+% \item Solve this matrix problem basic to \index[authors]{Fisher}Fisher's Linear Discriminant\index[indx]{Discriminant} Analysis\,:
+\item Resuelva este problema matricial esencial del análisis discriminante lineal de Fisher: \index[authors]{Fisher}\index[indx]{Discriminante}
+
+\vspace{-11pt}
+$$\text{Si \;} R(\bi{x})=\dfrac{\bi{x}\transp S\bi{x}}{\bi{x}\transp M\bi{x}}\text{\; y \;} S=\bu\bu\transp\text{\quad¿\,qué vector } \bi{x}\text{ maximiza }R(\bi{x})\,?$$
+%\item
+
+
+\end{enumerate}
+
+
+\section{Sección I.11}
+  {\bf Hay apuntes aparte del libro para la clase.}
+\subsection*{Videos}
+
+\begin{itemize}
+
+       
+    \item      \href{https://youtu.be/HeNuPWbOAX4}{\bf Video 27: Normas de vectores. 36 min} 
+       
+       Definici\'on de distancia. Distancia usual en $R^n$ cumple las propiedades.
+       
+       Definici\'on de norma en espacios vectoriales. La norma usual en $R^n$ cumple las propiedades. Una norma induce una distancia. No vale el rec\'iproco: no toda distancia proviene de una norma. Ejemplo: ?. ?`Cuando una distancia proviene de una norma? Condiciones necesarias y suficientes para que una distancia provenga de una norma. Ejercicio para el lector. 
+      
+     Definici\'on de producto interno. El producto interno usual en $R^n$ cumple las propiedades. Producto interno generado por una matriz definida positiva. Desigualdad de Cauchy-Schwarz. Prueba (no est\'a en el video pero hay que hacerla o saberla). Un producto interno induce una norma. No vale el rec\'iproco: no toda norma proviene de un producto interno. Ejemplo: la norma $p$ usual en $R^n$
+       con $p>1$ y $p\not=2$. Condiciones necesarias y suficiente para que una norma provenga de un producto interno. 
+       
+       Normas famosas y que deben conocer $R^n$. Bolas unitarias en cada caso.
+       
+       Utilidades de las normas. Minimizaci\'on de funciones con restricciones. 
+       
+        \item      \href{https://youtu.be/qSGLRy33zyw}{\bf Video 28: Normas matriciales. Parte I.  31 min} 
+        
+        En una matriz $A$ de $m\times n $ podemos definir una norma usando cualquier norma en $R^{m n}$ haciendo el vec de la matriz $A$
+        
+        Normas matriciales. Una norma mas una propiedad particular $||A B||\le ||A||||B||$. Ejemplo: norma de Frobenius. Norma de Frobenius de una matriz de rango 1. Es una norma generada por una norma vectorial. ?`Cu\'al?. La norma de Frobenius es invariante bajo matrices ortogonales. Prueba de como se calcula la norma de Frobenius a partir de los autovalores de la matriz. 
+        
+        La norma medica. No es una norma matricial. 
+        
+        Normas inducidas por una norma vectorial. Definici\'on: $|||A|||=\max_{x\not=0} \frac{||A x||}{||x||}$ donde para $A $ matriz de $n \times n$ consideramos $||.||$ es cualquier norma en $R^n$. Prueba de que todas esas normas son normas matriciales. 
+       
+         \item      \href{https://youtu.be/dwA38Q51jPU}{\bf Video 29: Normas matriciales. Parte II. 22 min} 
+       
+       
+       Normas inducidas por una norma vectorial. Norma de la matriz identidad es siempre 1. Definiciones equivalentes. 
+       
+       Norma inducida por la norma 2 usual: norma espectral.
+       
+       Norma inducida por la norma 1 usual: igual al m\'aximo de suma de valores absolutos de columnas. 
+       
+       Norma inducida por la norma 1 usual: igual al m\'aximo de suma de valores absolutos de filas. 
+       
+       Norma nuclear
+
+  \item      \href{https://youtu.be/aXsRmXH2vqE}{\bf Video 30: Radio espectral. 20 min} 
+  
+  Radio espectral: m\'aximo del valor absoluto de los autovalores de $A$. No es una norma.
+  
+  Propiedad: radio espectral de $A$ es menor o igual que $||A||$ para cualquier norma inducida.
+  $A$ y $\epsilon >0$ entonces existe una norma inducida tal que $||A||< \hbox{radio espectral} -\epsilon$. Es decir que el radio espectral de $A$ es el infimo de la norma de $||A||$ entre todas las normas inducidas.
+  La prueba esta en los apuntes del curso. Consecuencia importante: $A^k \rightarrow 0$
+si y solo si el radio espectral de $A$
+es menor que uno. Ademas el radio espectral de $A$ es el limite de $||A^k||^{1/k}$ con $k\rightarrow \infty$ para cualquier matriz inducida. 
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+    
+    \item Muestre directamente este hecho sobre las normas vectoriales $\ell^1$ y $\ell^2$ y $\ell^\infty$ \,: $$||\bv||^2_2\leq ||\bv||_1\;||\bv||_\infty$$
+% \item Prove the \index[authors]{Schwarz}\index[indx]{Cauchy-Schwarz}Cauchy-Schwarz inequality $|\bv\transp\bw|\leq||\bv||_2\,||\bw||_2$ for vectors in $\hbox{\textbf{R}}^n$.\linebreak You could verify and use this identity for a length squared\,:
+\item Pruebe la desigualdad de \index[authors]{Schwarz}\index[indx]{Cauchy-Schwarz}Cauchy-Schwarz $|\bv\transp\bw|\leq||\bv||_2\,||\bw||_2$ para vectores en $\hbox{\textbf{R}}^n$. Puede verificar y usar esta identidad para una longitud al cuadrado \,:
+
+\vspace{-9pt}
+$$
+0\leq\left(\bv-\dfrac{\bv\transp\bw}{\bw\transp\bw}\bw, \bv-\dfrac{\bv\transp\bw}{\bw\transp\bw}\bw\right)=\bv\transp\bv-\dfrac{|\bv\transp\bw|^2}{\bw\transp\bw}.
+$$
+
+% \item Show that always $||\bv||_{\text{\scriptsize $\bi{2}$}}\leq\sqrt{n}\,||\bv||_{\text{\scriptsize $\bi{\infty}$}}$. Also prove $||\bv||_{\text{\scriptsize $\bi{1}$}}\leq\sqrt{n}\,||\bv||_{\text{\scriptsize $\bi{2}$}}$ by choosing a suitable vector $\bw$ and applying the Cauchy-Schwarz inequality.
+\item Muestre que siempre se satisface que $||\bv||_{\text{\scriptsize $\bi{2}$}}\leq\sqrt{n}\,||\bv||_{\text{\scriptsize $\bi{\infty}$}}$. También pruebe que $||\bv||_{\text{\scriptsize $\bi{1}$}}\leq\sqrt{n}\,||\bv||_{\text{\scriptsize $\bi{2}$}}$, para esto puede considerar un vector apropiado $\bw$ y aplicanr la desigualdad Cauchy-Schwarz.
+
+% \item The $\ell^p$ and $\ell^q$ norms are ``\emph{dual}'' if $p^{-1}+q^{-1}=1$. The $\ell^1$ and $\ell^\infty$ vector norms\linebreak are dual (and $\ell^2$ is self-dual).\index[indx]{Duality} H\"{o}lder's inequality extends Cauchy-Schwarz to\linebreak all those dual pairs. What does it say for $p=1$ and $q=\infty$\,?
+\item Las normas $\ell^p$ y $\ell^q$ son ``\emph{duales}'' si $\frac1p + \frac1q =1$. Las normas vectoriales $\ell^1$ y $\ell^\infty$ son duales (y $\ell^2$ es auto-dual).\index[indx]{Dualidad} La desigualdad de H\"{o}lder  extiende a la de Cauchy-Schwarz para todos esos pares duales.
+
+\vspace{-16pt}
+$$
+\index[authors]{H\"{o}lder}\index[indx]{Desigualdad de H\"{o}lder}\textbf{Desigualdad de H\"{o}lder}\qquad |\bv\transp\bw|\leq||\bv||_{\text{\footnotesize $\bi{p}$}}\,||\bw||_{\text{\footnotesize $\bi{q}$}} \text{ \;cuando\; } \bi{\frac1p+\frac1q=1}.
+$$
+
+¿\,Cómo se interpreta la desigualdad en el caso en que $p=1$ y $q=\infty$\,?
+% \item What rules should be satisfied by any ``\emph{inner product}\,'' of vectors $\bv$ and $\bw$\,?
+\item ¿\,Qué reglas deben cumplir los ``\emph{productos internos}\,'' de los vectores $\bv$ y $\bw$\,?
+% \item The first page of\; I.11 shows \emph{unit balls}\index[indx]{Unit ball} for the $\ell^1$ and $\ell^2$ and $\ell^\infty$ norms. Those\linebreak are the three sets of vectors $\bv=(v_1,v_2)$ with $||\bv||_1\leq 1, ||\bv||_2\leq 1, ||\bv||_\infty\leq 1$.\linebreak \emph{Unit balls are always convex because of the triangle inequality for vector norms}\,:
+\item La primera página de\; I.11 muestra \emph{bolas unitarias}\index[indx]{Bola unitaria} para las normas $\ell^1$ y $\ell^2$ y $\ell^\infty$. Esos son los tres conjuntos de vectores $\bv=(v_1,v_2)$ con $||\bv||_1\leq 1, ||\bv||_2\leq 1, ||\bv||_\infty\leq 1$.\linebreak \emph{Las bolas unitarias son siempre convexas debido a la desigualdad triangular para normas vectoriales}\,:
+
+\vspace{-7pt}
+\begin{center}
+% If $||\bv||\leq 1$ and $||\bw||\leq1$ show that $||\frac{\bv}{2}+\frac{\bw}{2}||\leq 1$.
+Si $||\bv||\leq 1$ y $||\bw||\leq1$ muestre que $||\frac{\bv}{2}+\frac{\bw}{2}||\leq 1$.
+\end{center}
+% \item A short proof of $||AB||_F\leq||A||_F\,||B||_F$ starts from multiplying rows times columns\,:
+\item Una prueba corta de $||AB||_F\leq||A||_F\,||B||_F$ comienza con la multiplicación desde el punto de vista filas por columnas\,:
+
+\vspace{5pt}
+\hspace{10pt}
+% $|(AB)_{ij}|^2\leq||\text{row }i\text{ of }A||^2\,||\text{column } j\text{ of } B||^2$ is the Cauchy-Schwarz inequality
+$|(AB)_{ij}|^2\leq||\text{fila }i\text{ de }A||^2\,||\text{columna } j\text{ de } B||^2$ es la desiguladad de Cauchy-Schwarz.
+
+\vspace{5pt}
+\hspace{10pt}
+% Add up both sides over all $i$ and $j$ to show that $||AB||^2_F\leq||A||^2_F\,||B||^2_F$.
+Sume ambos lados para todo $i$ y $j$ para mostrar que $||AB||^2_F\leq||A||^2_F\,||B||^2_F$.
+
+% \item Test $||AB||_F\leq||A||_F\,||B||_F$ for $A=B=I$ and $A=B=$ ``all ones matrix''.
+\item Verifique que $||AB||_F\leq||A||_F\,||B||_F$ para $A=B=I$ y $A=B=$ ``matriz de todos unos''.
+
+% \item The space of $m$ by $n$ matrices with the Frobenius norm is actually a \index[authors]{Hilbert}Hilbert space---\linebreak \textbf{it has an inner product} $\bi{(A,B )=\hbox{\textbf{trace}}(A\transp B)}$. Show that $\bi{||A||^2_F=(A,A)}$.\linebreak\vspace{-11pt}
+\item El espacio de las matrices de $m$ por $n$ con la norma de Frobenius es de hecho un  \index[authors]{Hilbert}espacio de Hilbert: %\linebreak
+\textbf{tiene un producto interno} $\bi{(A,B )=\hbox{\textbf{traza}}(A\transp B)}$. Muestre que $\bi{||A||^2_F=(A,A)}$.\linebreak\vspace{-11pt}
+
+% \item (Conjecture) The only matrices with $||AB||_F=||A||_F\,||B||_F$ and no zero entries have the rank one form $A=\bu\bv\transp$ and $B=\bv\bw\transp$ with a shared vector $\bv$.
+\item Probar que si $A = u v^T$ y $B= v w^T$ con $u,v,w$ vectores no nulos, entonces se satisface que $||AB||_F^2=||A||_F^2||B||_F^2$.
+
+La implicación contraria es una conjetura: Las únicas matrices sin elementos nulos, de rango 1 que satisfacen $||AB||_F=||A||_F\,||B||_F$, son de la forma $A=\bu\bv\transp$ y $B=\bv\bw\transp$ con un vector compartido $\bv$.
+
+% \item Why is (21) a true formula for $||A||_\infty$\,? Which $\bv$ with $\pm 1$'s has $||A\bv||_\infty=||A||_\infty$?\linebreak\vspace{-11pt}
+\item ¿\,Por qué es (21) una fórmula cierta para $||A||_\infty$\,? ¿\,Qué vector $\bv$ con componentes $\pm 1$ tiene $||A\bv||_\infty=||A||_\infty$? %\linebreak\vspace{-11pt}
+% \item Suppose $A,B,$ and $AB$ are $m$ by $n, n$ by $p$, and $m$ by $p$. The ``medical norm''\index[indx]{Medical norm} of $A$\linebreak is its largest entry\,: $\bi{|||A|||_\infty}=\hbox{\textbf{max}}\bi{|a_{ij}|}$.
+\item Suponga que $A,B,$ y $AB$ son de $m$ por $n, n$ por $p$, y $m$ por $p$. La ``norma del máximo''\index[indx]{Norma del maximo@Norma del máximo} de $A$ es el mayor elemento\,: $\bi{|||A|||_\infty}=\hbox{\textbf{max}}\bi{|a_{ij}|}$.
+
+\vspace{-4pt}
+\begin{center}
+% \textbf{Show that} $\bi{|||AB|||_\infty\leq n\,|||A|||_\infty\,|||B|||_\infty}$ (this is false without the factor $n$).
+\textbf{Muestre que} $\bi{|||AB|||_\infty\leq n\,|||A|||_\infty\,|||B|||_\infty}$ (esto es falso sin el factor $n$).
+\end{center}
+\vspace{-4pt}
+
+\noindent
+% Rewrite that in the form $(\sqrt{mp}\,|||AB|||_\infty)\leq(\sqrt{mn}\,|||A|||_\infty)(\sqrt{np}\,|||B|||_\infty)$.\linebreak The rescaling by those square roots gives a true matrix norm.
+Reescríbalo en la forma $(\sqrt{mp}\,|||AB|||_\infty)\leq(\sqrt{mn}\,|||A|||_\infty)(\sqrt{np}\,|||B|||_\infty)$. Reescalar usando raíces cuadradas da una norma matricial verdadera.
+
+\end{enumerate}
+
+
+
+
+ {\bf Aca nos fuimos a II.2}
+
+
+
+
+\section{Sección II.2}
+
+\subsection*{Videos}
+
+ \begin{itemize}
+
+       
+    \item      \href{https://youtu.be/B-P5a5-OpeI}{\bf Video 31: Cuadrados m\'inimos. Parte I. 19 minutos } 
+       
+       
+      Dado $A $ y $b$  queremos encontrar $x$ tal que dado $Ax=b$.
+      
+      ?` Qu\'e condiciones tiene que tener $A$ para que tenga solucion $Ax=b$ para cualquier b?
+      
+      $A$ matriz de $m \times n$
+      \begin{itemize}
+          \item $m=n$. Tienen soluci\'on para todo $b$ si y solo si $A$ tiene inversa.
+          
+          \item $m>n$.  Existe algun $b$ tal que el sistema no tenga solucion
+          
+          \item $m<n$. Si rango$(A) = r < m $.  Existe algun $b$ tal que el sistema no tenga solucion.
+        Si rango $(A)=m$ entonces tiene soluci\'on para todo $b$. Es decir  
+       {\bf   Tiene soluci\'on para todo $b$ si y solo si $A$ tiene filas linealmente independientes.}
+         
+         
+       
+      \end{itemize}
+      Si $x$ es solucion de $Ax=b$ entonces $x+ N(A)$ es soluci\'on. 
+      
+      ?` Qu\'e condiciones tiene que tener $b$ para que para una $A$ particular $Ax=b$ tenga soluci\'on? Esta es facil y es que $b $ pertenezca al rango de $A$
+      
+      
+      Cuando no tiene soluci\'on buscaremos $x$ tal que $||Ax - b||$ sea lo mas chico posible.
+      
+       \item      \href{https://youtu.be/cE-x_KfMoqU}{\bf Video 32: Cuadrados m\'inimos. Parte II. 25 minutos } 
+    
+    Dados $A$ y $b$, queremos econtrar $x$ tal que $\min_x ||Ax - b||$ con $||.||$ norma 2, esto es equivalente a encontrar $x$ que verifica la ecuaci\'on $A^T A x= A^T b$, que siempre tiene soluci\'on. ?`Por qu\'e?. Y si tiene una soluci\'on dicha soluci\'on mas cualquier vector del n\'ucleo de $A^T A$ es soluci\'on tambien. ?` Cu\'al es la de m\'inimos cuadrados?. Si $A^T A$ es invertible etnonces la unica solucion es $x=(A^T A)^{-1} A^T b$. Si no es invertible entonces ....
+    
+    
+    Definici\'on: inversa generalizada de Penrose de una matriz cualquiera. Si $A=U \Sigma V^T$ entocnes $A^+=U \Sigma^{+} V^T$. Donde $\Sigma^{+}$ es igual a $\Sigma$ excepto los que no son 0 que se sustituyen por su inverso multiplicativo. Es la unica que cumple las 4 propiedades.
+    
+    Probamos que $x= (A^T A)^+ A^T b$ es soluci\'on de $A^T A x=A^T b$ y cualquier solucion de de minimo es de la forma $(A^T A)^+ A^T b + N(A)$. Esto sale de que $N(A^TA)=N(A)$. Ademas
+    la solucion $x=(A^TA)^+ A^T b$ es ortogonal al $N(A)$ y asi es la solucion de minima longitud. 
+    
+      
+    \item      \href{https://youtu.be/-hOpqfUR_lw}{\bf Video 33: Cuadrados m\'inimos. Parte III. 11 minutos }    
+    
+    Calculo computacional de $(A^TA)^+ A^T b$. Gauss-Smith.
+      
+      
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+\begin{enumerate}
+
+\item (Una nueva prueba de que $\hbox{\textbf{N}}(A\transp A)=\hbox{\textbf{N}}(A)$.)\index[smbl]{$\hbox{\textbf{N}}(A\transp A)=\,\hbox{\textbf{N}}(A)$}\quad Supongamos que $A\transp A\bi{x}=\bi{0}$. Entonces $A\bi{x}$ está en el espacio nulo de $A\transp$. Pero $A\bi{x}$ siempre está en el espacio columna de $A$. Esos dos subespacios son ortogonales, por lo tanto \emph{si $A\transp A\bi{x}=\bi{0}$ entonces} $A\bi{x}=\bi{0}$.
+
+% Prove the opposite statement to reach $\hbox{\textbf{N}}(A\transp A)=\hbox{\textbf{N}}(A)$.
+Demuestre la afirmación opuesta para obtener  $\hbox{\textbf{N}}(A\transp A)=\hbox{\textbf{N}}(A)$.
+% \item Why do $A$ and $A^+$ have the same rank\,? If $A$ is square, do $A$ and $A^+$ have the same eigenvectors\,? What are the eigenvalues of $A^+$\,?
+\item ¿\,Por qué $A$ y $A^+$ tienen el mismo rango\,? Si $A$ es cuadrada, ¿\,tienen $A$ y $A^+$ los mismos autovectores\,? ¿\,Hay alguna relación entre los autovalores de $A$ y los de $A^+$\,?
+% \item   From $A$ and $A^+$ show that $A^+A$ is correct and $(A^+A)^2=A^+A=$ projection.\linebreak
+\item   Usando $A$ y $A^+$ muestre que $A^+A$ se puede realizar y que $(A^+A)^2=A^+A=$ proyección.\linebreak
+
+\vspace{-27pt}
+% \index{Rank one}
+\index{Rango uno}
+  \begin{displaymath}
+    A = \summ \sigma_i \bi u_i \bv_i\transp \quad \quad
+    A^{+} = \summ \dfrac{\bv_i \bi u_i\transp}{\sigma_i}
+    \quad \quad A^{+}A = \summ \bv_i \bv_i\transp \quad
+    \quad AA^{+} = \summ \bi u_i \bi u_i\transp
+  \end{displaymath}
+\vspace{-15pt}
+
+% \item Which matrices have $A^+=A$\,? Why are they square\,? Look at $A^+A$.
+\item ¿\,Qué matrices tienen $A^+=A$\,? ¿\,Por qué son cuadradas\,? Mire $A^+A$.
+% \item Suppose $A$ has independent columns (rank $r=n$; nullspace $=$ zero vector).
+\item Suponga que una matriz $A$ de tamaño $m \times n$  tiene columnas independientes (rango $r=n$; espacio nulo $=$ vector cero).
+
+\vspace{-5pt}
+\begin{itemize}
+% 	\item [(a)] Describe the $m$ by $n$ matrix $\Sigma$ in $A=U\Sigma V\transp$. How many nonzeros in $\Sigma$\,?
+\item [(a)] Describa la matriz $\Sigma$ de $m$ por $n$ en $A=U\Sigma V\transp$.  ¿\,Cuántos valores no nulos hay en $\Sigma$\,?
+% 	\item [(b)] Show that $\Sigma\transp\Sigma$ is invertible by finding its inverse.
+\item [(b)] Muestre que $\Sigma\transp\Sigma$ es invertible encontrando su inversa.
+% 	\item [(c)] Write down the $n$ by $m$ matrix $(\Sigma\transp\Sigma)^{-1}\Sigma\transp$ and identify it as $\bi{\Sigma^+}$.
+\item [(c)] Escriba la matriz  $(\Sigma\transp\Sigma)^{-1}\Sigma\transp$ de $n$ por $m$ e identifíquela como $\bi{\Sigma^+}$.
+% 	\item [(d)] Substitute $A=U\Sigma V\transp$ into $(A\transp A)^{-1}A\transp$ and identify that matrix as $\bi{A^+}$.
+\item [(d)] Reemplace $A=U\Sigma V\transp$en $(A\transp A)^{-1}A\transp$ e identifique esa matriz como $\bi{A^+}$.
+\end{itemize}
+
+\vspace{-4pt}
+% $\bi{A\transp A\bi{\widehat{x}}=A\transp\bi{b}}$ \textbf{\;leads to\; $\bi{A^+=(A\transp A)^{-1}A\transp}$, but only if $\bi{A}$ has rank $\bi{n}$.}
+$\bi{A\transp A\bi{\widehat{x}}=A\transp\bi{b}}$ \textbf{\;conduce a\; $\bi{A^+=(A\transp A)^{-1}A\transp}$, pero solo si $\bi{A}$ tiene rango $\bi{n}$.}
+% \item The Householder\index[indx]{Householder}\index[authors]{Householder} matrix $H$ in equation (17) chooses $\bv=\bi{a}-\bi{r}$ with $||\bi{a}||^2=||\bi{r}||^2$.\linebreak Check that this choice of the vector $\bv$ always gives $H\bi{a}=\bi{r}$\,:
+\item La matriz de Householder\index[indx]{Householder}\index[authors]{Householder}  $H$ en la ecuación (17) elige $\bv=\bi{a}-\bi{r}$ con $||\bi{a}||^2=||\bi{r}||^2$.\linebreak Verifique que esta elección del vector $\bv$ siempre da $H\bi{a}=\bi{r}$\,:
+
+\vspace{-5pt}
+$$
+% \text{Verify that\; } H\bi{a} = \bi{a}-2\,\dfrac{(\bi{a}-\bi{r})\,(\bi{a}-\bi{r})\transp}{(\bi{a}-\bi{r})\transp (\bi{a}-\bi{r})}\bi{a}\text{ \;reduces to\; }\bi{r}.
+\text{Verifique que\; } H\bi{a} = \bi{a}-2\,\dfrac{(\bi{a}-\bi{r})\,(\bi{a}-\bi{r})\transp}{(\bi{a}-\bi{r})\transp (\bi{a}-\bi{r})}\bi{a}\text{ \;es igual a\; }\bi{r}.
+$$
+
+\vspace{-9pt}
+% \item According to Problem $6$, which $n$ by $n$ Householder matrix $H$ gives $H\bi{a}=\left[\begin{array}{c}||\bi{a}||\\[5pt] \textbf{zeros}\\\end{array}\right]\,?$
+\item Según el Problema $6$, ¿\,qué matriz de Householder $H$ de $n$ por $n$ da $H\bi{a}=\left[\begin{array}{c}||\bi{a}||\\[5pt] \textbf{ceros}\\\end{array}\right]\,?$
+
+% \item What multiple of $\bi{a}=\bigl[\begin{smallmatrix} 1\\
+%     1\end{smallmatrix}\bigr]$ should be subtracted from
+%   $\bi{b}=\bigl[\begin{smallmatrix} 4\\ 0\end{smallmatrix}\bigr]$
+%   to make the result $\bi{A_2}$ orthogonal to $\bi{a}$?  Sketch a
+%   figure to show $\bi{a},\bi{b}$, and $\bi{A_2}$.
+\item ?`\,Qué múltiplo de $\bi{a}=\bigl[\begin{smallmatrix} 1\\
+    1\end{smallmatrix}\bigr]$ debería restarse de
+  $\bi{b}=\bigl[\begin{smallmatrix} 4\\ 0\end{smallmatrix}\bigr]$
+  para que el resultado $\bi{A_2}$ sea ortogonal a $\bi{a}$\,?
+  Esboce una figura para mostrar $\bi{a}, \bi{b}$, y $\bi{A_2}$.
+
+% \item Complete the Gram-Schmidt process in Problem $8$ by
+%   computing $\bi{q}_1=\bi{a}/\|\bi{a}\|$ and $\bi{A}_2=\bi{b}-(\bi{b}\transp\bi{q}_1)\bi{q}_1$ and $\bi{q}_2=\bi{A_2}/
+%   \|\bi{A_2}\|$ and factoring into $QR$:
+\item Complete el proceso de Gram-Schmidt en el Problema $8$ calculando
+   $\bi{q}_1=\bi{a}/\|\bi{a}\|$ y $\bi{A}_2=\bi{b}-(\bi{b}\transp\bi{q}_1)\bi{q}_1$ y $\bi{q}_2=\bi{A_2}/
+  \|\bi{A_2}\|$ y factorizando en $QR$:
+\begin{displaymath}
+  \begin{bmatrix} 1 & 4\\ 1 & 0\end{bmatrix}=
+  \left[\vphantom{\begin{bmatrix} 1\\ 4\end{bmatrix}}
+    \bi{q}_1\quad \bi{q}_2\right]
+  \begin{bmatrix}
+    \|\bi{a}\| & ?        \\
+    0 & \|\bi{A_2}\| \end{bmatrix}.
+\end{displaymath}
+% \item If $A=QR$ then $A\transp A=R\transp R=\1$ triangular times $\1$ triangular.\break
+\item Si $A=QR$ entonces $A\transp A=R\transp R=$ triangular $\1$ por triangular $\1$.\break
+%   \emph{Gram-Schmidt\index{Gram-Schmidt} on $A$ corresponds to elimination on} $A\transp A$.
+\emph{Gram-Schmidt\index{Gram-Schmidt} en $A$ corresponde a eliminación en} $A\transp A$.
+
+%   \item \emph{If $Q\transp Q\!=\!I$ show that $Q\transp\!=\!Q^+$. If $A\!=\!QR$ for invertible $R$, show that $QQ\transp\!=\!AA^+$.\linebreak On the last page} $155$ \emph{of Part} II, \emph{this will be the key to computing an SVD}.
+\item \emph{Si $Q\transp Q\!=\!I$ muestre que $Q\transp\!=\!Q^+$. Si $A\!=\!QR$ con $R$ invertible, muestre que $QQ\transp\!=\!AA^+$.\linebreak En la última página} $155$ \emph{de la Parte} II, \emph{esto ser\'a la clave para calcular una SVD}.
+
+\newpage
+\noindent
+% This page is devoted to the simplest and most important application of least squares\,:\linebreak \textbf{Fitting a straight line to data}.\index[indx]{Straight line fit} A line $b=C+Dt$ has $n=2$ parameters $C$ and $D$.\linebreak We are given $m>2$ measurements $b_i$ at $m$ different times $t_i$. The equations $A\bi{x}=b$\linebreak (unsolvable) and $A\transp A\bi{\widehat{x}}=A\transp\bi{b}$ (solvable) are%\linebreak
+
+Esta página está dedicada a la aplicación más sencilla y más importante de mínimos cuadrados\,:\linebreak \textbf{ajustar una recta a datos}.\index[indx]{Ajuste de recta} Una recta $b=C+Dt$ tiene $n=2$ parámetros $C$ y $D$. Tenemos $m>2$ mediciones $b_i$ en $m$ instantes de tiempo diferentes $t_i$. Las ecuaciones $A\bi{x}=b$ %\linebreak 
+(sin solución) y $A\transp A\bi{\widehat{x}}=A\transp\bi{b}$ (con solución) son%\linebreak
+\vspace{-9pt}
+
+$$
+A\bi{x}=\!\left[\begin{array}{@{\;}cc@{\;}}1&t_1\\1&t_2\\:&:\\1&t_m\\\end{array}\right]\left[\begin{array}{@{\;}c@{\;}}\bi{C}\\[3pt]\bi{D}\\\end{array}\right]=\left[\begin{array}{@{\;}c@{\;}}b_1\\b_2\\:\\b_m\end{array}\right]\qquad A\transp A\bi{\widehat{x}}=\left[\begin{array}{@{\;}cc@{\;}}m&\sum t_i\\[3pt]\sum t_i&\sum t_i^2\\\end{array}\right]\left[\begin{array}{@{\;}c@{\;}}\bi{\widehat{C}}\\[3pt]\bi{\widehat{D}}\\\end{array}\right]=\!\left[\begin{array}{@{\;}c@{\;}}\sum b_i\\[3pt]\sum b_it_i\\\end{array}\right].
+$$
+
+\noindent
+% The column space $\hbox{\textbf{C}}(A)$ is a $2$-dimensional plane in $\hbox{\textbf{R}}^m$. The vector $\bi{b}$ is in this column space if and only if the $m$ points $(t_i, b_i)$ actually lie on a straight line. In that case only, $A\bi{x}=\bi{b}$ is solvable\,: the line is $C+Dt$. \textbf{Always $\bi{b}$ is projected to the closest $\bi{p}$ in $\hbox{\textbf{C}}(A)$}.
+El espacio columna $\hbox{\textbf{C}}(A)$ es un plano bidimensional en $\hbox{\textbf{R}}^m$.
+El vector $\bi{b}$ está en este espacio columna si y solo si los $m$ puntos $(t_i, b_i)$ yacen efectivamente sobre una línea recta. Solo en ese caso, $A\bi{x}=\bi{b}$ tiene solución\,: la recta sobre la que yacen los puntos es $C+Dt$. \textbf{El vector $\bi{b}$ siempre se proyecta al $\bi{p}$ más cercano que pertenece a $\hbox{\textbf{C}}(A)$}.
+
+% \textbf{The best line (the least squares fit) passes through the points $\bi{(t_i, p_i)}$. The error vector $\bi{e=A\widehat{x}-b}$ has components $\bi{b_i-p_i}$. And $\bi{e}$ is perpendicular to $\bi{p}$.}
+\textbf{La mejor recta (el ajuste por mínimos cuadrados) pasa por los puntos $\bi{(t_i, p_i)}$. El vector error $\bi{e=A\widehat{x}-b}$ tiene componentes $\bi{p_i-b_i}$. Y $\bi{e}$ es perpendicular a $\bi{p}$.}
+
+\vspace{5pt}
+% There are two important ways to draw this least squares regression problem. One way shows the best line $b=\widehat{C}+\widehat{D}t$ and the errors $e_i$ (vertical distances to the line). The second way is in $\hbox{\textbf{R}}^m=m$-dimensional space. There we see the data vector $\bi{b}$, its projection $\bi{p}$ onto $\hbox{\textbf{C}}(A)$, and the error vector $\bi{e}$. This is a right triangle with $||\bi{p}||^2+||\bi{e}||^2=||\bi{b}||^2$.
+Existen dos maneras importantes de dibujar este problema de regresión por mínimos cuadrados. Una manera muestra la mejor recta $b=\widehat{C}+\widehat{D}t$ y los errores $e_i$ (distancias verticales a la recta). La segunda manera es verlo en el espacio $\hbox{\textbf{R}}^m=m$-dimensional. Allí podemos ver el vector de datos $\bi{b}$, su proyección $\bi{p}$ en $\hbox{\textbf{C}}(A)$, y el vector de error $\bi{e}$. Este es un triángulo rectángulo con $||\bi{p}||^2+||\bi{e}||^2=||\bi{b}||^2$.
+
+\vspace{10pt}
+% \noindent{\bf Problems 12 to 22 use four data points $\bi b =
+%   (0,8,8,20)$ to bring out the key ideas.}
+\noindent{\bf Los problemas 12 a 22 usan datos correspondientes a cuatro puntos con $\bi b =
+  (0,8,8,20)$ para destacar las ideas clave.}
+
+\begin{figure}[h]
+%  \leavevmode
+\epsffile{4-fig9_ver2.eps}
+%\begin{overpic}{4-fig9_ver2.eps}
+\put(-297,93){$\bi{b=C+Dt}$}
+\put(-309,53){\textcolor{white}{$\text{\Large ${\blacksquare\hspace{-2pt}\blacksquare}$}$}}
+\put(-301,56){$\bi{e_2}$}
+\put(-285,38){\textcolor{white}{$\text{\Large ${\blacksquare\hspace{-2pt}\blacksquare}$}$}}
+\put(-283,42){$\bi{p_2}$}
+\put(-315,16){\textcolor{white}{$\text{\Large ${\blacksquare\hspace{-2pt}\blacksquare}$}$}}
+\put(-314,20){$\bi{e_1}$}
+\put(-345,20){\textcolor{white}{$\text{\Large ${\blacksquare\hspace{-2pt}\blacksquare}$}$}}
+\put(-336,23){$\bi{p_1}$}
+\put(-234.5,76){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-237,78){$\bi{e_3}$}
+\put(-220.6,86.3){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-219.5,91){$\bi{p_3}$}
+\put(-203,125){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-203,130){$\bi{e_4}$}
+\put(-188,110){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-186,116){$\bi{p_4}$}
+\put(-110,128){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-107,128){$\bi{b}$}
+\put(-69.8,84){\textcolor{white}{$\text{\Large ${\blacksquare\hspace{-2pt}\blacksquare\hspace{-2pt}\blacksquare\hspace{-2pt}\blacksquare\hspace{-2pt}\blacksquare\hspace{-2pt}\blacksquare\hspace{-2pt}\blacksquare\hspace{-2pt}\blacksquare}$}$}}
+\put(-67,87){$\bi{p}=\bi{Ca_1+Da_2}$}
+% \put(-85,107){\textbf{error vector}}
+% \put(-82,64){\textbf{projection of\; }$\bi{b}$}
+\put(-85,107){\textbf{vector error}}
+\put(-82,64){\textbf{proyección de\; }$\bi{b}$}
+\put(-131.3,39.5){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-131.3,44){$\bi{a_2}$}
+\put(-125,18){\textcolor{white}{$\text{\Large ${\blacksquare}$}$}}
+\put(-123,23.5){$\bi{a_1}$}
+
+%\end{overpic}
+% \caption{The closest line\index{Closest line} $C+Dt$ in the $t-b$ plane matches $C \bi a_1 + D \bi a_2$ in $\hbox{\bf R}\bi{^4}$.}
+\caption*{Figura II. 3: La recta más cercana\index{Recta más cercana} $C+Dt$ en el plano $t-b$ coincide con $C \bi a_1 + D \bi a_2$ en $\hbox{\bf R}\bi{^4}$.}
+\label{fig:4.3.4}
+\end{figure}
+
+
+% \item With $b=0,8,8,20$ at $t=0,1,3,4$, set up and solve the  normal equations\break $A\transp A\bwxhat=A\transp \bi b$.  For the best straight line in Figure II.3a, find its four  heights $p_i$ and four errors $e_i$. What is the minimum squared error $E=e^2_1+ e^2_2+e^2_3+e^2_4$\,?\index[indx]{Projection}\index[indx]{Closest line}
+\item Con $b=0,8,8,20$ en $t=0,1,3,4$, plantee y resuelva las ecuaciones normales $A\transp A\bwxhat=A\transp \bi b$.  Para la mejor recta en la Figura II.3 (izquierda), encuentre sus cuatro alturas $p_i$ y cuatro errores $e_i$. ¿\,Cuál es el mínimo error cuadr\'atico $E=e^2_1+ e^2_2+e^2_3+e^2_4$\,?\index[indx]{Proyección}\index[indx]{Recta más cercana}
+
+\newpage
+% \item (Line $C+Dt$ does go through $p$'s) With $b=0,8,8,20$ at  times $t=0,1,3,4$, write down the four equations $A\bi x=\bi b$  (unsolvable). Change the measurements to $p=1,5,13,17$ and find  an exact solution to $A\bwxhat= \bi p$.
+\item (La recta $C+Dt$ pasa por los $p$.) Con $b=0,8,8,20$ en los instantes de tiempo $t=0,1,3,4$, escriba las cuatro ecuaciones $A\bi x=\bi b$  (sin solución). Cambie las mediciones a $p=1,5,13,17$ y encuentre una solución exacta para $A\bwxhat= \bi p$.
+
+% \item Check that $\bi e=\bi b-\bi p=(-1,3,-5,3)$ is perpendicular  to both columns of the\linebreak same matrix $A$.  What is the shortest distance $\|\bi e\|$ from $\bi b$ to the column space of $A$?
+\item Verifique que $\bi e=\bi b-\bi p=(-1,3,-5,3)$ es perpendicular a ambas columnas de la misma matriz $A$.  ¿\,Cuál es la menor distancia del espacio columna de $A$ a $\bi b$?
+
+% \item (By calculus) Write down $E=\|A\bi x-\bi b\|^2$ as a sum of   four squares---the last one is $(C + 4D -20)^2$. Find the  derivative equations $\pa E/\pa C=0$ and $\pa E/\pa D=0$.  Divide by 2 to obtain the normal equations $A\transp  A\bwxhat=A\transp \bi b$.
+\item (Usando cálculo) Escriba $E=\|A\bi x-\bi b\|^2$ como una suma de cuatro cuadrados, el último es $(C + 4D -20)^2$ considerando $\bi x = [C, D]^T$ . Encuentre las ecuaciones para las derivadas $\pa E/\pa C=0$ y $\pa E/\pa D=0$. Corrobore que las ecuaciones obtenidas son equivalentes a la ecuación normal $A\transp  A\bwxhat=A\transp \bi b$.
+
+\looseness=2
+% \item Find the height $C$ of the best \emph{horizontal line} to fit $\bi b=(0,8,8,20)$. An exact fit would solve the unsolvable equations $C=0,\, C=8, \, C=8, \, C=20$. Find the 4~by~1 matrix  $A$ in these equations and solve $A\transp A \wxhat=A\transp  \bi b$. Draw the horizontal line at height $\wxhat=C$ and the  four errors in $\bi e$.
+\item Encuentre la altura $C$ de la mejor \emph{recta horizontal} para ajustar $\bi b=(0,8,8,20)$. Un ajuste exacto resolvería las ecuaciones sin solución $C=0,\, C=8, \, C=8, \, C=20$. Encuentre la matriz $A$ de 4~por~1 en estas ecuaciones y resuelva $A\transp A \wxhat=A\transp  \bi b$. Dibuje la recta horizontal de altura $\wxhat=C$ y los cuatro errores en $\bi e$.
+
+
+%% figs ok to here
+% \item Project $\bi b=(0,8,8,20)$ onto the line through $\bi  a=(1,1,1,1)$.  Find $\wxhat=\bi a\transp \bi b/\bi a\transp \bi  a$ and the projection $\bi p=\wxhat \bi a$. Check that $\bi  e=\bi b- \bi p$ is perpendicular to $\bi a$, and find the  shortest distance $\|\bi e\|$ from $\bi b$ to the line through  $\bi a$.
+\item Proyecte $\bi b=(0,8,8,20)$ en la recta que contiene a $\bi  a=(1,1,1,1)$.  Para esto, ejncuentre $\wxhat=\bi a\transp \bi b/\bi a\transp \bi  a$ y la proyección $\bi p=\wxhat \bi a$. Verifique que $\bi  e=\bi b- \bi p$ sea perpendicular a $\bi a$, y encuentre la menor distancia ($\|\bi e\|$) de la recta que pasa por  $\bi a$ a $\bi b$.
+
+% \item Find the closest line $b=Dt$,   \emph{through the origin}, to the same four points.  An exact   fit would solve $D\bfcdot 0= 0,D\bfcdot 1=8,D\bfcdot   3=8,D\bfcdot 4=20$. Find the 4~by~1 matrix and solve $A\transp  A\wxhat=A\transp \bi b$. Redraw Figure II.3a showing the best  line $b=Dt$.\linebreak\vspace{-11pt}
+\item Encuentre la recta $b=Dt$ más cercana a los mismos cuatro puntos, \emph{que pasa por el origen}.  Un ajuste exacto resovería $D\bfcdot 0= 0,D\bfcdot 1=8,D\bfcdot   3=8,D\bfcdot 4=20$. Encuentre la matriz de 4~por~1 y resuelva $A\transp  A\wxhat=A\transp \bi b$. Vuelva a dibujar la Figura II.3a mostrando la mejor recta $b=Dt$. %\linebreak\vspace{-11pt}
+
+% \item Project $\bi b=(0,8,8,20)$ onto the line through $\bi a=  (0,1,3,4)$.  Find $\wxhat = D$ and $\bi p=\wxhat \bi a$.  The  best $C$ in Problem 16 and the best $D$ in Problem 18 \emph{do  not\linebreak agree} with the best $(\widehat{C},\widehat{D})$ in Problems 11--14.  That  is because the two columns\linebreak $(1,1,1,1)$ and $(0,1,3,4)$ are $\1$ perpendicular.
+\item Proyecte $\bi b=(0,8,8,20)$ sobre la recta que contiene a $\bi a=  (0,1,3,4)$.  Encuentre $\wxhat = D$ y $\bi p=\wxhat \bi a$. La mejor $C$ del Problema 16 y la mejor $D$ del Problema 18 \emph{no coinciden} con el mejor $(\widehat{C},\widehat{D})$ de los Problemas 11--14.  Esto es porque las dos columnas $(1,1,1,1)$ y $(0,1,3,4)$ $\1$ son perpendiculares.
+
+% \item For the closest parabola $b=C+Dt+Et^2$ to the same four  points, write down the unsolvable equations $A\bi x=\bi b$ in  three unknowns $\bi x = (C, D, E)$. Set up the three normal  equations $A\transp A\bwxhat=A\transp \bi b$ (solution not  required). In Figure~II.3a you are now fitting a parabola to $4$  points---what is happening in Figure~II.3b?
+\item Para la parábola $b=C+Dt+Et^2$ más cercana a los mismos cuatro puntos, escriba las ecuaciones sin solución $A\bi x=\bi b$ con las tres incógnitas $\bi x = (C, D, E)$. Plantee las tres ecuaciones normales $A\transp A\bwxhat=A\transp \bi b$ (no hace falta calcular la solución). En la Figura~II.3a ahora se está ajustando una parábola a $4$ puntos, ¿\,Qué está pasando en la Figura~II.3b?
+
+% \item For the closest cubic $b=C+Dt+Et^2+Ft^3$ to the same four  points, write down the four equations $A\bi x=\bi b$.  Solve  them by elimination. In Figure~II.3a this cubic now goes exactly  through the points. What are $\bi p$ and $\bi e$?
+\item Para la ecuaci\'on cúbica $b=C+Dt+Et^2+Ft^3$ más cercana a los mismos cuatro puntos, escriba las cuatro ecuaciones $A\bi x=\bi b$.  Resuélvalas por eliminación. En la Figura~II.3a esta cúbica ahora pasa exactamente por los puntos. ¿\,Quiénes son $\bi p$ y $\bi e$?
+
+% \item The averages of the $t_i$ and $b_i$ are $\overline{t}=2$ and $\overline{b}=9$. Verify that $C+D\overline{t}=\overline{b}$. Explain\,!\linebreak\vspace{-11pt}
+\item Los promedios de los $t_i$ y de los $b_i$ son $\overline{t}=2$ y $\overline{b}=9$. Verifique que $C+D\overline{t}=\overline{b}$. Explique.
+\begin{itemize}
+% \item[(a)] Verify that the best line goes through the center  point $(\overline{t},\overline{b})=(2,9)$.
+\item[(a)] Verifique que la mejor recta pasa por el punto central $(\overline{t},\overline{b})=(2,9)$.
+% \item[(b)] Explain why $C+D\overline{t} =\overline{b}$ comes from  the first equation in $A\transp A \widehat{\bi x} = A\transp  \bi b$.
+\item[(b)] Explique por qué $C+D\overline{t} =\overline{b}$ se deduce de la primera ecuación en $A\transp A \widehat{\bi x} = A\transp  \bi b$.
+\end{itemize}
+
+
+\end{enumerate}
+
+\end{document}
+
+\section{Sección I.12}
+
+\subsection*{Videos}
+
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\subsection*{Ejercicios}
+
+
+\noindent
+% The first $5$ questions are about minimizing $||A-UV||_F^2$ when $UV$ has rank $1$.
+Las primeras $5$ preguntas son sobre minimizar $||A-UV||_F^2$ cuando $UV$ tiene rango $1$.
+
+\vspace{-5pt}
+$$
+\textbf{Problema}\qquad \text{Minimice}\quad \Bigg{|}\Bigg{|}\left[\begin{array}{rr}a&c\\b&d\\\end{array}\right]-\left[\begin{array}{r}u_1\\u_2\\\end{array}\right]\left[\begin{array}{rr}v_1&v_2\\\end{array}\right]\Bigg{|}\Bigg{|}_F^2
+$$
+
+\begin{enumerate}
+% \item Look at the first column of $A-UV$ with $A$ and $U$ fixed\,:
+\item Mire la primera columna de $A-UV$ con $A$ y $U$ fijas\,:
+
+$$
+\text{Minimice}\quad \Bigg{|}\Bigg{|}\left[\begin{array}{r}a-v_1u_1\\b-v_1u_2\\\end{array}\right]\Bigg{|}\Bigg{|}^2=(a-v_1u_1)^2+(b-v_1u_2)^2
+$$
+
+% Show by calculus that the minimizing number $v_1$ has $(u_1^2+u_2^2)\,v_1=u_1a+u_2b$.\linebreak In vector notation $\bu\transp\bu\, v_1=\bu\transp\bi{a}_1$ where $\bi{a}_1$ is column $1$ of $A$.
+Muestre usando c\'alculo  que el número minimizante $v_1$ verifica $(u_1^2+u_2^2)\,v_1=u_1a+u_2b$.
+
+En  notación vectorial $\bu\transp\bu\, v_1=\bu\transp\bi{a}_1$ donde $\bi{a}_1$ es la columna $1$ de $A$.
+
+% \item Which point $v_1\bu$ in this picture minimizes $||\bi{a}_1-v_1\bu||^2$\,?
+\item ¿\,Qué punto $v_1\bu$ en esta imagen minimiza $||\bi{a}_1-v_1\bu||^2$\,?
+
+\begin{tabular}{p{5cm}@{\;}l}
+\begin{tikzpicture}
+\draw [arrows=->] (1,1)--(3,1);
+\draw [arrows=->] (3,1)--(5,1);
+\draw [arrows=->] (1,1)--(3,2);
+\draw (3,2)--(3,1);
+\node at (0.8,1) {$\bi{0}$};
+\node at (3,0.7) {$v_1\bu$};
+\node at (3,2.2) {$\bi{a}_1$};
+\node at (5.2,1) {$\bu$};
+\end{tikzpicture}
+&
+\end{tabular}
+
+\vspace{-55pt}
+\begin{tabular}{p{5cm}@{\;}l}
+% &The error vector $\bi{a}_1-v_1\bu$ is \1 to $\bu$.\\[5pt]
+&El vector error $\bi{a}_1-v_1\bu$ es \1 a $\bu$.\\[5pt]
+% &From\, that fact, find again the number\, $v_1$.\\
+&A partir de ese hecho, encuentre de nuevo el número\, $v_1$.\\
+\end{tabular}
+
+\vspace{10pt}
+% \item The second column of $A-UV$ is $\left[\begin{array}{r}c\\d\\\end{array}\right]-\left[\begin{array}{r}u_1\\u_2\end{array}\right]\,v_2=\bi{a}_2-v_2\bu$. Which number $v_2$ minimizes $||\bi{a}_2-v_2\bu||^2$\,?
+\item La segunda columna de $A-UV$ es $\left[\begin{array}{r}c\\d\\\end{array}\right]-\left[\begin{array}{r}u_1\\u_2\end{array}\right]\,v_2=\bi{a}_2-v_2\bu$. ¿\,Qué número  $v_2$ minimiza $||\bi{a}_2-v_2\bu||^2$\,?
+
+\vspace{-5pt}
+\begin{center}
+\begin{tabular}{|@{\;}l@{\;}|}\hline%p{11.65cm}
+\\[-5pt]
+% \textbf{Vector form}\qquad The best $\bv=\left[\begin{array}{rr}v_1&v_2\\\end{array}\right]$ \;solves\; $(\bu\transp\bu)\,\bv=\bu\transp A$
+\textbf{Forma vectorial}\qquad El mejor $\bv=\left[\begin{array}{rr}v_1&v_2\\\end{array}\right]$ \;resuelve\; $(\bu\transp\bu)\,\bv=\bu\transp A$
+\\[5pt]\hline
+\end{tabular}
+\end{center}
+\vspace{-5pt}
+
+% \item Problems $1$ to $3$ minimized $||A-UV||_F^2$ with fixed $U$, when $UV$ has rank $1$.
+\item Los problemas $1$ a $3$ minimizan $||A-UV||_F^2$ con $U$ fija, cuando $UV$ tiene rango $1$.
+
+% With fixed $V=\left[\begin{array}{@{\;}rr@{\;}}v_1&v_2\end{array}\right]$, which $U=\left[\begin{array}{@{\;}r@{\;}}u_1\\u_2\\\end{array}\right]$ gives the minimum of $||A-UV||_F^2$\,?
+Con $V=\left[\begin{array}{@{\;}rr@{\;}}v_1&v_2\end{array}\right]$ fijo, ¿\,cuál $U=\left[\begin{array}{@{\;}r@{\;}}u_1\\u_2\\\end{array}\right]$ da el mínimo de $||A-UV||_F^2$\,?
+
+% \item (Computer)\quad Starting from any $U_0$, does this alternating minimization converge\linebreak to the closest rank $1$ matrix $A_1=\sigma_1\bu_1\bv_1\transp$ from the SVD\,?
+\item (Computadora) \quad A partir de cualquier $U_0$, ¿\,converge esta minimización alternada a la matriz de rango uno más cercana $A_1=\sigma_1\bu_1\bv_1\transp$ de la SVD\,?
+
+\vspace{-5pt}
+$$
+\begin{array}{llll}
+\begin{array}{c}\text{Minimice}\\V\\\end{array}&
+||A-U_nV||_F^2&\text{en}\;\; V=V_{n}&A \;\text{es de}\; 3\times 3\\
+&&&U \;\text{es de}\; 3\times 1\\
+
+\begin{array}{c}\text{Minimice}\\U\\\end{array}&
+||A-UV_{n}||_F^2&\text{en}\;\; U=U_{n+1}&V \;\text{es de}\; 1\times 3\\
+\end{array}
+$$
+\vspace{-5pt}
+
+% \emph{Note}\,: These questions are also an introduction to least squares\index[indx]{Least squares} (Section II.2). For\linebreak fixed $V$ or fixed $U$, each minimization is a least squares problem---even when\linebreak the rank of $UV$ increases beyond $1$. But requiring nonnegativity or sparsity of\linebreak $U$ and $V$ makes each minimization more difficult and new methods are needed.
+\emph{Observación}\,: estas preguntas también son una introducción a m\'inimos cuadrados\index[indx]{Minimos cuadrados@Mínimos cuadrados} (Sección II.2). Para $V$ fija o $U$ fija, cada minimización es un problema de mínimos cuadrados, aún cuando el rango de $UV$ es mayor a $1$. Pero requerir la no negatividad o raleza de $U$ y $V$ hace que cada minimización sea más difícil y se necesiten nuevos métodos.
+
+% \newpage
+% Problems 6 to 11 are about tensors. We are not doing calculus (with derivatives) or tensor algebra (with spaces of tensors). Our focus is on a single tensor $\bi{T}$ that contains multidimensional data. If we have samples $1$ to $n$ and each sample is an image (a matrix) then we have a tensor of order $3$. \emph{How can we approximate this tensor $T$ by a combination of simple tensors}\,? This is the data science question.
+Los problemas 6 a 11 son sobre tensores. No estamos haciendo cálculo (con derivadas) o álgebra de tensores (con espacios de tensores). Nuestro enfasis est\'a en un solo tensor $\bi{T}$ que contiene datos multidimensionales. Si tenemos las muestras $1$ a $n$ y cada muestra es una imagen (una matriz) entonces tenemos un tensor de orden 3. \emph{¿\,Cómo podemos aproximar este tensor $T$ con una combinación de tensores simples}\,? Esta es la pregunta de ciencia de datos.
+
+\hspace{16pt}
+% First we must decide\,: Which tensors are simple\,? Our answer\,: $\bi{a}\pmb{\otimes}\bi{b}\pmb{\otimes}\bi{c}$ is\linebreak a simple (rank $1$) tensor. Its $i,j,k$ entry is the number $a_i$ times $b_j$ times $c_k$---just as a rank-$1$ matrix $\bi{ab}\transp$ has entries $a_ib_j$. A sum of simple tensors approximates $\bi{T}$.\linebreak\vspace{-11pt}
+Primero debemos decidir\,: el tensor $\bi{a}\pmb{\otimes}\bi{b}\pmb{\otimes}\bi{c}$ de rango 1 en la ecuación (12) es simple. Su elemento $i,j,k$ es el número $a_i$ por $b_j$ por $c_k$, igual que una matriz de rango $1$ $\bi{ab}\transp$ con sus elementos $a_ib_j$. Una suma de tensores simples aproxima a $\bi{T}$. %\linebreak\vspace{-11pt}
+
+% \item Given an $m$ by $n$ matrix $A$, how do you decide if $A$ has rank $1$\,?
+\item Dada una matriz $A$ de $m$ por $n$, ¿\,cómo sabemos si $A$ tiene rango $1$\,?
+% \item Given an $m$ by $n$ by $p$ tensor\index[indx]{Tensor} $T$, how do you decide if $T$ has rank $1$\,?
+\item Dado un tensor $T$ de $m$ por $n$ por $p$\index[indx]{Tensor}, ¿\,cómo sabemos si $T$ tiene rango $1$\,?
+
+
+% \item The largest possible rank of a $2$ by $2$ by $2$ tensor is $3$. Can you find an example\,?
+\item El mayor rango posible de un tensor de $2$ por $2$ por $2$ es $3$. ¿\,Puede encontrar un ejemplo\,?
+\item
+\begin{enumerate}
+% \item [(a)] Suppose you know the row sums $r_1$ to $r_m$ and the column sums $c_1$ to $c_n$\linebreak of an $m$ by $n$ matrix $A$. What condition must be satisfied by those numbers\,?\linebreak\vspace{-11pt}
+\item [(a)] Suponga que conoce las sumas de las filas $r_1$ a $r_m$ y las sumas de las columnas $c_1$ a $c_n$ de una matriz $A$ de $m$ por $n$. ¿\,Qué condición deben cumplir esos números\,?\linebreak\vspace{-11pt}
+% \item [(b)] For an $m$ by $n$ by $p$ tensor, the slices are $n$ by $p$ matrices and $m$ by $p$ matrices and $m$ by $n$ matrices. Suppose you add up the entries in each of those $m$ slices and $n$ slices and $p$ slices. What conditions would be guaranteed to connect\linebreak those $m$ numbers and $n$ numbers and $p$ numbers\,?
+\item [(b)] Para un tensor de $m$ por $n$ por $p$, las {secciones} son matrices de $n$ por $p$, matrices de $m$ por $p$ y matrices de $m$ por $n$. Suponga que suma los elementos en cada una de esas $m$ {secciones}, $n$ {secciones} y $p$ {secciones}. ¿\,Qué condiciones que conectan esos $m$ números, $n$ números y $p$ números estarían garantizadas\,?
+\end{enumerate}
+% \item Suppose all entries are $1$ in a $2\times 2\times 2$ tensor $T$, except the first entry is $T_{111}=0$. Write $T$ as a sum of two rank-$1$ tensors. What is the closest rank-$1$ tensor to $T$\linebreak (in the usual Frobenius norm)\,?
+\item Suponga que todos los elementos de un tensor $T$ de $2\times 2\times 2$ son 1, excepto el primero que es $T_{111}=0$. Escriba $T$ como una suma de dos tensores de rango $1$. ¿\,Cuál es el tensor de rango $1$ más cercano a $T$ (en la norma habitual de Frobenius)\,?
+% \item A $2$ by $2$ by $2$ tensor $\bi{T}$ times a vector $\bv$ in $\hbox{\textbf{R}}^2$ should produce a matrix $A$ in $\hbox{\textbf{R}}^{2\times 2}$. How could you define that output $A=\bi{Tv}$\,?\index[indx]{Rank one}
+\item Un tensor $\bi{T}$ de $2$ por $2$ por $2$ multiplicado por un vector $\bv$ en $\hbox{\textbf{R}}^2$ debería producir una matriz $A$ en $\hbox{\textbf{R}}^{2\times 2}$. ¿\,Cómo definiría ese resultado $A=\bi{Tv}$\,?\index[indx]{Rango uno}
+
+\end{enumerate}
+
+\end{document}

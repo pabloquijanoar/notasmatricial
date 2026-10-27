@@ -1,0 +1,2130 @@
+
+\chapter{Eliminación gaussiana y la factorización $LU$}\label{cap:LU}
+
+Uno de los grandes problemas del álgebra lineal es resolver un sistema lineal
+$A\n{x} = \n{b}$. En este capítulo veremos que el método que todos conocemos
+--- la eliminación gaussiana --- no es sólo un algoritmo para despejar
+incógnitas: es, en realidad, una \emph{factorización} de $A$. Esa es la idea que
+va a organizar el resto del apunte, porque todas las descomposiciones que
+veremos ($LU$, $QR$, $Q\Lambda Q^T$, $U\Sigma V^T$) responden al mismo esquema:
+escribir $A$ como producto de matrices más simples y leer en esos factores la
+información que buscamos.
+
+\section{El conjunto solución de $A\n{x}=\n{b}$}
+\label{sec:conjunto-solucion}
+
+Antes de calcular conviene saber qué estamos buscando. Los cuatro subespacios
+del Capítulo~\ref{cap:algebra-lineal} responden por completo las dos preguntas
+básicas sobre un sistema lineal: \emph{¿tiene solución?} y \emph{¿es única?}
+
+La primera es inmediata si recordamos que $A\n{x}$ recorre exactamente el
+espacio columna:
+\[
+A\n{x}=\n{b} \ \text{ tiene solución}
+\iff
+\n{b}\in C(A)
+\iff
+\rg\big(\begin{bmatrix} A & \n{b}\end{bmatrix}\big) = \rg(A),
+\]
+donde la última equivalencia dice que agregar $\n{b}$ como columna no agranda el
+espacio columna. La segunda pregunta la responde el espacio nulo.
+
+\begin{theorem}[Estructura del conjunto solución]\label{teo:conjunto-solucion}
+Sea $A\in\mathbb{R}^{m\times n}$ y $\n{b}\in\mathbb{R}^m$. Si $\n{x}_p$ es una
+solución particular de $A\n{x}=\n{b}$, entonces el conjunto de todas las
+soluciones es
+\[
+\{\n{x}_p + \n{z} \ :\ \n{z}\in N(A)\},
+\]
+un trasladado del espacio nulo. En particular la solución, cuando existe, es
+única si y sólo si $N(A)=\{\n{0}\}$.
+\end{theorem}
+
+\begin{proof}
+Si $\n{z}\in N(A)$ entonces $A(\n{x}_p+\n{z}) = A\n{x}_p + A\n{z} = \n{b}$.
+Recíprocamente, si $A\n{x} = \n{b}$, entonces
+$A(\n{x}-\n{x}_p) = \n{b}-\n{b} = \n{0}$, o sea $\n{z}=\n{x}-\n{x}_p\in N(A)$ y
+$\n{x} = \n{x}_p + \n{z}$.
+\end{proof}
+
+Un sistema lineal no tiene entonces ``una'' solución: tiene un conjunto solución
+que es vacío, un punto, o un trasladado de un subespacio de dimensión $n-r$. Las
+dos preguntas se contestan con dos números, $\rg(A)$ y $\dim N(A)$, y no hace
+falta resolver nada para saber la respuesta.
+
+\medskip
+
+En este capítulo nos concentraremos en el caso más frecuente, el de una matriz
+$A$ cuadrada \emph{no singular}, donde el conjunto solución es siempre un único
+punto. Vale la pena recordar las caracterizaciones equivalentes de esa
+situación: para $A \in \mathbb{R}^{n\times n}$ son equivalentes
+
+\begin{enumerate}[itemsep=1pt]
+\item Para todo $\n{b} \in \mathbb{R}^n$ existe $\n{x} \in \mathbb{R}^n$ tal que $A\n{x} = \n{b}$.
+\item Si $A\n{x} = \n{b}$ tiene solución, esa solución es única.
+\item Si $A\n{x} = \n{0}$, entonces $\n{x} = \n{0}$, es decir $N(A)=\{\n{0}\}$.
+\item Las columnas de $A$ son linealmente independientes.
+\item Las filas de $A$ son linealmente independientes.
+\item $\rg(A) = n$.
+\item Existe $A^{-1} \in \mathbb{R}^{n\times n}$ tal que $A A^{-1} = A^{-1} A = I$.
+\item $\det(A) \neq 0$.
+\end{enumerate}
+
+\noindent
+(La equivalencia entre (4), (5) y (6) es el teorema del rango del capítulo
+anterior; las demás son el Teorema~\ref{teo:conjunto-solucion} leído en el caso
+$m=n$.) Al final del capítulo, en la Sección~\ref{sec:caso-general}, volveremos
+al caso rectangular o singular, donde la eliminación produce la factorización
+$CR$ que ya conocemos.
+
+\section{Interpretación por filas vs. Interpretación por columnas}
+Antes de pasar al problema de resolver un sistema de ecuaciones lineales,
+veamos cómo la reinterpretación del producto de matrices del capítulo anterior
+permite ver un mismo sistema $A\n{x}=\n{b}$ de dos maneras distintas. Las dos
+valen para cualquier tamaño: con $A\in\mathbb{R}^{m\times n}$,
+$\n{x}\in\mathbb{R}^n$ y $\n{b}\in\mathbb{R}^m$, cada una corresponde a una de
+las dos fórmulas \eqref{eq:filas} y \eqref{eq:mat-vec-col} del
+Capítulo~\ref{cap:algebra-lineal}. Lo que haremos con $2\times2$ es sólo
+dibujarlas, porque en el plano se ven; el enunciado general va después de cada
+dibujo.
+
+\subsection*{Por filas}
+
+Leer $A\n{x}$ fila por fila, como en \eqref{eq:filas}, convierte el sistema en
+$m$ ecuaciones escalares, una por fila:
+\[
+\fila_i(A)\,\n{x} = b_i, \qquad i=1,\dots,m .
+\]
+Cada una de esas ecuaciones es una condición sobre el punto
+$\n{x}\in\mathbb{R}^n$, y el conjunto de puntos que la cumplen es un
+\textbf{hiperplano} de $\mathbb{R}^n$: una recta si $n=2$, un plano si $n=3$,
+y en general un objeto de dimensión $n-1$. Resolver el sistema es entonces
+\emph{intersecar los $m$ hiperplanos}.
+
+Con $m=n=2$ esto se dibuja: el sistema es
+\[
+\begin{cases}
+a_{11}x_1 + a_{12}x_2 = b_1, \\
+a_{21}x_1 + a_{22}x_2 = b_2.
+\end{cases}
+\]
+y cada ecuación es una recta del plano; la solución es el punto donde se
+cortan.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=0.9]
+% Ejes coordenados
+\draw[->] (-1,0) -- (6,0) node[right] {$x_1$};
+\draw[->] (0,-2) -- (0,6) node[above] {$x_2$};
+
+% Recta 1: x1 + x2 = 5  ->  x2 = 5 - x1
+\draw[blue, thick] (-1,6) -- (6,-1) node[above right] {$x_1+x_2=5$};
+
+% Recta 2: -x1 + x2 = -1  ->  x2 = x1 - 1
+\draw[red, thick] (-1,-2) -- (6,5) node[below right] {$-x_1+x_2=-1$};
+
+% Intersección
+\filldraw (3,2) circle (2pt) node[below right] {$(3,2)$};
+\end{tikzpicture}
+\caption{Intersección de las rectas $x_1+x_2=5$ y $-x_1+x_2=-1$.}
+\end{figure}
+
+\subsection*{Por columnas}
+
+Leer $A\n{x}$ por columnas, como en \eqref{eq:mat-vec-col}, da una pregunta de
+otra naturaleza. Allí vimos que $A\n{x}=\sum_{j=1}^n x_j\col_j(A)$, de modo que
+el sistema $A\n{x}=\n{b}$ pide
+\[
+x_1\col_1(A) + x_2\col_2(A) + \cdots + x_n\col_n(A) = \n{b} :
+\]
+\emph{¿se puede escribir $\n{b}$ como combinación lineal de las $n$ columnas de
+$A$, y con qué coeficientes?} No hay nada que intersecar: hay que ver si $\n{b}$
+está al alcance de las columnas. Dicho de otra manera, el sistema tiene solución
+si y sólo si $\n{b}\in C(A)$, y las soluciones son los vectores de coeficientes
+que lo logran.
+
+De nuevo con $m=n=2$, buscamos los escalares $x_1,x_2$ tales que
+\[
+x_1
+\begin{bmatrix}
+a_{11} \\ a_{21}
+\end{bmatrix}
++
+x_2
+\begin{bmatrix}
+a_{12} \\ a_{22}
+\end{bmatrix}
+=
+\begin{bmatrix}
+b_1 \\ b_2
+\end{bmatrix}.
+\]
+es decir, estiramos cada columna por un escalar y pedimos que la suma de los
+dos vectores resultantes dé $\n{b}$.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=0.9, >=stealth]
+
+% Ejes coordenados
+\draw[->] (-0.5,0) -- (6,0) node[right] {$x_1$};
+\draw[->] (0,-4) -- (0,4) node[above] {$x_2$};
+
+% Vector 3 * (1,-1)
+\draw[->, blue, thick] (0,0) -- (3,-3)
+    node[midway, below left, xshift=4pt, yshift=-2pt] {$3\begin{bmatrix}1\\-1\end{bmatrix}$};
+
+% Vector 2 * (1,1)
+\draw[->, red, thick] (0,0) -- (2,2)
+    node[midway, above left, xshift=8pt, yshift=2pt] {$2\begin{bmatrix}1\\1\end{bmatrix}$};
+
+% Líneas punteadas del paralelogramo
+\draw[dashed, gray] (3,-3) -- (5,-1);
+\draw[dashed, gray] (2,2) -- (5,-1);
+
+% Vector resultante
+\draw[->, black, very thick] (0,0) -- (5,-1)
+    node[midway, above right, xshift=6pt, yshift=6pt] {$\begin{bmatrix}5\\-1\end{bmatrix}$};
+
+% Puntos
+%\filldraw (3,-3) circle (1.5pt) node[below left, xshift=-2pt, yshift=-2pt] {$(3,-3)$};
+%\filldraw (2,2) circle (1.5pt) node[above left, xshift=2pt, yshift=2pt] {$(2,2)$};
+%\filldraw (5,-1) circle (1.5pt) node[above right, xshift=4pt, yshift=4pt] {$(5,-1)$};
+
+\end{tikzpicture}
+\caption{Suma de vectores: $3\begin{bmatrix}1\\-1\end{bmatrix} + 2\begin{bmatrix}1\\1\end{bmatrix} = \begin{bmatrix}5\\-1\end{bmatrix}$.}
+\end{figure}
+
+\medskip
+
+Las dos miradas describen el mismo conjunto solución, pero no sirven para lo
+mismo. La de filas es la que guía el \emph{cálculo}: la eliminación gaussiana
+de la sección siguiente opera sobre las filas. La de columnas es la que guía la
+\emph{teoría}: ``$A\n{x}=\n{b}$ tiene solución si y sólo si $\n{b}\in C(A)$'' es
+un enunciado sobre subespacios, no sobre cuentas, y es el que seguiremos usando
+en todo el apunte. Conviene además notar que el dibujo de filas se vuelve
+inmanejable apenas $n$ crece --- nadie interseca cuatro hiperplanos de
+$\mathbb{R}^4$ mentalmente --- mientras que el enunciado por columnas no cambia
+en nada al crecer el tamaño.
+
+\section{Eliminación gaussiana}\label{sec:eliminacion}
+
+Esta sección no desarrolla la teoría de la eliminación gaussiana: suponemos que
+el método ya se conoce del curso de álgebra lineal. Lo que hacemos es
+\emph{un solo ejemplo, con todo el detalle}, por dos motivos.
+
+El primero es repasar el procedimiento y fijar el vocabulario --- pivote,
+multiplicador, sustitución hacia atrás --- que vamos a usar durante todo el
+capítulo.
+
+El segundo es más importante, y conviene anunciarlo antes de empezar. En la
+sección siguiente vamos a construir la factorización $LU$ de la \emph{misma}
+matriz, y lo que se va a ver es que no hay ningún método nuevo: la
+factorización $LU$ \textbf{es} esta eliminación, ejecutada paso por paso igual
+que acá, con una única diferencia. Al eliminar, cada multiplicador se usa una
+vez y se tira; para factorizar, cada multiplicador se \emph{guarda} en el lugar
+de la matriz que acaba de anular. Esos números guardados son exactamente las
+entradas de $L$, y la matriz triangular con la que uno termina es $U$. Nada
+más. Conviene entonces leer el ejemplo que sigue prestando atención a los
+multiplicadores $2$, $3$, $5$, $4$, $6$ y $7$ que van apareciendo, porque son
+los que vamos a reencontrar, uno por uno, en la Sección~\ref{sec:LU}.
+
+Empecemos considerando el siguiente sistema de 4 incógnitas con 4 ecuaciones:
+
+\begin{equation*}
+\begin{cases}
+4x_1 - 5x_2 + 6x_3 - 2x_4 = 11 \\
+8x_1 - 8x_2 + 15x_3 - 8x_4 = 30 \\
+12x_1 - 7x_2 + 40x_3 - 31x_4 = 76 \\
+20x_1 - 13x_2 + 118x_3 - 93x_4 = 184
+\end{cases}
+\end{equation*}
+
+Este sistema puede escribirse de forma matricial como \(A\n{x} = \n{b}\), donde \(A\) es la matriz de coeficientes, \(\n{x}\) el vector de incógnitas y \(\n{b}\) el vector de términos independientes. Para aplicar la eliminación gaussiana resulta conveniente trabajar con la \textbf{matriz aumentada} \([A|\n{b}]\), que agrupa la información de manera compacta:
+
+\[
+\left[\begin{array}{cccc|c}
+4 & -5 & 6 & -2 & 11 \\
+8 & -8 & 15 & -8 & 30 \\
+12 & -7 & 40 & -31 & 76 \\
+20 & -13 & 118 & -93 & 184
+\end{array}\right]
+\]
+
+
+Ahora vamos a tomar la primera fila y considerar el 4 de la posición \((1,1)\) como \textbf{elemento pivote}. Elegimos un multiplicador adecuado para cada fila (de la segunda en adelante) de modo que, al sumarle ese múltiplo de la primera fila, se anule el elemento de la primera columna correspondiente.
+
+Para la fila 2: el multiplicador es \(\frac{8}{4} = 2\). \\
+Para la fila 3: el multiplicador es \(\frac{12}{4} = 3\). \\
+Para la fila 4: el multiplicador es \(\frac{20}{4} = 5\).
+
+Hacemos entonces:
+\[
+F_2 \leftarrow F_2 - 2F_1,\qquad
+F_3 \leftarrow F_3 - 3F_1,\qquad
+F_4 \leftarrow F_4 - 5F_1
+\]
+y la matriz aumentada queda:
+\[
+\left[\begin{array}{cccc|c}
+4 & -5 & 6 & -2 & 11 \\
+0 &  2 & 3 & -4 &  8 \\
+0 &  8 & 22 & -25 & 43 \\
+0 & 12 & 88 & -83 & 129
+\end{array}\right]
+\]
+
+Ahora tomamos como pivote el elemento \(2\) de la posición \((2,2)\). Los multiplicadores para anular los elementos debajo de él en la segunda columna son:
+\[
+\text{Para } F_3 : \frac{8}{2} = 4,\qquad
+\text{Para } F_4 : \frac{12}{2} = 6
+\]
+Realizamos:
+\[
+F_3 \leftarrow F_3 - 4F_2,\qquad
+F_4 \leftarrow F_4 - 6F_2
+\]
+y obtenemos:
+\[
+\left[\begin{array}{cccc|c}
+4 & -5 &  6 & -2 & 11 \\
+0 &  2 &  3 & -4 &  8 \\
+0 &  0 & 10 & -9 & 11 \\
+0 &  0 & 70 & -59 & 81
+\end{array}\right]
+\]
+
+El siguiente pivote es el \(10\) en la posición \((3,3)\). El multiplicador para la cuarta fila es:
+\[
+\text{Para } F_4 : \frac{70}{10} = 7
+\]
+Efectuamos:
+\[
+F_4 \leftarrow F_4 - 7F_3
+\]
+y llegamos a la matriz triangular superior:
+\[
+\left[\begin{array}{cccc|c}
+4 & -5 &  6 & -2 & 11 \\
+0 &  2 &  3 & -4 &  8 \\
+0 &  0 & 10 & -9 & 11 \\
+0 &  0 &  0 &  4 &  4
+\end{array}\right]
+\]
+
+La matriz triangular superior que obtuvimos corresponde al sistema equivalente:
+\[
+\begin{cases}
+4x_1 - 5x_2 + 6x_3 - 2x_4 = 11 \\
+2x_2 + 3x_3 - 4x_4 = 8 \\
+10x_3 - 9x_4 = 11 \\
+4x_4 = 4
+\end{cases}
+\]
+
+Ahora resolvemos de abajo hacia arriba mediante \textbf{sustitución hacia atrás}. Comenzamos por la última ecuación, que ya tiene una sola incógnita, y vamos reemplazando los valores obtenidos en las ecuaciones anteriores.
+
+\begin{itemize}
+\item De la cuarta ecuación: \(4x_4 = 4 \;\Longrightarrow\; x_4 = 1\).
+\item Sustituimos \(x_4 = 1\) en la tercera ecuación:
+  \(10x_3 - 9(1) = 11 \;\Longrightarrow\; 10x_3 = 20 \;\Longrightarrow\; x_3 = 2\).
+\item Sustituimos \(x_3 = 2\) y \(x_4 = 1\) en la segunda ecuación:
+  \(2x_2 + 3(2) - 4(1) = 8 \;\Longrightarrow\; 2x_2 + 6 - 4 = 8 \;\Longrightarrow\; 2x_2 = 6 \;\Longrightarrow\; x_2 = 3\).
+\item Finalmente, sustituimos \(x_2 = 3\), \(x_3 = 2\) y \(x_4 = 1\) en la primera ecuación:
+  \(4x_1 - 5(3) + 6(2) - 2(1) = 11 \;\Longrightarrow\; 4x_1 - 15 + 12 - 2 = 11 \;\Longrightarrow\; 4x_1 = 16 \;\Longrightarrow\; x_1 = 4\).
+\end{itemize}
+
+Por lo tanto, la solución del sistema es:
+\[
+\boxed{x_1 = 4,\quad x_2 = 3,\quad x_3 = 2,\quad x_4 = 1}
+\]
+
+\medskip
+\noindent Antes de seguir, vale la pena mirar para atrás y hacer un inventario
+de lo que produjo esta cuenta. Por un lado quedó la matriz triangular superior
+del último paso, con los pivotes $4$, $2$, $10$ y $4$ en la diagonal. Por otro
+lado quedaron, desparramados en el camino y ya usados, los seis multiplicadores
+\[
+\ell_{21}=2,\quad \ell_{31}=3,\quad \ell_{41}=5,\qquad
+\ell_{32}=4,\quad \ell_{42}=6,\qquad \ell_{43}=7 ,
+\]
+donde $\ell_{ik}$ es el multiplicador que usamos para anular la entrada $(i,k)$.
+Si tuviéramos que resolver otro sistema con la misma matriz $A$ y otro término
+independiente, habría que volver a calcularlos todos. La sección que sigue
+muestra que no hace falta: guardándolos se obtiene $A=LU$, y con eso cada nuevo
+sistema sale con dos sustituciones y sin volver a eliminar.
+
+
+
+\section{La factorización $LU$}\label{sec:LU}
+
+Ahora vamos a estudiar la factorización LU. La idea es expresar una matriz $A$ como el producto $LU$, donde $L$ es una matriz triangular inferior (del inglés \textit{lower triangular}) y $U$ es una matriz triangular superior (\textit{upper triangular}). Veremos primero cómo la eliminación gaussiana nos proporciona un camino natural para construir esta factorización para luego ver las ventajas de conseguir estas matrices triangulares a la hora de resolver sistemas de ecuaciones.
+
+Retomemos la matriz de coeficientes del ejemplo anterior:
+\[
+A = \begin{bmatrix}
+4 & -5 &  6 & -2 \\
+8 & -8 & 15 & -8 \\
+12 & -7 & 40 & -31 \\
+20 & -13 & 118 & -93
+\end{bmatrix}
+\]
+
+A partir de $A$ construimos una nueva matriz formada de la siguiente manera: cada fila de esta nueva matriz es igual a la primera fila de $A$ multiplicada por el multiplicador que usamos en el primer paso de la eliminación para anular la primera columna de esa fila. Es decir, la primera fila queda multiplicada por $1$, la segunda por $2$, la tercera por $3$ y la cuarta por $5$. Así obtenemos la matriz:
+\[
+M_1 = \begin{bmatrix}
+1 \cdot (4) & 1 \cdot (-5) & 1 \cdot (6) & 1 \cdot (-2) \\
+2 \cdot (4) & 2 \cdot (-5) & 2 \cdot (6) & 2 \cdot (-2) \\
+3 \cdot (4) & 3 \cdot (-5) & 3 \cdot (6) & 3 \cdot (-2) \\
+5 \cdot (4) & 5 \cdot (-5) & 5 \cdot (6) & 5 \cdot (-2)
+\end{bmatrix}
+=
+\begin{bmatrix}
+4 & -5 &  6 & -2 \\
+8 & -10 & 12 & -4 \\
+12 & -15 & 18 & -6 \\
+20 & -25 & 30 & -10
+\end{bmatrix}
+\]
+Ahora restamos esta matriz de $A$:
+\[
+A - M_1 =
+\begin{bmatrix}
+4 & -5 &  6 & -2 \\
+8 & -8 & 15 & -8 \\
+12 & -7 & 40 & -31 \\
+20 & -13 & 118 & -93
+\end{bmatrix}
+-
+\begin{bmatrix}
+4 & -5 &  6 & -2 \\
+8 & -10 & 12 & -4 \\
+12 & -15 & 18 & -6 \\
+20 & -25 & 30 & -10
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 2 &  3 & -4 \\
+0 & 8 & 22 & -25 \\
+0 & 12 & 88 & -83
+\end{bmatrix}
+\]
+
+Observamos que el resultado es justamente la matriz que apareció debajo del primer renglón después de la primera etapa de eliminación, pero ahora con la primera fila completa de ceros. Más aún, si observamos la matriz $M_1$ vemos que es una matriz de rango uno que puede construirse multiplicando el vector columna de los multiplicadores (que llamaremos $\ell_1$) por la primera fila de la matriz A (que llamaremos $u_1^\star$, esto es
+\[M_1 = \ell_1 u_1^\star = \begin{bmatrix}
+    1 \\ 2 \\ 3 \\ 5
+\end{bmatrix} \begin{bmatrix}
+    4 & -5 & 6 & -2
+\end{bmatrix},\]
+por lo que 
+\[A =  \ell_1 u_1^\star + A_2 = \begin{bmatrix}
+    1 \\ 2 \\ 3 \\ 5
+\end{bmatrix} \begin{bmatrix}
+    4 & -5 & 6 & -2
+\end{bmatrix} + \begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 2 &  3 & -4 \\
+0 & 8 & 22 & -25 \\
+0 & 12 & 88 & -83
+\end{bmatrix}.\]
+
+Ahora repetimos la misma idea sobre la parte activa de la matriz $A_2$. Observemos que en $A_2$ la primera fila ya es nula y el trabajo de eliminación continuó a partir de la segunda fila. Los multiplicadores de la segunda etapa fueron $4$ para la tercera fila y $6$ para la cuarta (recordemos que los obtuvimos al dividir los elementos de la segunda columna por el pivote $2$). Formamos entonces el vector columna $\ell_2$, que tendrá un $1$ en la posición del pivote y los multiplicadores debajo, y la fila pivote $u_2^\star$, que es justamente la segunda fila de $A_2$:
+
+\[
+\ell_2 = \begin{bmatrix} 0 \\ 1 \\ 4 \\ 6 \end{bmatrix}, \qquad
+u_2^\star = \begin{bmatrix} 0 & 2 & 3 & -4 \end{bmatrix}.
+\]
+
+Con estos construimos la matriz de rango $1$ correspondiente al segundo paso de eliminación:
+
+\[
+M_2 = \ell_2\, u_2^\star =
+\begin{bmatrix} 0 \\ 1 \\ 4 \\ 6 \end{bmatrix}
+\begin{bmatrix} 0 & 2 & 3 & -4 \end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 &  0 \\
+0 & 2 & 3 & -4 \\
+0 & 8 & 12 & -16 \\
+0 & 12 & 18 & -24
+\end{bmatrix}.
+\]
+
+Restamos $M_2$ de $A_2$:
+\[
+A_2 - M_2 =
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 2 &  3 & -4 \\
+0 & 8 & 22 & -25 \\
+0 & 12 & 88 & -83
+\end{bmatrix}
+-
+\begin{bmatrix}
+0 & 0 & 0 &  0 \\
+0 & 2 & 3 & -4 \\
+0 & 8 & 12 & -16 \\
+0 & 12 & 18 & -24
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  0 \\
+0 & 0 & 10 & -9 \\
+0 & 0 & 70 & -59
+\end{bmatrix}
+\equiv A_3.
+\]
+
+Así, $A_2$ se descompone como $A_2 = \ell_2 u_2^\star + A_3$, y por lo tanto
+\[
+A = \ell_1 u_1^\star + \ell_2 u_2^\star + A_3.
+\]
+
+Damos el último paso con la submatriz activa de $A_3$, que involucra las filas $3$ y $4$ a partir de la tercera columna. El multiplicador de la tercera etapa fue $7$ para la cuarta fila (pivote $10$). Definimos
+\[
+\ell_3 = \begin{bmatrix} 0 \\ 0 \\ 1 \\ 7 \end{bmatrix}, \qquad
+u_3^\star = \begin{bmatrix} 0 & 0 & 10 & -9 \end{bmatrix},
+\]
+y la matriz correspondiente es
+\[
+M_3 = \ell_3\, u_3^\star =
+\begin{bmatrix} 0 \\ 0 \\ 1 \\ 7 \end{bmatrix}
+\begin{bmatrix} 0 & 0 & 10 & -9 \end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  0 \\
+0 & 0 & 10 & -9 \\
+0 & 0 & 70 & -63
+\end{bmatrix}.
+\]
+
+Restamos $M_3$ de $A_3$:
+\[
+A_3 - M_3 =
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  0 \\
+0 & 0 & 10 & -9 \\
+0 & 0 & 70 & -59
+\end{bmatrix}
+-
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  0 \\
+0 & 0 & 10 & -9 \\
+0 & 0 & 70 & -63
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  0 \\
+0 & 0 &  0 &  4
+\end{bmatrix}
+\equiv A_4,
+\]
+donde $A_4$ ya tiene solo la última fila no nula, correspondiente al cuarto pivote.
+
+Así, $A_3 = \ell_3 u_3^\star + A_4$, y juntando todo obtenemos
+\[
+A = \ell_1 u_1^\star + \ell_2 u_2^\star + \ell_3 u_3^\star + A_4.
+\]
+
+Observemos que $A_4$ puede escribirse como $\ell_4 u_4^\star$ con
+\[
+\ell_4 = \begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix}, \qquad
+u_4^\star = \begin{bmatrix} 0 & 0 & 0 & 4 \end{bmatrix},
+\]
+aunque en este caso no hay eliminación, simplemente es la última fila pivote y obtenemos: 
+\[
+A = \ell_1 u_1^\star + \ell_2 u_2^\star + \ell_3 u_3^\star +\ell_4 u_4^\star.
+\]
+
+Ahora, las filas $u_1^\star, u_2^\star, u_3^\star, u_4^\star$ son exactamente las filas de la matriz triangular superior que obtuvimos al final de la eliminación. Si las apilamos formamos la matriz $U$:
+\[
+U =
+\begin{bmatrix} u_1^\star \\ u_2^\star \\ u_3^\star \\ u_4^\star \end{bmatrix}
+=
+\begin{bmatrix}
+4 & -5 &  6 & -2 \\
+0 &  2 &  3 & -4 \\
+0 &  0 & 10 & -9 \\
+0 &  0 &  0 &  4
+\end{bmatrix}.
+\]
+
+Por otro lado, si colocamos los vectores columna $\ell_1, \ell_2, \ell_3, \ell_4$ como columnas de una matriz, obtenemos una matriz triangular inferior con unos en la diagonal:
+\[
+L =
+\begin{bmatrix}
+\ell_1 & \ell_2 & \ell_3 & \ell_4
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+2 & 1 & 0 & 0 \\
+3 & 4 & 1 & 0 \\
+5 & 6 & 7 & 1
+\end{bmatrix}.
+\]
+
+Finalmente, de la descomposición en suma de matrices de rango $1$ se sigue la factorización
+\[
+A = L\, U.
+\]
+
+En efecto, puede verificarse que
+\[
+L U =
+\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+2 & 1 & 0 & 0 \\
+3 & 4 & 1 & 0 \\
+5 & 6 & 7 & 1
+\end{bmatrix}
+\begin{bmatrix}
+4 & -5 &  6 & -2 \\
+0 &  2 &  3 & -4 \\
+0 &  0 & 10 & -9 \\
+0 &  0 &  0 &  4
+\end{bmatrix}
+=
+\begin{bmatrix}
+4 & -5 &  6 & -2 \\
+8 & -8 & 15 & -8 \\
+12 & -7 & 40 & -31 \\
+20 & -13 & 118 & -93
+\end{bmatrix}
+= A.
+\]
+
+Este proceso permite, en ciertos casos, construir la factorización $LU$ de una matriz cuadrada $A$ siempre que en cada paso el pivote correspondiente sea no nulo (esto implica en particular que $A$ es una matriz no singular). Obteniendo entonces
+\[
+A = L U =
+\begin{bmatrix}
+1 & 0 & \cdots & 0 \\
+\ell_{21} & 1 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+\ell_{n1} & \ell_{n2} & \cdots & 1
+\end{bmatrix}
+\begin{bmatrix}
+u_{11} & u_{12} & \cdots & u_{1n} \\
+0 & u_{22} & \cdots & u_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & u_{nn}
+\end{bmatrix},
+\]
+
+Una vez obtenida la factorización $A = LU$, resolver el sistema $A\n{x} = \n{b}$ se vuelve muy eficiente. Reescribimos el sistema como
+\[
+LU\n{x} = \n{b}.
+\]
+Si definimos un nuevo vector $\n{c} = U\n{x}$, el problema se descompone en dos sistemas triangulares consecutivos:
+\begin{align*}
+L\n{c} &= \n{b} \quad \text{(sustitución hacia adelante)}, \\
+U\n{x} &= \n{c} \quad \text{(sustitución hacia atrás)}.
+\end{align*}
+La ventaja es que, al ser $L$ triangular inferior con unos en la diagonal y $U$ triangular superior, cada uno de estos sistemas se resuelve de forma directa sin necesidad de aplicar nuevamente la eliminación gaussiana.
+
+Volvamos al ejemplo que venimos trabajando. Teníamos
+\[
+L = \begin{bmatrix}
+1 & 0 & 0 & 0 \\
+2 & 1 & 0 & 0 \\
+3 & 4 & 1 & 0 \\
+5 & 6 & 7 & 1
+\end{bmatrix}, \qquad
+U = \begin{bmatrix}
+4 & -5 & 6 & -2 \\
+0 & 2 & 3 & -4 \\
+0 & 0 & 10 & -9 \\
+0 & 0 & 0 & 4
+\end{bmatrix}, \qquad
+\n{b} = \begin{bmatrix} 11 \\ 30 \\ 76 \\ 184 \end{bmatrix}.
+\]
+
+\textbf{Paso 1:} Resolvemos $L\n{c} = \n{b}$ por sustitución hacia adelante.
+\[
+\left\{
+\begin{aligned}
+c_1 &= 11 \\
+2c_1 + c_2 &= 30 \\
+3c_1 + 4c_2 + c_3 &= 76 \\
+5c_1 + 6c_2 + 7c_3 + c_4 &= 184
+\end{aligned}
+\right.
+\]
+De la primera ecuación obtenemos $c_1 = 11$. Sustituyendo en la segunda:
+\[
+2(11) + c_2 = 30 \implies c_2 = 30 - 22 = 8.
+\]
+Llevamos $c_1, c_2$ a la tercera:
+\[
+3(11) + 4(8) + c_3 = 76 \implies 33 + 32 + c_3 = 76 \implies c_3 = 11.
+\]
+Finalmente, reemplazamos en la cuarta:
+\[
+5(11) + 6(8) + 7(11) + c_4 = 184 \implies 55 + 48 + 77 + c_4 = 184 \implies c_4 = 4.
+\]
+Así resulta
+\[
+\n{c} = \begin{bmatrix} 11 \\ 8 \\ 11 \\ 4 \end{bmatrix}.
+\]
+
+\textbf{Paso 2:} Resolvemos $U\n{x} = \n{c}$ por sustitución hacia atrás. Pero
+este es exactamente el sistema triangular que ya resolvimos al final de la
+Sección~\ref{sec:eliminacion}, porque $\n{c}$ es el lado derecho que allí
+quedó después de la eliminación. La solución es, naturalmente, la misma:
+\[
+\boxed{x_1 = 4,\; x_2 = 3,\; x_3 = 2,\; x_4 = 1}.
+\]
+
+De esta manera, la factorización $LU$ nos permite resolver el sistema con dos sustituciones sencillas. Además, si luego necesitáramos resolver $A\n{x} = \n{b}'$ para un nuevo término independiente $\n{b}'$, bastaría con repetir los dos procesos de sustitución usando las mismas matrices $L$ y $U$, lo que representa un ahorro considerable de operaciones.
+
+
+\subsection{¿Cuándo existe la factorización? ¿Es única?}
+
+El procedimiento anterior se traba en cuanto un pivote es cero, y no siempre
+podemos anticiparlo mirando $A$. La condición exacta se enuncia en términos de
+las \textbf{submatrices principales}
+\[
+A_k = \begin{bmatrix}
+a_{11} & \cdots & a_{1k}\\
+\vdots & \ddots & \vdots\\
+a_{k1} & \cdots & a_{kk}
+\end{bmatrix},
+\qquad k=1,\dots,n,
+\]
+es decir, los bloques cuadrados de arriba a la izquierda de $A$ (en particular
+$A_n = A$).
+
+\begin{theorem}[Existencia y unicidad de $LU$]\label{teo:LU}
+Sea $A\in\mathbb{R}^{n\times n}$. Entonces $A$ admite una factorización $A=LU$
+con $L$ triangular inferior de unos en la diagonal y $U$ triangular superior con
+todos sus pivotes no nulos si y sólo si todas las submatrices principales
+$A_1,\dots,A_n$ son invertibles. En ese caso $L$ y $U$ son únicas, los pivotes
+valen
+\[
+u_{kk} = \frac{\det A_k}{\det A_{k-1}}\qquad (\det A_0 := 1),
+\]
+y en consecuencia
+\[
+\det A = u_{11}u_{22}\cdots u_{nn} .
+\]
+\end{theorem}
+
+La demostración es el Ejercicio de desarrollo que sigue: toda la información
+está en la multiplicación por bloques de la Sección~\ref{sec:bloques}.
+
+\begin{entrega}{Existencia y unicidad de la factorización $LU$}
+Sea $A\in\mathbb{R}^{n\times n}$ y supongamos primero que $A = LU$ con $L$
+triangular inferior de unos en la diagonal y $U$ triangular superior.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Escribiendo $L$ y $U$ por bloques,
+\[
+L = \begin{bmatrix} L_k & 0\\ \ast & \ast\end{bmatrix},
+\qquad
+U = \begin{bmatrix} U_k & \ast\\ 0 & \ast\end{bmatrix},
+\]
+con $L_k, U_k$ de $k\times k$, probar que $A_k = L_kU_k$ para todo $k$.
+
+\item Deducir que $\det A_k = u_{11}u_{22}\cdots u_{kk}$ y, por lo tanto, que
+$u_{kk} = \det A_k/\det A_{k-1}$. Concluir que si todos los pivotes son no
+nulos, entonces todas las submatrices principales son invertibles.
+
+\item \emph{(Recíproco.)} Supongamos ahora que $A_1,\dots,A_n$ son invertibles.
+Probar, por inducción sobre $k$, que el procedimiento de la
+Sección~\ref{sec:LU} no se traba: en el paso $k$ el pivote es no nulo.
+\emph{Sugerencia:} el pivote del paso $k$ es $\det A_k/\det A_{k-1}$ por el
+ítem (b), y el primer paso no cambia las submatrices principales.
+
+\item \emph{(Unicidad.)} Supongamos $L_1U_1 = L_2U_2$ con $L_i$ triangulares
+inferiores de diagonal unitaria y $U_i$ triangulares superiores invertibles.
+Probar que $L_2^{-1}L_1 = U_2U_1^{-1}$, observar que el miembro izquierdo es
+triangular inferior con unos en la diagonal y el derecho es triangular superior,
+y concluir que ambos valen $I$. \emph{Sugerencia:} la inversa de una triangular
+inferior de diagonal unitaria es triangular inferior de diagonal unitaria, y el
+producto de dos triangulares superiores es triangular superior; conviene probar
+antes esas dos afirmaciones.
+
+\item Deducir que $\det A$ es el producto de los pivotes y verificarlo en el
+ejemplo de la Sección~\ref{sec:LU}, donde los pivotes son $4,2,10,4$.
+
+\item Exhibir una matriz invertible que \emph{no} admita factorización $LU$ e
+indicar cuál de sus submatrices principales es singular. ¿Contradice esto el
+teorema?
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (b) --- los pivotes
+como cocientes de menores --- reaparece en el Capítulo~\ref{cap:sdp} como
+criterio de positividad, y el ítem (d) es el modelo de casi todas las pruebas de
+unicidad de factorizaciones del apunte.}}
+\end{entrega}
+
+\subsection{Las variantes $LDU$ y $LDL^T$}\label{sec:LDU}
+
+En la factorización $A=LU$ la matriz $L$ tiene unos en la diagonal pero $U$ no:
+sus elementos diagonales son los pivotes. Esa asimetría es fácil de corregir.
+Llamemos
+\[
+D = \diag(u_{11},u_{22},\dots,u_{nn})
+\]
+a la matriz diagonal de los pivotes. Como los pivotes son no nulos, $D$ es
+invertible y podemos escribir $U = D\,U'$, donde $U' = D^{-1}U$ es triangular
+superior \emph{con unos en la diagonal} (dividir la fila $k$ de $U$ por su
+pivote). Obtenemos así
+\[
+\boxed{\ A = L\,D\,U'\ }
+\]
+con $L$ y $U'$ triangulares de diagonal unitaria y $D$ diagonal. Esta
+factorización también es única (mismo argumento que el ítem (d) de la entrega
+anterior).
+
+El caso simétrico es el interesante. Si $A = A^T$, trasponiendo $A=LDU'$ se
+obtiene $A = A^T = (U')^T D L^T$, que es otra factorización $LDU$ de $A$: el
+primer factor es triangular inferior de diagonal unitaria, el segundo es
+diagonal y el tercero es triangular superior de diagonal unitaria. Por unicidad,
+$U' = L^T$ y entonces
+\[
+\boxed{\ A = L\,D\,L^T\ }\qquad\text{para } A \text{ simétrica.}
+\]
+La consecuencia práctica es inmediata: para una matriz simétrica basta calcular
+y guardar $L$ y $D$, con lo que la eliminación cuesta la mitad. Cuando además
+todos los pivotes son \emph{positivos}, $D^{1/2}$ tiene sentido y
+$A = (LD^{1/2})(LD^{1/2})^T$; esa es la factorización de Cholesky, que veremos
+en el Capítulo~\ref{cap:sdp} junto con las matrices definidas positivas.
+
+\section{Conteo de operaciones}\label{sec:conteo}
+
+En la sección anterior aprendimos a factorizar (cuando esto es posible) una matriz cuadrada no singular $A\in \mathbb{R}^{n\times n}$ en la forma $A = LU$ donde $L$ es una matriz triangular inferior de la forma
+\[
+L  =
+\begin{bmatrix}
+1 & 0 & \cdots & 0 \\
+\ell_{21} & 1 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+\ell_{n1} & \ell_{n2} & \cdots & 1
+\end{bmatrix}
+\]
+y $U$ es una matriz triangular superior de la forma
+\[
+U =
+\begin{bmatrix}
+u_{11} & u_{12} & \cdots & u_{1n} \\
+0 & u_{22} & \cdots & u_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & u_{nn}
+\end{bmatrix}.
+\]
+
+Contemos, en primer lugar, cuántas operaciones debemos realizar para resolver $A\n{x} = \n{b}$ si ya tenemos $A$ factorizada. En primer lugar debemos resolver el sistema triangular inferior
+\[
+L\n{c} = \n{b}.
+\]
+Como $L$ es triangular inferior con unos en la diagonal, este sistema no requiere divisiones. La primera incógnita se obtiene directamente:
+\[
+c_1 = b_1.
+\]
+Para cada fila $i=2,\dots,n$, una vez conocidas $c_1,\dots,c_{i-1}$, calculamos
+\[
+c_i = b_i - \sum_{j=1}^{i-1} \ell_{ij} c_j.
+\]
+En la fila $i$-ésima hay $i-1$ multiplicaciones y $i-1$ restas. Por lo tanto, la sustitución hacia adelante requiere
+\[
+\sum_{i=2}^{n} (i-1) = \frac{n(n-1)}{2}
+\]
+multiplicaciones y
+\[
+\sum_{i=2}^{n} (i-1) = \frac{n(n-1)}{2}
+\]
+sumas/restas. No se necesita ninguna división porque la diagonal de $L$ está formada por unos. Tenemos entonces $n^2-n$ operaciones para resolver $L\n{c}=\n{b}$. 
+
+A continuación resolvemos el sistema triangular superior
+\[
+U\n{x} = \n{c}.
+\]
+Aquí sí aparecen divisiones, una por cada fila, al despejar cada incógnita. Comenzando por la última fila:
+\[
+x_n = \frac{c_n}{u_{nn}}.
+\]
+Para una fila general $i=1,\dots,n-1$, una vez conocidas $x_{i+1},\dots,x_n$, calculamos
+\[
+x_i = \frac{c_i - \sum_{j=i+1}^{n} u_{ij} x_j}{u_{ii}}.
+\]
+En la fila $i$-ésima se realizan $n-i$ multiplicaciones, $n-i$ restas y una división. Sumando sobre todas las filas, la sustitución hacia atrás requiere
+\[
+\sum_{i=1}^{n} (n-i) = \frac{n(n-1)}{2}
+\]
+multiplicaciones y
+\[
+\sum_{i=1}^{n} (n-i) = \frac{n(n-1)}{2}
+\]
+sumas/restas, además de
+\[
+n
+\]
+divisiones. Lo que da un total de $n^2$ operaciones para resolver $U\n{x} = \n{c}$
+
+En total, para resolver $A\n{x}=\n{b}$ una vez que se dispone de $L$ y $U$, se realizan $2n^2 - n $ operaciones, es decir, el orden es de $n^2$. 
+
+Vamos a contar ahora cuántas operaciones necesitamos para construir la factorización $LU$ de una matriz $A \in \mathbb{R}^{n\times n}$,
+\[
+A = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \cdots & a_{nn}
+\end{bmatrix}.
+\]
+
+En el primer paso consideramos el pivote de la posición $(1,1)$ y construimos la matriz de multiplicadores $M_1$. Para construir esta matriz necesitamos $n-1$ divisiones (una por cada fila excepto la primera) para calcular los multiplicadores
+\[
+\ell_{21} = \frac{a_{21}}{a_{11}}, \quad \ell_{31} = \frac{a_{31}}{a_{11}}, \quad \dots, \quad \ell_{n1} = \frac{a_{n1}}{a_{11}}.
+\]
+Luego $(n-1)(n-1)$ multiplicaciones (una por cada entrada que no esté en la primera fila ni en la primera columna). Posteriormente hacemos $(n-1)(n-1)$ sumas para calcular la matriz $A_2$ como $A-M_1$. Notar que en este conteo no estamos operando sobre las entradas que ya sabemos que son ceros.
+
+En general, en el $k$-ésimo paso de eliminación, con $k=1,\dots,n-1$, trabajamos con la submatriz activa de tamaño $(n-k+1)\times(n-k+1)$. Para anular las entradas debajo del pivote $a_{kk}$ se necesitan
+\[
+n-k
+\]
+divisiones, con las cuales se calculan los multiplicadores.
+% \[
+% \ell_{ik} = \frac{a_{ik}^{(k)}}{a_{kk}^{(k)}}, \qquad i=k+1,\dots,n.
+% \]
+Luego, para calcular $M_k$ de tamaño efectivo $(n-k)\times(n-k)$, se realizan
+\[
+(n-k)^2
+\]
+multiplicaciones y para calcular $A_{k}$ se realizan
+\[
+(n-k)^2
+\]
+% sumas/restas. En efecto, para cada $i,j>k$ calculamos
+% \[
+% a_{ij}^{(k+1)} = a_{ij}^{(k)} - \ell_{ik}\, a_{kj}^{(k)},
+% \]
+% lo cual involucra una multiplicación y una resta. Las posiciones de la columna $k$ debajo del pivote no se operan porque se anulan, y las columnas anteriores ya son cero.
+
+Sumando sobre todos los pasos, el número total de divisiones es
+\[
+\sum_{k=1}^{n-1} (n-k) = \frac{n(n-1)}{2}.
+\]
+El número total de multiplicaciones es
+\[
+\sum_{k=1}^{n-1} (n-k)^2 = \sum_{m=1}^{n-1} m^2 = \frac{(n-1)n(2n-1)}{6},
+\]
+y el de sumas/restas es exactamente el mismo. Para valores grandes de $n$, las multiplicaciones y las sumas dominan, y se comportan como
+\[
+\frac{(n-1)n(2n-1)}{6} =  \frac{n^3}{3} - \frac{n^2}{2} + \frac{n}{6}\ \approx\ \frac{n^3}{3}
+\]
+cada una. Sumando multiplicaciones y sumas, el total es del orden de
+\[
+\frac{2n^3}{3} .
+\]
+Así, la construcción de la factorización $LU$ requiere en el orden de 
+$n^3$
+operaciones.
+
+ En resumen, si bien el costo de resolver un sistema una vez que se dispone de la matriz factorizada $A=LU$ es bajo, del orden de $O(n^2)$ operaciones, hay que tener en cuenta que el costo de construir dicha factorización es del mismo orden que resolver el sistema mediante eliminación gaussiana, es decir, $O(n^3)$. Sin embargo, si vamos a resolver el mismo sistema con la misma matriz $A$ para varios lados derechos $\n{b}$, entonces se justifica realizar una única vez la eliminación y guardar en memoria la factorización $LU$, de modo que cada nuevo término independiente solo requiera resolver dos sistemas triangulares de bajo costo.
+
+
+
+\subsection{Moraleja: nunca se calcula la inversa}
+
+El conteo anterior tiene una consecuencia práctica que conviene subrayar,
+porque va a contramano de lo que sugiere la notación $\n{x}=A^{-1}\n{b}$.
+Calcular $A^{-1}$ es resolver los $n$ sistemas $A\n{x}=\n{e}_j$, $j=1,\dots,n$:
+cuesta la factorización ($\approx 2n^3/3$) más $n$ pares de sustituciones
+($n\cdot 2n^2 = 2n^3$), en total unas $8n^3/3$ operaciones, cuatro veces más que
+factorizar. Y una vez que se tiene $A^{-1}$, calcular el producto $A^{-1}\n{b}$
+cuesta $2n^2$ operaciones: exactamente lo mismo que las dos sustituciones con
+$L$ y $U$. Es decir, se paga cuatro veces más para no ganar nada --- y el
+resultado, además, es numéricamente peor. \emph{La inversa se usa para pensar y
+para escribir fórmulas; para calcular se factoriza.}
+
+\begin{remark}\label{obs:det-chico}
+Por la misma razón, el determinante tampoco sirve para medir cuán cerca está una
+matriz de ser singular. Si $A \in \mathbb{R}^{30\times 30}$ tiene $\det(A) = 1$,
+entonces
+\[
+\det(0.1 \, A) = (0.1)^{30} \det(A) = 10^{-30},
+\]
+y sin embargo $0.1\,A$ es tan invertible como $A$: resolver un sistema con una u
+otra es igual de fácil. Un determinante chico no indica que la matriz sea
+\emph{casi singular}. La medida correcta es el \emph{número de condición}, que
+veremos en el capítulo de normas de matrices.
+\end{remark}
+
+\section{Factorización $LU$ con pivoteo}\label{sec:pivoteo}
+
+En secciones anteriores explicamos cómo encontrar la factorización $LU$ de matrices $A$ no singulares. Sin embargo, hay casos en los que el algoritmo que desarrollamos falla. Siempre supusimos que el pivote en cada paso es un número no nulo, pero ¿qué sucede si el pivote es cero? Hagamos primero un ejemplo de cómo resolver un sistema con una matriz de estas características mediante eliminación gaussiana.
+
+Consideremos
+\[
+A = \begin{bmatrix}
+0 & 1 & 1 \\
+1 & 3 & 7 \\
+2 & 1 & 8
+\end{bmatrix}, \qquad
+\n{b} = \begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix}.
+\]
+
+Si tuviéramos que aplicar el método de eliminación, lo que hacemos usualmente es intercambiar filas. Un buen criterio es usar siempre como pivote el elemento de mayor valor absoluto de la columna correspondiente. En este caso, la primera columna tiene entradas $0$, $1$ y $2$; la de mayor valor absoluto es $2$, que está en la fila $3$. Entonces intercambiamos la fila $1$ con la fila $3$, y nos queda
+\[
+\left[\begin{array}{ccc|c}
+2 & 1 & 8 & b_3 \\
+1 & 3 & 7 & b_2 \\
+0 & 1 & 1 & b_1
+\end{array}\right].
+\]
+Notemos que hemos cambiado también el lado derecho para no cambiar el sistema de ecuaciones que queremos resolver.
+
+Ahora continuamos con eliminación gaussiana. El pivote es $2$ y el multiplicador para la segunda fila es
+\[
+\frac{1}{2}.
+\]
+Aplicamos
+\[
+F_2 \leftarrow F_2 - \frac{1}{2}F_1
+\]
+y obtenemos
+\[
+\left[\begin{array}{ccc|c}
+2 & 1 & 8 & b_3 \\
+0 & \frac{5}{2} & 3 & b_2 - \frac{1}{2}b_3 \\
+0 & 1 & 1 & b_1
+\end{array}\right].
+\]
+
+El siguiente pivote es $\frac{5}{2}$. Para eliminar el elemento de la tercera fila, el multiplicador es
+\[
+\frac{1}{\frac{5}{2}} = \frac{2}{5}.
+\]
+Hacemos
+\[
+F_3 \leftarrow F_3 - \frac{2}{5}F_2
+\]
+y llegamos a la matriz triangular superior
+\[
+\left[\begin{array}{ccc|c}
+2 & 1 & 8 & b_3 \\
+0 & \frac{5}{2} & 3 & b_2 - \frac{1}{2}b_3 \\
+0 & 0 & -\frac{1}{5} & b_1 - \frac{2}{5}b_2 + \frac{1}{5}b_3
+\end{array}\right].
+\]
+
+Resolvemos ahora por sustitución hacia atrás. De la tercera ecuación:
+\[
+-\frac{1}{5}x_3 = b_1 - \frac{2}{5}b_2 + \frac{1}{5}b_3,
+\]
+de donde
+\[
+x_3 = -5b_1 + 2b_2 - b_3.
+\]
+
+De la segunda ecuación:
+\[
+\frac{5}{2}x_2 + 3x_3 = b_2 - \frac{1}{2}b_3,
+\]
+reemplazando $x_3$ y despejando se obtiene
+\[
+x_2 = 6b_1 - 2b_2 + b_3.
+\]
+
+Finalmente, de la primera ecuación:
+\[
+2x_1 + x_2 + 8x_3 = b_3,
+\]
+y reemplazando $x_2$ y $x_3$ resulta
+\[
+x_1 = 17b_1 - 7b_2 + 4b_3.
+\]
+
+Ahora bien, ¿cómo reflejamos ese cambio de filas a la hora de hacer la factorización? Vamos a hacer uso de las matrices de permutación. Tomemos por ejemplo
+\[
+P = \begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}.
+\]
+
+Para entender qué hace $P$ no hace falta ninguna cuenta nueva: alcanza con las
+dos fórmulas \eqref{eq:cols} y \eqref{eq:filas} de la
+Sección~\ref{sec:producto-filas-cols} del Capítulo~\ref{cap:algebra-lineal},
+\[
+\fila_i(PA) = \fila_i(P)\,A
+\qquad\text{y}\qquad
+\col_j(AP) = A\,\col_j(P).
+\]
+Esto significa que, si multiplicamos por $P$ a la izquierda, estamos combinando filas de $A$ de acuerdo con las filas de $P$. Como cada fila de $P$ tiene un único $1$, al calcular $PA$ se permutan las filas de $A$.
+
+En efecto, para nuestro ejemplo,
+\[
+PA =
+\begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+0 & 1 & 1 \\
+1 & 3 & 7 \\
+2 & 1 & 8
+\end{bmatrix}
+=
+\begin{bmatrix}
+2 & 1 & 8 \\
+0 & 1 & 1 \\
+1 & 3 & 7
+\end{bmatrix}.
+\]
+Observamos que la primera fila de $PA$ es la tercera fila de $A$, la segunda fila de $PA$ es la primera fila de $A$, y la tercera fila de $PA$ es la segunda fila de $A$. Es decir, $P$ permuta filas.
+
+De manera análoga, si multiplicamos por $P$ a la derecha, se permutan las columnas de $A$. Usando la propiedad de columnas,
+\[
+AP =
+\begin{bmatrix}
+0 & 1 & 1 \\
+1 & 3 & 7 \\
+2 & 1 & 8
+\end{bmatrix}
+\begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 1 & 0 \\
+3 & 7 & 1 \\
+1 & 8 & 2
+\end{bmatrix}.
+\]
+Aquí la primera columna de $AP$ es la segunda columna de $A$, la segunda columna de $AP$ es la tercera columna de $A$, y la tercera columna de $AP$ es la primera columna de $A$. Por lo tanto, multiplicar por la derecha por $P$ permuta columnas.
+
+La matriz $P$ es un ejemplo de una matriz de permutación. Una \textbf{matriz de permutación} es una matriz binaria cuadrada que tiene exactamente un $1$ en cada fila y en cada columna, y $0$ en todas las demás entradas. Una matriz de permutación de $n\times n$ puede representar una permutación de $n$ elementos. Premultiplicar una matriz $M$ de $n$ filas por una matriz de permutación $P$, formando $PM$, permuta las filas de $M$; análogamente, postmultiplicar una matriz $M$ de $n$ columnas, formando $MP$, permuta las columnas de $M$.
+
+Toda matriz de permutación $P$ satisface
+\[
+\boxed{\ P^{-1} = P^{T}\ }
+\]
+es decir, para deshacer una permutación de filas alcanza con trasponer. Esto se
+verifica directamente: la entrada $(i,j)$ de $P^TP$ es el producto escalar de
+las columnas $i$ y $j$ de $P$, y como cada columna tiene un único $1$ y están
+en posiciones distintas, ese producto vale $1$ si $i=j$ y $0$ si $i\neq j$; o
+sea $P^TP=I$. En el Capítulo~\ref{cap:ortogonalidad} veremos que las matrices
+que cumplen esta propiedad se llaman \emph{ortogonales}, y que las de
+permutación son un caso particular.
+
+
+
+
+
+Ahora veamos cómo incorporar las matrices de permutación en la factorización LU. Volvamos al ejemplo de hoy. Vamos a aplicar la técnica llamada \textbf{pivoteo parcial}, que consiste en realizar intercambios de filas de manera que, en cada paso, el pivote sea el elemento de mayor valor absoluto de la columna correspondiente.
+
+Para la matriz
+\[
+A = \begin{bmatrix}
+0 & 1 & 1 \\
+1 & 3 & 7 \\
+2 & 1 & 8
+\end{bmatrix},
+\]
+el primer pivote sería $a_{11}=0$, que no es admisible. En la primera columna, el mayor valor absoluto es $2$, ubicado en la fila $3$. Por lo tanto, intercambiamos la fila $1$ con la fila $3$. Esta operación se representa con la matriz de permutación
+\[
+P = \begin{bmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+1 & 0 & 0
+\end{bmatrix}.
+\]
+Trabajamos entonces con la matriz permutada
+\[
+\widetilde{A} = PA =
+\begin{bmatrix}
+2 & 1 & 8 \\
+1 & 3 & 7 \\
+0 & 1 & 1
+\end{bmatrix}.
+\]
+
+Ahora aplicamos a $\widetilde{A}$ la misma construcción con matrices de multiplicadores que usamos antes.
+
+En el primer paso, el pivote es $2$. Los multiplicadores son
+\[
+\ell_{21} = \frac{1}{2}, \qquad \ell_{31} = \frac{0}{2} = 0.
+\]
+Definimos
+\[
+\ell_1 = \begin{bmatrix} 1 \\ 1/2 \\ 0 \end{bmatrix}, \qquad
+u_1^\star = \begin{bmatrix} 2 & 1 & 8 \end{bmatrix},
+\]
+y construimos
+\[
+M_1 = \ell_1 u_1^\star =
+\begin{bmatrix}
+1 \\ 1/2 \\ 0
+\end{bmatrix}
+\begin{bmatrix}
+2 & 1 & 8
+\end{bmatrix}
+=
+\begin{bmatrix}
+2 & 1 & 8 \\
+1 & 1/2 & 4 \\
+0 & 0 & 0
+\end{bmatrix}.
+\]
+Restamos esta matriz de $\widetilde{A}$:
+\[
+\widetilde{A} - M_1 =
+\begin{bmatrix}
+2 & 1 & 8 \\
+1 & 3 & 7 \\
+0 & 1 & 1
+\end{bmatrix}
+-
+\begin{bmatrix}
+2 & 1 & 8 \\
+1 & 1/2 & 4 \\
+0 & 0 & 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 5/2 & 3 \\
+0 & 1 & 1
+\end{bmatrix}
+\equiv A_2.
+\]
+
+En el segundo paso, el pivote es $5/2$ y el multiplicador para la tercera fila es
+\[
+\ell_{32} = \frac{1}{5/2} = \frac{2}{5}.
+\]
+Definimos
+\[
+\ell_2 = \begin{bmatrix} 0 \\ 1 \\ 2/5 \end{bmatrix}, \qquad
+u_2^\star = \begin{bmatrix} 0 & 5/2 & 3 \end{bmatrix},
+\]
+y
+\[
+M_2 = \ell_2 u_2^\star =
+\begin{bmatrix}
+0 \\ 1 \\ 2/5
+\end{bmatrix}
+\begin{bmatrix}
+0 & 5/2 & 3
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 5/2 & 3 \\
+0 & 1 & 6/5
+\end{bmatrix}.
+\]
+Restamos $M_2$ de $A_2$:
+\[
+A_2 - M_2 =
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 5/2 & 3 \\
+0 & 1 & 1
+\end{bmatrix}
+-
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 5/2 & 3 \\
+0 & 1 & 6/5
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & -1/5
+\end{bmatrix}
+\equiv A_3.
+\]
+Observemos que $A_3$ puede escribirse como
+\[
+A_3 = \ell_3 u_3^\star,
+\]
+con
+\[
+\ell_3 = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}, \qquad
+u_3^\star = \begin{bmatrix} 0 & 0 & -1/5 \end{bmatrix}.
+\]
+
+Así,
+\[
+\widetilde{A} = \ell_1 u_1^\star + \ell_2 u_2^\star + \ell_3 u_3^\star.
+\]
+Apilando las filas $u_1^\star, u_2^\star, u_3^\star$ obtenemos
+\[
+U =
+\begin{bmatrix} u_1^\star \\ u_2^\star \\ u_3^\star \end{bmatrix}
+=
+\begin{bmatrix}
+2 & 1 & 8 \\
+0 & 5/2 & 3 \\
+0 & 0 & -1/5
+\end{bmatrix},
+\]
+y colocando las columnas $\ell_1, \ell_2, \ell_3$ obtenemos
+\[
+L =
+\begin{bmatrix}
+\ell_1 & \ell_2 & \ell_3
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 \\
+1/2 & 1 & 0 \\
+0 & 2/5 & 1
+\end{bmatrix}.
+\]
+Por lo tanto,
+\[
+PA = LU,
+\]
+es decir,
+\[
+\begin{bmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+1 & 0 & 0
+\end{bmatrix}
+\begin{bmatrix}
+0 & 1 & 1 \\
+1 & 3 & 7 \\
+2 & 1 & 8
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 \\
+1/2 & 1 & 0 \\
+0 & 2/5 & 1
+\end{bmatrix}
+\begin{bmatrix}
+2 & 1 & 8 \\
+0 & 5/2 & 3 \\
+0 & 0 & -1/5
+\end{bmatrix}.
+\]
+Terminemos esta sección con un ejemplo donde se necesita más de una permutación. Consideremos
+\[
+A = \begin{bmatrix}
+0 & 2 & 1 \\
+1 & 1 & 1 \\
+2 & 5 & 1
+\end{bmatrix}.
+\]
+
+\textbf{Paso 1.} En la primera columna, el pivote $a_{11}=0$ no es admisible. El mayor valor absoluto de la primera columna es $2$, que está en la fila $3$. Por lo tanto, intercambiamos la fila $1$ con la fila $3$ mediante la matriz de permutación
+\[
+P_1 = \begin{bmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+1 & 0 & 0
+\end{bmatrix}.
+\]
+Trabajamos entonces con
+\[
+P_1 A =
+\begin{bmatrix}
+2 & 5 & 1 \\
+1 & 1 & 1 \\
+0 & 2 & 1
+\end{bmatrix}.
+\]
+
+Ahora aplicamos la misma construcción con matrices de multiplicadores que usamos antes. El pivote es $2$. Los multiplicadores son
+\[
+\ell_{21} = \frac{1}{2}, \qquad \ell_{31} = \frac{0}{2} = 0.
+\]
+Definimos
+\[
+\ell_1 = \begin{bmatrix} 1 \\ 1/2 \\ 0 \end{bmatrix}, \qquad
+u_1^\star = \begin{bmatrix} 2 & 5 & 1 \end{bmatrix},
+\]
+y construimos
+\[
+M_1 = \ell_1 u_1^\star =
+\begin{bmatrix} 1 \\ 1/2 \\ 0 \end{bmatrix}
+\begin{bmatrix} 2 & 5 & 1 \end{bmatrix}
+=
+\begin{bmatrix}
+2 & 5 & 1 \\
+1 & 5/2 & 1/2 \\
+0 & 0 & 0
+\end{bmatrix}.
+\]
+Restamos $M_1$ de $P_1A$:
+\[
+P_1A - M_1 =
+\begin{bmatrix}
+2 & 5 & 1 \\
+1 & 1 & 1 \\
+0 & 2 & 1
+\end{bmatrix}
+-
+\begin{bmatrix}
+2 & 5 & 1 \\
+1 & 5/2 & 1/2 \\
+0 & 0 & 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & -3/2 & 1/2 \\
+0 & 2 & 1
+\end{bmatrix}
+\equiv A_2.
+\]
+
+\textbf{Paso 2.} Antes de continuar, examinamos la submatriz activa de $A_2$, es decir, las filas $2$ y $3$ a partir de la segunda columna. El elemento en la posición $(2,2)$ es $-\frac{3}{2}$, pero el mayor valor absoluto en esa columna es $2$, que está en la fila $3$. Por lo tanto, intercambiamos la fila $2$ con la fila $3$ de $A_2$. La matriz de permutación correspondiente es
+\[
+P_2 = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{bmatrix}.
+\]
+Al aplicar $P_2$ a $A_2$ obtenemos
+\[
+ P_2 A_2 =
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 2 & 1 \\
+0 & -3/2 & 1/2
+\end{bmatrix}.
+\]
+Definimos
+\[
+\ell_2 = \begin{bmatrix} 0 \\ 1 \\ -3/4 \end{bmatrix}, \qquad
+u_2^\star = \begin{bmatrix} 0 & 2 & 1 \end{bmatrix},
+\]
+y construimos
+\[
+M_2 = \ell_2 u_2^\star =
+\begin{bmatrix} 0 \\ 1 \\ -3/4 \end{bmatrix}
+\begin{bmatrix} 0 & 2 & 1 \end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 2 & 1 \\
+0 & -3/2 & -3/4
+\end{bmatrix}.
+\]
+Restamos $M_2$ de $P_2A_2$:
+\[
+P_2A_2 - M_2 =
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 2 & 1 \\
+0 & -3/2 & 1/2
+\end{bmatrix}
+-
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 2 & 1 \\
+0 & -3/2 & -3/4
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 5/4
+\end{bmatrix}
+= A_3.
+\]
+Como
+\[A_3 = \begin{bmatrix}
+    0 \\ 0 \\ 1
+\end{bmatrix}\begin{bmatrix}
+    0 & 0 & 5/4
+\end{bmatrix},\]
+si definimos
+\[\ell_3 = \begin{bmatrix}
+    0 \\ 0 \\ 1
+\end{bmatrix}\quad u_3^\star = \begin{bmatrix}
+    0 & 0 & 5/4
+\end{bmatrix},\]
+tenemos que
+\[P_2A_2 = \ell_2 u_2^\star + \ell_3 u_3^\star.\]
+
+Volviendo a la matriz original, teniamos que 
+\[P_1 A = \ell_1 u_1^\star + A_2,\]
+entonces
+\[P_2P_1 A = P_2 \ell_1 u_1^\star + P_2 A_2 =  (P_2 \ell_1) u_1^\star + \ell_2 u_2^\star + \ell_3 u_3^\star .\]
+Es importante notar aquí que, al permutar las filas $2$ y $3$, también debemos permutar las componentes correspondientes de los multiplicadores ya calculados. El vector $\ell_1$ que teníamos era
+\[
+\ell_1 = \begin{bmatrix} 1 \\ 1/2 \\ 0 \end{bmatrix}.
+\]
+Al aplicar $P_2$ a sus filas, obtenemos
+\[
+\ell_1^{\prime} = P_2 \ell_1 =
+\begin{bmatrix} 1 \\ 0 \\ 1/2 \end{bmatrix}.
+\]
+Obtenemos entonces que 
+\begin{equation*}\begin{split} P_2P_1 A & = \ell_1^{\prime}u_1^\star + \ell_2 u_2^\star + \ell_3 u_3^\star \\ & = \begin{bmatrix} 1 \\ 0 \\ 1/2 \end{bmatrix} \begin{bmatrix} 2 & 5 & 1 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \\ -3/4 \end{bmatrix}
+\begin{bmatrix} 0 & 2 & 1 \end{bmatrix} + \begin{bmatrix}
+    0 \\ 0 \\ 1
+\end{bmatrix}\begin{bmatrix}
+    0 & 0 & 5/4
+\end{bmatrix}
+\\ & = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+1/2 & -3/4 & 1
+\end{bmatrix}
+\begin{bmatrix}
+2 & 5 & 1 \\
+0 & 2 & 1 \\
+0 & 0 & 5/4
+\end{bmatrix} 
+\\ & = LU
+ \end{split}
+ \end{equation*}
+
+
+La matriz de permutación total es el producto de las permutaciones aplicadas:
+\[
+P = P_2 P_1 =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+1 & 0 & 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}.
+\]
+
+Finalmente, la factorización con pivoteo parcial es
+\[
+PA = LU,
+\]
+es decir,
+\[
+\begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+0 & 2 & 1 \\
+1 & 1 & 1 \\
+2 & 5 & 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+1/2 & -3/4 & 1
+\end{bmatrix}
+\begin{bmatrix}
+2 & 5 & 1 \\
+0 & 2 & 1 \\
+0 & 0 & 5/4
+\end{bmatrix}.
+\]
+
+
+
+\subsection{Por qué conviene el pivote más grande}
+
+Dijimos al empezar que ``un buen criterio es usar siempre como pivote el
+elemento de mayor valor absoluto de la columna''. Si sólo quisiéramos evitar la
+división por cero bastaría con elegir \emph{cualquier} pivote no nulo; la razón
+para elegir el más grande es otra, y es puramente numérica.
+
+Observemos que los multiplicadores son cocientes $\ell_{ik} = a_{ik}/a_{kk}$. Si
+el pivote $a_{kk}$ es chico comparado con las entradas que están debajo, los
+multiplicadores son enormes, y al restar $\ell_k u_k^\star$ las entradas
+originales de la submatriz activa quedan sepultadas bajo números mucho más
+grandes. En aritmética exacta no pasa nada; en aritmética de punto flotante, esa
+información se pierde por redondeo y no se recupera nunca más. El pivoteo
+parcial ataca exactamente eso: al elegir como pivote el elemento de mayor módulo
+de la columna, se garantiza que
+\[
+|\ell_{ik}| \le 1 \qquad\text{para todos los multiplicadores},
+\]
+de modo que el paso de eliminación no puede amplificar lo que ya estaba
+calculado. El Ejercicio de desarrollo que sigue muestra el fenómeno en la
+matriz más chica posible.
+
+\begin{remark}[Pivoteo completo]\label{obs:pivoteo-completo}
+El pivoteo parcial busca el pivote recorriendo sólo la columna activa. Se puede
+ser más ambicioso y buscar el elemento de mayor módulo en \emph{toda} la
+submatriz activa, intercambiando entonces filas \emph{y} columnas; eso se llama
+\textbf{pivoteo completo} y produce una factorización
+\[
+P A Q = LU ,
+\]
+con $P$ y $Q$ matrices de permutación. El intercambio de columnas reordena las
+incógnitas, así que al final hay que deshacer ese reordenamiento en el vector
+solución: si $PAQ=LU$ y llamamos $\n{y}$ a la solución del sistema triangular,
+la solución del sistema original es $\n{x}=Q\n{y}$.
+
+El pivoteo completo controla el crecimiento de las entradas mucho mejor que el
+parcial, y hay matrices (poco frecuentes, pero construibles) para las cuales el
+pivoteo parcial efectivamente falla. Aun así, en la práctica casi nadie lo usa:
+buscar el máximo en toda la submatriz activa cuesta del orden de $n^3$
+comparaciones en total --- comparable al costo de la eliminación misma, que es
+$\sim n^3/3$ operaciones aritméticas --- mientras que el pivoteo parcial cuesta
+$\sim n^2/2$. Para las matrices que aparecen en problemas reales el pivoteo
+parcial anda bien, y ése es el que implementan \textsc{Matlab},
+\textsc{Python} y las bibliotecas numéricas estándar.
+\end{remark}
+
+\begin{entrega}{Por qué se pivotea: un experimento numérico}
+Consideremos, para $\varepsilon\neq0$,
+\[
+A = \begin{bmatrix} \varepsilon & 1\\ 1 & 1\end{bmatrix},
+\qquad
+\n{b} = \begin{bmatrix} 1 \\ 2\end{bmatrix}.
+\]
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Calcular $L$ y $U$ sin pivotear y resolver $A\n{x}=\n{b}$ en aritmética
+exacta. Verificar que la solución es
+$\n{x} = \big(\tfrac{1}{1-\varepsilon},\ \tfrac{1-2\varepsilon}{1-\varepsilon}\big)^T$,
+que para $\varepsilon$ chico está cerca de $(1,1)^T$. Observar que $A$ no tiene
+nada de particular: sus dos columnas están lejos de ser dependientes.
+
+\item Rehacer la cuenta del ítem (a) con $\varepsilon = 10^{-4}$
+\emph{redondeando a tres cifras significativas después de cada operación}, como
+haría una computadora con precisión limitada. Comparar con la solución exacta.
+¿Cuántas cifras correctas quedan en $x_1$? ¿Y en $x_2$?
+
+\item Repetir el ítem (b) intercambiando primero las dos filas (es decir,
+factorizando $PA$ con $P = \begin{bsmallmatrix}0&1\\1&0\end{bsmallmatrix}$) y con
+el mismo redondeo a tres cifras. Comparar.
+
+\item Explicar qué salió mal en (b). \emph{No} es que el problema esté mal
+planteado: la solución exacta depende suavemente de los datos. Identificar en
+qué operación concreta se perdió la información y relacionarlo con el tamaño del
+multiplicador $1/\varepsilon$.
+
+\item Probar que con pivoteo parcial todos los multiplicadores cumplen
+$|\ell_{ik}|\le1$, y dar un ejemplo de $3\times3$ donde sin pivotear algún
+multiplicador sea mayor que $100$.
+
+\item \emph{(Opcional.)} Calcular $\max_{ij}|u_{ij}| / \max_{ij}|a_{ij}|$ en los
+casos (b) y (c). Ese cociente se llama \emph{factor de crecimiento} y es la
+cantidad que el pivoteo parcial mantiene bajo control.
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. Conviene hacer las cuentas
+a mano, redondeando explícitamente; el punto del ejercicio se pierde si se
+delega en una calculadora que trabaja con más cifras.}}
+\end{entrega}
+
+\section{Eliminación por bloques y el complemento de Schur}
+\label{sec:schur-complemento}
+
+Todo lo que hicimos con números se puede hacer con bloques, y el resultado es
+una de las identidades más útiles del álgebra matricial. Partamos una matriz
+cuadrada en cuatro bloques,
+\[
+M = \begin{bmatrix} A & B\\ C & D\end{bmatrix},
+\qquad A\in\mathbb{R}^{k\times k} \text{ invertible},
+\]
+y hagamos \emph{un} paso de eliminación, pero tratando al bloque $A$ como si
+fuera el pivote: a la segunda fila de bloques le restamos $CA^{-1}$ veces la
+primera. El multiplicador es ahora la matriz $CA^{-1}$, y lo que queda en el
+lugar de $D$ es
+\[
+S = D - C A^{-1} B,
+\]
+llamado el \textbf{complemento de Schur} de $A$ en $M$. En términos de
+factorizaciones, lo que acabamos de hacer es
+\begin{equation}\label{eq:schur}
+M =
+\begin{bmatrix} I & 0\\ CA^{-1} & I\end{bmatrix}
+\begin{bmatrix} A & 0\\ 0 & S\end{bmatrix}
+\begin{bmatrix} I & A^{-1}B\\ 0 & I\end{bmatrix},
+\end{equation}
+como se comprueba multiplicando los tres factores. Es exactamente una
+factorización $LDU$ por bloques.
+
+\begin{remark}[Es la eliminación de siempre]
+Si tomamos $k=1$, entonces $A = a_{11}$ es el primer pivote, $B$ es el resto de
+la primera fila, $C$ el resto de la primera columna, y
+\[
+S = D - \frac{1}{a_{11}}\,C\,B
+\]
+es precisamente la submatriz activa $A_2$ que obtuvimos al restar
+$\ell_1 u_1^\star$ en la Sección~\ref{sec:LU}. La eliminación gaussiana es la
+iteración del complemento de Schur con bloques de tamaño $1$.
+\end{remark}
+
+De \eqref{eq:schur} se leen de inmediato tres consecuencias, porque los factores
+triangulares por bloques tienen determinante $1$ y son invertibles:
+\[
+\det M = \det(A)\,\det(S),
+\qquad
+\rg(M) = k + \rg(S),
+\qquad
+M \text{ es invertible} \iff S \text{ es invertible}.
+\]
+La primera generaliza la fórmula del determinante de una matriz triangular por
+bloques; la segunda dice que el rango de $M$ se reparte entre el bloque pivote y
+lo que queda después de eliminar. El complemento de Schur volverá a aparecer en
+el Capítulo~\ref{cap:sdp}, donde da el criterio para decidir si una matriz
+simétrica por bloques es definida positiva.
+
+\section{El caso general: forma escalonada reducida y la factorización $CR$}
+\label{sec:caso-general}
+
+Hasta acá supusimos $A$ cuadrada y no singular. Si $A$ es rectangular, o es
+cuadrada pero singular, el algoritmo no se rompe: simplemente algunas columnas
+no aportan pivote y hay que saltearlas. Esto cierra una deuda del
+Capítulo~\ref{cap:algebra-lineal}, donde construimos la factorización $A=CR$
+mediante un procedimiento que llamamos \emph{heurístico} porque no decía cómo
+encontrar sistemáticamente las columnas independientes. La eliminación lo dice.
+
+El procedimiento es el de siempre, con una regla extra: en el paso $k$ se busca
+un pivote no nulo en la columna actual; si toda la columna activa es nula, esa
+columna \emph{no es columna pivote} y se pasa a la siguiente sin eliminar nada.
+Al terminar se obtiene una matriz \textbf{escalonada}: cada fila no nula empieza
+más a la derecha que la anterior. Si además dividimos cada fila por su pivote y
+eliminamos también \emph{hacia arriba}, obtenemos la \textbf{forma escalonada
+reducida por filas} de $A$, que anotaremos $\rref(A)$: los pivotes valen $1$ y
+son los únicos elementos no nulos de sus columnas.
+
+\begin{example}\label{ej:rref-CR}
+Tomemos la matriz del Ejemplo~\ref{ej:CR} del capítulo anterior:
+\[
+A = \begin{bmatrix}
+    1 & 2 & 5 & 2 \\
+    0 & 1 & 2 & 1 \\
+    0 & 3 & 6 & 3
+\end{bmatrix}.
+\]
+La primera columna ya tiene ceros debajo del pivote $1$. El segundo pivote es el
+$1$ de la posición $(2,2)$ y la operación $F_3 \leftarrow F_3 - 3F_2$ da
+\[
+\begin{bmatrix}
+    1 & 2 & 5 & 2 \\
+    0 & 1 & 2 & 1 \\
+    0 & 0 & 0 & 0
+\end{bmatrix}.
+\]
+La tercera columna no tiene pivote (su parte activa es nula), y la cuarta
+tampoco: la eliminación terminó con $r=2$ pivotes, en las columnas $1$ y $2$.
+Eliminando ahora hacia arriba, $F_1 \leftarrow F_1 - 2F_2$, llegamos a
+\[
+\rref(A) =
+\begin{bmatrix}
+    1 & 0 & 1 & 0 \\
+    0 & 1 & 2 & 1 \\
+    0 & 0 & 0 & 0
+\end{bmatrix}.
+\]
+Comparemos con el capítulo anterior: las columnas pivote $1$ y $2$ de $A$ son
+exactamente las columnas de $C$, y las dos filas no nulas de $\rref(A)$ son
+exactamente las filas de $R$.
+\end{example}
+
+Esto no es una casualidad del ejemplo.
+
+\begin{proposition}\label{prop:rref-CR}
+Sea $A\in\mathbb{R}^{m\times n}$ de rango $r$. Entonces:
+\begin{enumerate}[label=(\roman*),itemsep=1pt]
+\item $\rref(A)$ tiene exactamente $r$ filas no nulas;
+\item las $r$ columnas pivote de $A$ forman una matriz $C$ cuyas columnas son
+una base de $C(A)$;
+\item si $R$ es la matriz formada por las $r$ filas no nulas de $\rref(A)$,
+entonces $A = CR$;
+\item las columnas pivote de $\rref(A)$ son los vectores canónicos
+$\n{e}_1,\dots,\n{e}_r$, de modo que $R$ contiene a $I_r$ incrustada.
+\end{enumerate}
+\end{proposition}
+
+La razón de fondo es que cada paso de eliminación es una multiplicación a
+izquierda por una matriz invertible, y multiplicar a izquierda por una matriz
+invertible no cambia ni el espacio nulo ni las relaciones de dependencia entre
+las columnas (ítem (b) del Ejercicio de desarrollo~\ref{ent:rango} del capítulo
+anterior). Las columnas de $\rref(A)$ heredan entonces las mismas
+dependencias que las de $A$, y en $\rref(A)$ esas dependencias se leen a simple
+vista.
+
+Esto da además la forma práctica de describir el espacio nulo. Las variables
+asociadas a columnas \emph{sin} pivote se llaman \textbf{variables libres}; hay
+$n-r$ de ellas. Fijando una en $1$ y las demás en $0$, y despejando las
+variables pivote, se obtiene una base de $N(A)$ con $n-r$ vectores --- que es la
+demostración constructiva del teorema de la dimensión.
+
+\begin{example}
+Para la matriz del Ejemplo~\ref{ej:rref-CR}, las variables libres son $x_3$ y
+$x_4$. De $\rref(A)\n{x}=\n{0}$ se obtiene $x_1 = -x_3$ y $x_2 = -2x_3-x_4$,
+de donde
+\[
+N(A) = \gen\left\{
+\begin{bmatrix} -1\\ -2\\ 1\\ 0\end{bmatrix},\
+\begin{bmatrix} 0\\ -1\\ 0\\ 1\end{bmatrix}
+\right\},
+\qquad \dim N(A) = 4-2 = 2 = n-r .
+\]
+\end{example}
+
+\subsection{La factorización \texorpdfstring{$LU$}{LU} en el caso singular}
+\label{sec:LU-singular}
+
+En el ejemplo anterior nos detuvimos en $\rref(A)$, pero vale la pena no
+soltar la otra mitad: la eliminación que hicimos también produce una
+factorización $LU$, y mirarla deja en claro qué se conserva y qué se pierde
+cuando $A$ no es cuadrada no singular.
+
+Volvamos al Ejemplo~\ref{ej:rref-CR}. Para llegar a la forma escalonada hicimos
+una única operación, $F_3\leftarrow F_3-3F_2$, con multiplicador
+$\ell_{32}=3$; el primer paso no requirió ninguna, porque la primera columna ya
+tenía ceros debajo del pivote. Guardando los multiplicadores como siempre:
+\[
+A=
+\begin{bmatrix}
+1 & 2 & 5 & 2 \\
+0 & 1 & 2 & 1 \\
+0 & 3 & 6 & 3
+\end{bmatrix}
+=
+\underbrace{\begin{bmatrix}
+1 & 0 & 0\\
+0 & 1 & 0\\
+0 & 3 & 1
+\end{bmatrix}}_{L}
+\underbrace{\begin{bmatrix}
+1 & 2 & 5 & 2 \\
+0 & 1 & 2 & 1 \\
+0 & 0 & 0 & 0
+\end{bmatrix}}_{U} .
+\]
+Vale la pena observar tres cosas. Primero, que $L$ sigue siendo cuadrada
+($m\times m$) y triangular inferior con unos en la diagonal, igual que antes.
+Segundo, que $U$ ya no es triangular superior sino \textbf{escalonada}: tiene
+el tamaño de $A$ y sus filas no nulas son exactamente $r=2$, una por pivote.
+Y tercero, que $U$ \emph{no} es $\rref(A)$: para llegar a la forma reducida
+faltaba todavía eliminar hacia arriba y normalizar los pivotes, y esos pasos ya
+no son parte de la factorización $LU$.
+
+\subsubsection*{¿Es única?}
+
+Para $A$ cuadrada con todas sus submatrices principales invertibles, el
+Teorema~\ref{teo:LU} garantizaba que $L$ y $U$ son únicas. Acá esa hipótesis no
+se cumple ---$A$ no es ni siquiera cuadrada--- y, en general, \textbf{la
+unicidad se pierde}. Conviene ver exactamente por qué.
+
+Supongamos $A=LU$ con $U$ escalonada, y supongamos que la fila $k$ de $U$ es
+nula. Al multiplicar, la columna $k$ de $L$ aparece siempre multiplicando a esa
+fila nula: la contribución de $\ell_{ik}$ al producto es $\ell_{ik}\,\fila_k(U)
+= \n{0}$ para todo $i>k$. Es decir, \emph{las entradas de $L$ que están debajo
+de la diagonal en una columna correspondiente a una fila nula de $U$ no
+intervienen en el producto y se pueden elegir a gusto}. Ésa es toda la
+no-unicidad que hay.
+
+El ejemplo más chico posible:
+\[
+A = \begin{bmatrix} 0 & 1\\ 0 & 0\end{bmatrix}
+= \begin{bmatrix} 1 & 0\\ \ell & 1\end{bmatrix}
+  \begin{bmatrix} 0 & 1\\ 0 & -\ell\end{bmatrix}
+\qquad\text{para cualquier } \ell\in\mathbb{R},
+\]
+donde la segunda fila de $U$ es nula sólo cuando $\ell=0$, pero el producto da
+$A$ igual: hay infinitas factorizaciones.
+
+En cambio, en nuestro Ejemplo~\ref{ej:rref-CR} la factorización \emph{sí} es
+única, y el criterio anterior explica por qué: la única fila nula de $U$ es la
+\emph{última}, y debajo de la diagonal de la tercera columna de $L$ no hay
+ninguna entrada. No queda ningún parámetro libre. (El
+Ejercicio~\ref{ej:LU-singular} pide verificarlo despejando $L$ y $U$ entrada
+por entrada.)
+
+\begin{remark}[También puede fallar la existencia]
+La no-unicidad no es el único síntoma. Para
+$A = \begin{bsmallmatrix} 1&2\\ 2&4\\ 0&1\end{bsmallmatrix}$ directamente
+\emph{no existe} ninguna factorización $A=LU$ con $L$ triangular inferior de
+diagonal unitaria y $U$ escalonada: después del primer paso de eliminación la
+segunda fila se anula, y el pivote de la segunda columna aparece recién en la
+tercera fila, de modo que hay que permutar. Igual que en el caso no singular,
+la permutación arregla todo: lo que siempre existe es $PA=LU$.
+\end{remark}
+
+\section{Ejercicios}
+
+\begin{enumerate}
+
+\item\label{ej:LU-singular} \emph{(Unicidad de $LU$ en el caso singular.)}
+Sea
+\[
+A = \begin{bmatrix}
+1 & 2 & 5 & 2 \\
+0 & 1 & 2 & 1 \\
+0 & 3 & 6 & 3
+\end{bmatrix}
+\]
+la matriz de la Sección~\ref{sec:LU-singular}. Planteando $A=LU$ con
+$L\in\mathbb{R}^{3\times3}$ triangular inferior de diagonal unitaria y
+$U\in\mathbb{R}^{3\times4}$ escalonada, y comparando fila por fila, despejar
+sucesivamente $\fila_1(U)$, luego $\ell_{21}$ y $\fila_2(U)$, y finalmente
+$\ell_{31}$, $\ell_{32}$ y $\fila_3(U)$. Concluir que la factorización es
+única y que coincide con la que da la eliminación.
+\begin{enumerate}[label=\textup{(\alph*)}]
+\item Repetir el planteo para
+$B=\begin{bsmallmatrix} 0&1\\ 0&0\end{bsmallmatrix}$ y describir
+\emph{todas} las factorizaciones $B=LU$.
+\item ¿Para qué matrices $A$ de $3\times4$ y rango $2$ es única la
+factorización? \emph{Sugerencia:} mirar en qué fila de $U$ quedan los ceros.
+\end{enumerate}
+
+% \item Factor these matrices into $A=LU$\,:
+\item Halle la factorización $A=LU$ de las siguientes matrices\,:
+
+\vspace{-7pt}
+$$
+A=\left[\begin{array}{rr}2&1\\6&7\\\end{array}\right]\qquad A=\left[\begin{array}{rrr}1&1&1\\1&1&1\\1&1&1\\\end{array}\right]\qquad A=\left[\begin{array}{rrr}2&-1&0\\-1&2&-1\\0&-1&2\\\end{array}\right]
+$$
+% \item If $a_{11},\ldots,a_{1n}$ is the first row of a rank-$1$ matrix $A$ and $a_{11},\ldots,a_{m1}$ is the first column, \emph{find a formula for} $a_{ij}$. Good to check when $a_{11}=2, a_{12}=3, a_{21}=4$. When will your formula break down\,? %Then rank $1$ is impossible or not unique.\linebreak\vspace{-11pt}
+\item Si $a_{11},\ldots,a_{1n}$ es la primera fila de una matriz $A$ de rango $1$ y $a_{11},\ldots,a_{m1}$ es la primera columna, \emph{encuentre una fórmula para} $a_{ij}$. Verifique la fórmula en el caso $a_{11}=2, a_{12}=3, a_{21}=4$. ?`Cuándo no funcionará la fórmula?
+%Then rank $1$ is impossible or not unique.\linebreak\vspace{-11pt}
+% \item What lower triangular matrix $E$ puts $A$ into upper triangular form $EA=U$\,?\linebreak Multiply by $E^{-1}=L$ to factor $A$ into $LU$\,:
+\item ¿\,Qué matriz triangular inferior $E$ transforma $A$ en una triangular superior $EA=U$\,?
+%Multiplique por $E^{-1}=L$ para factorizar $A$ como $LU$\,:
+%
+% \vspace{-7pt}
+$$
+A=\left[\begin{array}{rrr}2&1&0\\0&4&2\\6&3&5\\\end{array}\right]
+$$
+
+% \item \textbf{This problem shows how the one-step inverses multiply to give $\bi{L}$}. You see this best when $A=L$ is already lower triangular with 1's on the diagonal. \textbf{Then $\bi{U=I}$}\,:\linebreak\vspace{-4pt}
+\item \textbf{Este problema muestra cómo se multiplican las inversas de cada paso para obtener $\bi{L}$}. Esto es claro cuando $A=L$ ya es una matriz triangular inferior con unos en la diagonal.
+En este caso,  $\bi{U=I}$: 
+
+\begin{displaymath}
+% \text{Multiply }  A=\begin{bmatrix}
+\hbox{Premultiplique }  A=\begin{bmatrix}
+    1 & 0 & 0\\ a & 1 & 0\\ b & c & 1
+  \end{bmatrix} \text{ por } E_1=
+  \begin{bmatrix}
+  1& 0& 0\\-a&1&0\\-b&0&1
+\end{bmatrix}
+\end{displaymath}
+
+\begin{displaymath}
+\hbox{Luego, premultiplique ese resultado por } E_2=
+  \begin{bmatrix}1&0&0\\0&1&0\\0&-c&1\\
+  \end{bmatrix}.
+\end{displaymath}
+
+Observar que el resultado es una matriz triagular superior.
+
+%
+%The elimination matrices $E_{21},E_{31},E_{32}$ contain $-a$ then
+%$-b$ then $-c$.
+%
+
+\begin{itemize}
+% \item[(a)] Multiply $E_{2}E_{1}$ to find the single
+%   matrix $E$ that produces $EA=I$.
+\item[(a)] Multiplique $E_{2}E_{1}$ para encontrar la matriz $E$ que produce $EA=I$.
+\item[(b)] Calcule $(E_2E_1)^{-1}$ para encontrar la matriz $A=L$.
+\end{itemize}
+
+% \textbf{The multipliers\index{Multiplier} $\bi{a, b, c}$ are mixed up in $\bi{E=L^{-1}}$ but they are perfect in $\bi{L}$}.
+\textbf{Los multiplicadores\index{Multiplicador} $\bi{a, b, c}$ están mezclados en $\bi{E=L^{-1}}$ pero est\'an perfectos en $\bi{L}$}.
+%\pagebreak
+
+%\eject
+
+% \item \emph{When zero appears in a pivot position}, $A=LU$\index[smbl]{$A=LU$} \emph{is
+% not possible}! (We are requiring nonzero pivots in $U$.) Show
+% directly why these $LU$ equations are both impossible:\linebreak\vspace{-2pt}
+\item \emph{La factorización} $A=LU$ \emph{no es posible cuando aparece cero en una posición pivote} (es necesario que los pivotes sean distintos de cero en $U$). Demuestre por qué en estos ejemplos las descomposiciones $LU$ son imposibles\,: %\linebreak\vspace{-2pt}
+%
+\begin{displaymath}
+  \begin{bmatrix} 0 & 1\\ 2 & 3\end{bmatrix}=
+  \begin{bmatrix} 1 & 0\\ \ell & 1\end{bmatrix}
+  \begin{bmatrix} d & e\\ 0 & f\end{bmatrix}
+  \qquad\begin{bmatrix} 1 & 1 & 0\\ 1 & 1 & 2\\
+    1 & 2 & 1\end{bmatrix}=\begin{bmatrix} 1\\
+    \ell & 1\\ m & n & 1\end{bmatrix}
+  \begin{bmatrix} d & e & g\\
+    & f & h\\ && i\end{bmatrix}.
+\end{displaymath}
+% These matrices need a row exchange by a \emph{permutation matrix} $P$.
+Estas matrices necesitan un intercambio de filas utilizando una \emph{matriz de permutación} $P$.
+
+% \item Which number $c$ leads to zero in the second pivot
+%   position? A row exchange is needed and $A=LU$ will not be possible.
+%   Which $c$ produces zero in the third pivot position?
+%   Then a row exchange can't help and elimination fails\,:
+
+
+\item
+Considere la siguiente matriz:
+\begin{displaymath}
+  A=\begin{bmatrix}
+    1 & c & 0\\ 2 & 4 & 1\\ 3 & 5 & 1
+  \end{bmatrix}.
+\end{displaymath}
+
+\begin{itemize}
+\item[(a)]¿\,Qué número $c$ hace que sea cero la segunda posición pivote\,?
+  En este caso, se necesitaría un intercambio de filas ya que no sería posible realizar $A=LU$.
+  
+\item[(b)]¿\,Qué $c$ produce un cero en la tercera posición pivote\,?
+  En este caso, un intercambio de filas no sirviría y la eliminación fallaría\,:
+\end{itemize}
+%
+%\item (\emph{Recommended})\, Compute $L$ and $U$ for this symmetric
+%matrix $A$:
+%
+
+\item (\emph{Recomendado})\, Calcule $L$ y $U$ para la matriz sim\'etrica $A$\,:
+\begin{displaymath}
+  A=\begin{bmatrix} a & a & a & a\\ a & b & b & b\\
+    a & b & c & c\\ a & b & c & d\end{bmatrix}.
+\end{displaymath}
+%
+%Find four conditions on $a,b,c,d$ to get $A=LU$ with four nonzero pivots.
+Encuentre condiciones sobre $a,b,c,d$ para obtener $A=LU$ con cuatro pivotes no nulos.\linebreak\vspace{-11pt}
+%\item \emph{Tridiagonal
+%    matrices}\index[indx]{Tridiagonal} have zero entries except
+%  on the main diagonal and the two adjacent diagonals. Factor
+%  these into $A=LU$. Symmetry further produces $A=LDL\transp $:
+
+\item Las \emph{matrices tridiagonales} tienen ceros en todas las posiciones excepto en la diagonal principal y las dos diagonales adyacentes. Factorice las siguientes matrices como $A=LU$.
+Luego, corrobore que se satisface que $A=LDL^T$, para alguna matriz diagonal $D$\,:
+
+\vspace{-11pt}
+\begin{displaymath}
+  A=\begin{bmatrix}
+    1 & 1 & 0\\ 1 & 2 & 1\\ 0 & 1 & 2\end{bmatrix}
+  \quad\hbox{y}\quad A=
+  \begin{bmatrix} a & a & 0\\ a & a+b & b\\
+    0 & b & b+c\end{bmatrix}.
+\end{displaymath}
+
+
+%\item \emph{Easy but important.}
+%If $A$ has pivots $5,9,3$ with no row exchanges,
+%what are the pivots for the upper left $2$ by $2$
+%submatrix $A_2$ (without row $3$ and column $3$)?
+\item \emph{F\'acil pero importante.}
+Si $A$ tiene pivotes $5,9,3$ sin hacer intercambio de filas,
+?`Cuales son los pivotes para la submatriz superior izquierda de
+$2$ por $2$ $A_2$ (es decir, la matriz que resulta de quitarle a $A$ la fila $3$ y la columna $3$)?
+
+%\item Which invertible matrices allow $A=LU$
+%(elimination without row exchanges)? \emph{Good question}\,!
+%Look at each of the square upper left submatrices $A_1, A_2,\ldots,A_n$.\linebreak\vspace{-11pt}
+\item Este ejercicio propone estudiar qu\'e matrices invertibles permiten la descomposici\'on $A=LU$
+(eliminaci\'on sin intercambio de filas) ¡Es una buena pregunta!
+Observe cada una de las submatrices cuadradas superiores izquierdas $A_1, A_2,\ldots,A_n$. %\linebreak\vspace{-11pt}
+
+
+% \vspace{2ex}
+% \noindent
+%\mbox{\embf{\color{bleu}
+%All upper left submatrices $\bi{A_k}$
+%must be invertible\,: \textbf{sizes} $\bi{1}$ by $\bi{1, 2}$ by  %$\bi{2,\ldots,n}$ by $\bi{n}$.}}
+\vspace{-9pt}
+\begin{center}
+\begin{tabular}{c}\embf{
+Todas las submatrices superiores izquierdas $\bi{A_k}$
+deben ser invertibles\,:} \\
+\embf{
+la de tamaño $1 \times 1$, la de $2 \times 2$, $\ldots$, la de $\bi{n} \times \bi{n}$.
+}
+\end{tabular}
+\end{center}
+% \mbox{\embf{\color{bleu}
+% Todas las submatrices superiores izquierdas $\bi{A_k}$
+% deben ser invertibles\,: la de $\bi{1}$ por $\bi{1, 2}$ por  $\bi{2,\ldots,n}$ por $\bi{n}$.}}
+
+\vspace{-9pt}
+%\vspace{1.5ex}\noindent
+%Explain that answer: $A_k$ factors into \1 because $LU=\left[
+%\begin{array}{ll}
+%L_k & 0	\\
+%\ast & \ast
+%\end{array}
+%\right]\left[
+%\begin{array}{ll}
+%U_k & \ast	\\
+%0 & \ast
+%\end{array}
+%\right]$.
+
+
+%\vspace{1.5ex}
+\noindent
+Explique la respuesta: $A_k$ se factoriza como  \_\_\_\_  ya que $LU=\left[
+\begin{array}{ll}
+L_k & 0	\\
+\ast & \ast
+\end{array}
+\right]\left[
+\begin{array}{ll}
+U_k & \ast	\\
+0 & \ast
+\end{array}
+\right]$.
+
+
+%\item
+%In some data science applications, the first pivot is the \emph{largest number $|a_{ij}|$ in} $A$.\linebreak Then row $i$ becomes the first pivot row $\bu_1^*$. Column $j$ is the first pivot column. Divide that column by $a_{ij}$ so $\bi{\ell}_1$ has $1$ in row $i$. Then remove that $\bi{\ell_1}\bu_1^\ast$ from $A$.\linebreak\vspace{-11pt}
+
+
+\item En algunas aplicaciones de ciencia de los datos, el primer pivote es el \emph{mayor n\'umero $|a_{ij}|$ de} $A$. %\linebreak
+La fila $i$ se convierte en la primera fila pivote $\bu_1^*$. La columna $j$ es la primera columna pivote. Se divide esta columna por $a_{ij}$ de manera que $\bi{\ell}_1$ tiene un $1$ en la fila $i$. Luego se resta
+  $\bi{\ell_1}\bu_1^\ast$ de $A$. %\linebreak\vspace{-11pt}
+
+\hspace{6pt}
+En este ejemplo $a_{22}=4$ es el primer pivote $(i=j=2)$. Dividiendo por $4$ se obtiene $\bi{\ell}_1$\,:%\linebreak
+\vspace{-4pt}
+$$
+\!\left[\begin{array}{@{\,}rr@{\,}}1&2\\3&\bi{4}\\\end{array}\right]\!=\!\left[\begin{array}{@{\,}c@{\,}}1/2\\1\end{array}\right]\begin{array}{@{\!}c}\left[\begin{array}{@{\,}rr@{\,}}3&\bi{4}\\\end{array}\right]\\\\\end{array}\!+\left[\begin{array}{@{\,}cc@{\,}}-1/2&0\\0&0\\\end{array}\right]\!=\bi{\ell}_1\bu_1^*+\bi{\ell}_2\bu_2^*=\!\left[\begin{array}{@{\,}cc@{\,}}1/2&1\\1&0\\\end{array}\right]\!\left[\begin{array}{@{\,}cc@{\,}}3&4\\-1/2&0\\\end{array}\right]
+$$
+%For this $A$, both $L$ and $U$ involve permutations.\index[indx]{Permutation} $P_1$ exchanges the rows to give $L$.\linebreak $P_2$ exchanges the columns to give an upper triangular $U$. Then $\bi{P_1AP_2=LU}$.\linebreak\vspace{-22pt}
+Observar que las matrices $A$, $L$ y $U$ contienen permutaciones. $P_1$ intercambia las filas para obtener $L$. %\linebreak
+$P_2$ intercambia las columnas para obtener la matriz triangular superior $U$. Entonces $\bi{P_1AP_2=LU}$. %\linebreak\vspace{-22pt}
+\vspace{-7pt} %
+$$\textbf{Permutadas de antemano}\qquad \bi{P_1AP_2}=\left[\begin{array}{@{\;}cc@{\;}}1&0\\1/2&1\\\end{array}\right]\left[\begin{array}{@{\;}cc@{\;}}4&3\\0&-1/2\\\end{array}\right]=\left[\begin{array}{@{\;}cc@{\;}}\bi{4}&\bi{3}\\\bi{2}&\bi{1}\\\end{array}\right]$$
+ %
+%\vspace{-5pt}
+%Question for $A=\left[\begin{array}{@{\,}rr@{\,}}\bi{1}&\bi{3}\\\bi{2}&\bi{4}\\\end{array}\right]$\,: Apply complete pivoting to produce $P_1AP_2=LU$.
+%
+\vspace{-9pt}
+Sea $A=\left[\begin{array}{@{\,}rr@{\,}}\bi{1}&\bi{3}\\\bi{2}&\bi{4}\\\end{array}\right]$\,. Aplique pivoteo completo para producir $P_1AP_2=LU$.
+
+
+\vspace{5pt}
+%\item If the short wide matrix $A$ has $m<n$, how does elimination show that there are\linebreak nonzero solutions to $A\bi{x}=\bi{0}$\,? What do we know about the dimension of that\linebreak ``nullspace of $A$'' containing all solution vectors $\bi{x}$\,? The nullspace dimension is at least \1.
+
+
+\item Decimos que una matriz $A$ de $m\times n$  es baja y ancha cuando $m<n$, ?`C\'omo se ve a partir del proceso de eliminaci\'on que hay soluciones no nulas de  $A\bi{x}=\bi{0}$\,? ?`Qu\'e sabe acerca de la dimensi\'on del espacio nulo de $A$? La dimensi\'on del espacio nulo es al menos \_\_\_\_.
+
+%\emph{Suggestion}\,: First create a specific $2$ by $3$ matrix $A$ and ask those questions about $A$.
+
+
+\emph{Sugerencia}\,: Primero construya una matriz $A$ de $2 \times 3$ y h\'agase esas preguntas sobre $A$.
+
+\end{enumerate}

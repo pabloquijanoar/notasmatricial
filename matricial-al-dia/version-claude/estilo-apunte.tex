@@ -1,0 +1,241 @@
+% ===================================================================
+%  estilo-apunte.tex  --  identidad visual FIQ-UNL para el apunte
+%  de Análisis Matricial.
+%
+%  Se carga en main.tex con  \input{\VA estilo-apunte}  ANTES de las
+%  declaraciones \newtheorem (redefine los estilos plain/definition/
+%  remark, así que todos los entornos, incluidos los que se declaran
+%  dentro de los capítulos, toman el estilo nuevo).
+%
+%  Marca FIQ: rojo #E42313, gris #585856, tipografía Lato.
+%  Criterio: estructura en gris oscuro, rojo sólo como acento.
+%  Lato para títulos, cajas y encabezados; el cuerpo en Latin Modern.
+%
+%  Paquetes que necesita (MiKTeX los instala solo): lmodern, lato,
+%  microtype, geometry, titlesec, titletoc, fancyhdr, tcolorbox,
+%  caption.  Los logos están en figuras/logo-fiq-*.png
+% ===================================================================
+\makeatletter
+
+% ---------- tipografía ----------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{lato}                 % da \lato (familia de la marca)
+\usepackage{microtype}            % mejor justificado y \textls
+\newcommand{\fiqfuente}{\lato}
+\newcommand{\espaciado}[1]{\textls[160]{#1}}   % versalitas espaciadas
+
+% ---------- página ---------------------------------------------------
+\usepackage[a4paper,top=2.7cm,bottom=2.6cm,left=2.5cm,right=2.5cm,
+  headheight=15pt,headsep=0.9cm,footskip=1.1cm]{geometry}
+
+% ---------- colores de la marca -------------------------------------
+\definecolor{fiqrojo}{HTML}{E42313}
+\definecolor{fiqgris}{HTML}{585856}
+\definecolor{fiqtexto}{HTML}{262625}     % casi negro, para títulos
+\definecolor{fiqclaro}{HTML}{F5F5F4}     % fondo de cajas
+\definecolor{fiqlinea}{HTML}{D6D6D3}     % filetes finos
+\colorlet{fiqrojooscuro}{fiqrojo!78!black}
+
+% ---------- enlaces --------------------------------------------------
+\hypersetup{colorlinks=true,linkcolor=fiqrojooscuro,
+  citecolor=fiqrojooscuro,urlcolor=fiqrojooscuro}
+
+% ---------- títulos de capítulo y sección ---------------------------
+\usepackage{titlesec}
+\newcommand{\fiqcirculo}[2][1.55cm]{%
+  \tikz[baseline=(c.base)]\node[circle,fill=fiqrojo,text=white,
+    minimum size=#1,inner sep=0pt,font=\fiqfuente\bfseries\fontsize{24}{24}\selectfont](c){#2};}
+
+\titleformat{\chapter}[display]
+  {\fiqfuente\color{fiqtexto}}
+  {\fiqcirculo{\thechapter}\hspace{0.9em}%
+   {\small\color{fiqgris}\espaciado{\MakeUppercase{\chaptertitlename}}}}
+  {16pt}
+  {\fontsize{25}{30}\selectfont\bfseries\boldmath\raggedright}
+  [\vspace{10pt}{\color{fiqlinea}\titlerule[0.6pt]}]
+\titleformat{name=\chapter,numberless}[display]
+  {\fiqfuente\color{fiqtexto}}
+  {}
+  {0pt}
+  {\fontsize{25}{30}\selectfont\bfseries\boldmath\raggedright}
+  [\vspace{10pt}{\color{fiqlinea}\titlerule[0.6pt]}]
+\titlespacing*{\chapter}{0pt}{0pt}{28pt}
+
+\titleformat{\section}
+  {\fiqfuente\Large\bfseries\boldmath\color{fiqtexto}}
+  {\textcolor{fiqrojo}{\thesection}}{0.7em}{}
+\titleformat{name=\section,numberless}
+  {\fiqfuente\Large\bfseries\boldmath\color{fiqtexto}}
+  {}{0pt}{\textcolor{fiqrojo}{\rule[0.08em]{0.55em}{0.55em}}\hspace{0.5em}}
+\titleformat{\subsection}
+  {\fiqfuente\large\bfseries\boldmath\color{fiqtexto}}
+  {\textcolor{fiqrojo}{\thesubsection}}{0.7em}{}
+\titleformat{\subsubsection}
+  {\fiqfuente\normalsize\bfseries\boldmath\color{fiqgris}}
+  {\thesubsubsection}{0.7em}{}
+\titlespacing*{\section}{0pt}{3.2ex plus 1ex minus .2ex}{1.4ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{2.8ex plus 1ex minus .2ex}{1.1ex plus .2ex}
+
+% ---------- índice general ------------------------------------------
+\usepackage{titletoc}
+\renewcommand{\@pnumwidth}{2.2em}   % lugar para páginas de tres cifras
+\titlecontents{chapter}[0pt]
+  {\addvspace{11pt}\fiqfuente\bfseries\color{fiqtexto}}
+  {\makebox[2em][l]{\textcolor{fiqrojo}{\thecontentslabel}}}
+  {}
+  {\hfill\contentspage}
+  [\addvspace{2pt}]
+\titlecontents{section}[2em]
+  {\addvspace{1pt}}
+  {\makebox[2.4em][l]{\color{fiqgris}\thecontentslabel}}
+  {}
+  {\titlerule*[0.7pc]{\color{fiqlinea}.}\contentspage}
+\titlecontents{subsection}[4.4em]
+  {\small}
+  {\makebox[3em][l]{\color{fiqgris}\thecontentslabel}}
+  {}
+  {\titlerule*[0.7pc]{\color{fiqlinea}.}\contentspage}
+
+% ---------- encabezados y pies --------------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\newcommand{\fiqencab}{\fiqfuente\small\color{fiqgris}}
+\newcommand{\fiqpagina}{{\fiqfuente\small\bfseries\color{fiqrojo}\thepage}}
+\fancyhead[LE]{\fiqpagina\hspace{1em}{\fiqencab\nouppercase{\leftmark}}}
+\fancyhead[RO]{{\fiqencab\nouppercase{\rightmark}}\hspace{1em}\fiqpagina}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{{\color{fiqlinea}%
+  \hrule height\headrulewidth width\headwidth \vskip-\headrulewidth}}
+\renewcommand{\chaptermark}[1]{\markboth{%
+  \ifnum\c@secnumdepth>\m@ne\ifnum\c@chapter>\z@ \thechapter\hspace{0.6em}\fi\fi #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\hspace{0.6em}#1}}
+\fancypagestyle{plain}{%
+  \fancyhf{}\renewcommand{\headrulewidth}{0pt}%
+  \fancyfoot[C]{\fiqpagina}}
+
+% ---------- teoremas -------------------------------------------------
+% Se redefinen los tres estilos de amsthm.  El color del encabezado lo
+% fija la caja que rodea al entorno (\fiqcolorteo).
+\newcommand{\fiqcolorteo}{fiqtexto}
+\newtheoremstyle{plain}
+  {8pt plus 2pt}{8pt plus 2pt}{\normalfont}{0pt}
+  {\fiqfuente\bfseries\boldmath\color{\fiqcolorteo}}{.}{0.5em}
+  {\thmname{#1}\thmnumber{ #2}\thmnote{\ {\mdseries\color{fiqtexto}(#3)}}}
+\newtheoremstyle{definition}
+  {8pt plus 2pt}{8pt plus 2pt}{\normalfont}{0pt}
+  {\fiqfuente\bfseries\boldmath\color{\fiqcolorteo}}{.}{0.5em}
+  {\thmname{#1}\thmnumber{ #2}\thmnote{\ {\mdseries\color{fiqtexto}(#3)}}}
+\newtheoremstyle{remark}
+  {8pt plus 2pt}{8pt plus 2pt}{\normalfont}{0pt}
+  {\fiqfuente\bfseries\color{fiqgris}}{.}{0.5em}
+  {\thmname{#1}\thmnumber{ #2}\thmnote{\ {\mdseries\color{fiqtexto}(#3)}}}
+
+% Demostración: encabezado en Lato gris, cuadradito rojo al final.
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}\normalfont\topsep6\p@\@plus6\p@\relax
+  \trivlist\item[\hskip\labelsep{\fiqfuente\bfseries\color{fiqgris}#1.}]%
+  \ignorespaces}{\popQED\endtrivlist\@endpefalse}
+\renewcommand{\qedsymbol}{\textcolor{fiqrojo}{\rule{0.45em}{0.45em}}}
+
+% ---------- cajas ----------------------------------------------------
+\usepackage[most]{tcolorbox}
+\tcbset{
+  fiqbase/.style={enhanced,breakable,frame hidden,arc=0pt,outer arc=0pt,
+    colback=fiqclaro,boxrule=0pt,left=11pt,right=9pt,top=2pt,bottom=4pt,
+    before skip=11pt plus 2pt,after skip=11pt plus 2pt,
+    before upper={\parskip=0pt}},
+  % teoremas, proposiciones, lemas, corolarios: filete rojo
+  fiqteo/.style={fiqbase,
+    borderline west={2.4pt}{0pt}{fiqrojo},
+    before upper app={\renewcommand{\fiqcolorteo}{fiqrojooscuro}}},
+  % definiciones: filete gris
+  fiqdef/.style={fiqbase,
+    borderline west={2.4pt}{0pt}{fiqgris}},
+}
+\newcommand{\fiqcajateo}[1]{\tcolorboxenvironment{#1}{fiqteo}}
+\newcommand{\fiqcajadef}[1]{\tcolorboxenvironment{#1}{fiqdef}}
+% se aplican al empezar el documento, cuando ya están declarados;
+% los que se declaran dentro de un capítulo (teorema, proposicion, ...)
+% se enganchan por nombre y funcionan igual.
+\AtBeginDocument{%
+  \fiqcajateo{theorem}\fiqcajateo{lemma}\fiqcajateo{corollary}%
+  \fiqcajateo{proposition}\fiqcajateo{thm}\fiqcajateo{prop}%
+  \fiqcajateo{coro}\fiqcajateo{lema}%
+  \fiqcajateo{teorema}\fiqcajateo{proposicion}\fiqcajateo{corolario}%
+  \fiqcajadef{definition}\fiqcajadef{defn}\fiqcajadef{definicion}%
+}
+
+% Ideas clave (mdframed, para que sigan valiendo las opciones que usa
+% I9_pca.tex, como frametitle=...)
+\usepackage{mdframed}
+\renewmdenv[linewidth=0.6pt,linecolor=fiqlinea,backgroundcolor=fiqclaro,
+  roundcorner=4pt,innertopmargin=9pt,innerbottommargin=9pt,
+  innerleftmargin=12pt,innerrightmargin=12pt,
+  frametitlefont=\fiqfuente\bfseries\color{fiqtexto},
+  skipabove=10pt,skipbelow=10pt]{ideas}
+% Recuadro para algoritmos
+\renewmdenv[linewidth=0.8pt,linecolor=fiqgris,backgroundcolor=white,
+  roundcorner=3pt,innertopmargin=7pt,innerbottommargin=7pt,
+  innerleftmargin=10pt,innerrightmargin=10pt]{caja}
+
+% Ejercicios de desarrollo (para entregar)
+\newcounter{entrega}[chapter]
+\renewcommand{\theentrega}{\thechapter.\arabic{entrega}}
+\newenvironment{entrega}[1]{%
+  \refstepcounter{entrega}%
+  \begin{tcolorbox}[enhanced,breakable,colback=white,colframe=fiqrojo,
+    boxrule=0.8pt,arc=3pt,left=10pt,right=10pt,top=6pt,bottom=7pt,
+    colbacktitle=fiqrojo,coltitle=white,toptitle=3pt,bottomtitle=3pt,
+    fonttitle=\fiqfuente\bfseries,
+    before skip=14pt plus 2pt,after skip=14pt plus 2pt,
+    title={Ejercicio de desarrollo \theentrega\hspace{0.6em}{\mdseries|}\hspace{0.6em}#1}]%
+  \ignorespaces
+}{\end{tcolorbox}}
+
+% Fórmulas recuadradas con \boxed
+\renewcommand{\boxed}[1]{{\fboxsep=5pt\fcolorbox{fiqrojo!60}{fiqrojo!4}{\m@th$\displaystyle#1$}}}
+
+% ---------- epígrafes de figuras ------------------------------------
+\usepackage{caption}
+\DeclareCaptionFont{fiq}{\fiqfuente\bfseries\color{fiqgris}}
+\captionsetup{font=small,labelfont=fiq,labelsep=period}
+
+% ---------- portada --------------------------------------------------
+%  En main.tex:  \title{..} \subtitulo{..} \carreras{..} \author{..}
+%  \date{..} y después \maketitle.
+\newcommand{\subtitulo}[1]{\def\fiq@subtitulo{#1}}
+\newcommand{\carreras}[1]{\def\fiq@carreras{#1}}
+\subtitulo{}\carreras{}
+\renewcommand{\maketitle}{%
+  \begin{titlepage}
+  \thispagestyle{empty}%
+  \noindent\begin{tikzpicture}[remember picture,overlay]
+    % motivo circular de la marca, recortado por el borde de la hoja
+    \fill[fiqrojo] ([xshift=-2.4cm,yshift=4.6cm]current page.south east) circle (5cm);
+    \draw[fiqlinea,line width=0.8pt]
+      ([xshift=-6.2cm,yshift=1.9cm]current page.south east) circle (2.9cm);
+    \node[anchor=north west,inner sep=0pt]
+      at ([xshift=2.5cm,yshift=-2.3cm]current page.north west)
+      {\includegraphics[width=7.2cm]{\VA figuras/logo-fiq-color}};
+  \end{tikzpicture}\par
+  \vspace*{6.2cm}
+  \noindent{\fiqfuente\small\color{fiqgris}\espaciado{\MakeUppercase{\fiq@subtitulo}}}\par
+  \vspace{10pt}
+  \noindent{\fiqfuente\bfseries\color{fiqtexto}\fontsize{44}{50}\selectfont\@title}\par
+  \vspace{16pt}
+  \noindent{\color{fiqrojo}\rule{2.8cm}{2.2pt}}\par
+  \vspace{18pt}
+  \noindent\begin{minipage}{0.62\textwidth}\raggedright
+    \fiqfuente\large\color{fiqgris}\fiq@carreras
+  \end{minipage}\par
+  \vfill
+  \noindent\begin{minipage}{0.5\textwidth}\raggedright
+    {\fiqfuente\color{fiqtexto}\@author}\par\vspace{8pt}
+    {\fiqfuente\small\color{fiqgris}\@date}
+  \end{minipage}
+  \vspace*{0.2cm}
+  \end{titlepage}}
+
+\makeatother

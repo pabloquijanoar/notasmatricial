@@ -1,0 +1,1543 @@
+
+\chapter{Autovalores y autovectores}\label{cap:autovalores}
+
+\section{Definición y ejemplos}
+
+\noindent\textbf{Convenio.} A diferencia de los capítulos anteriores, acá no podemos
+quedarnos en $\mathbb{R}$. El ejemplo de la rotación que veremos en un momento muestra que
+una matriz \emph{real} puede no tener ningún autovalor real, y el teorema fundamental del
+álgebra garantiza que sobre $\mathbb{C}$ siempre hay exactamente $n$ autovalores contados
+con multiplicidad. Por eso, salvo aviso explícito, en este capítulo las matrices son
+reales pero los autovalores se buscan en $\mathbb{C}$ y los autovectores en $\mathbb{C}^n$.
+Cuando un resultado valga sólo para autovalores reales, lo diremos.
+
+\medskip
+
+\begin{definicion}[Autovalor y autovector]\label{def:autovalor}
+Sea $A\in\mathbb{C}^{n\times n}$. Un vector \emph{no nulo} $\n{v}\in\mathbb{C}^n$ es un
+\textbf{autovector} (o vector propio) de $A$ si existe un escalar
+$\lambda\in\mathbb{C}$ tal que
+\[
+\boxed{\ A\n{v}=\lambda\n{v}\ }
+\]
+En ese caso $\lambda$ se llama \textbf{autovalor} (o valor propio) de $A$ asociado a
+$\n{v}$.
+\end{definicion}
+
+Hay una asimetría en la definición que conviene subrayar desde el principio: \emph{el
+vector tiene que ser no nulo, pero el escalar puede ser cero}. La exclusión de
+$\n{v}=\n{0}$ no es un capricho: la igualdad $A\n{0}=\lambda\n{0}$ se cumple para
+cualquier $\lambda$, así que admitirlo haría que todo número fuera autovalor de toda
+matriz y la definición no diría nada. En cambio $\lambda=0$ es perfectamente admisible,
+y lejos de ser un caso degenerado resultará ser el más informativo: lo veremos en el
+Corolario~\ref{coro:lambda-cero}.
+
+
+
+Geométricamente, la ecuación $A\n{v} = \lambda \n{v}$ admite una lectura muy intuitiva: cuando la transformación lineal representada por $A$ actúa sobre el vector $\n{v}$, el resultado es un nuevo vector que permanece en la misma recta que $\n{v}$. Es decir, la transformación no desvía a $\n{v}$ de su dirección original, sino que simplemente lo alarga o acorta (y eventualmente invierte su sentido) según el factor $\lambda$. Los autovectores son, por tanto, las direcciones privilegiadas de la transformación, aquellas que la matriz deja invariantes, y el autovalor mide cuánto se estira o encoge el vector en esa dirección.
+
+
+Por ejemplo, para
+\[
+D = \begin{pmatrix} 4 & 0 \\ 0 & -2 \end{pmatrix},
+\]
+tomemos $\n{v}_1 = (1,0)^T$. Entonces 
+\[
+D \n{v}_1 = \begin{pmatrix} 4 & 0 \\ 0 & -2 \end{pmatrix} \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 4 \\ 0 \end{pmatrix} = 4 \begin{pmatrix} 1 \\ 0 \end{pmatrix},
+\]
+luego $\n{v}_1$ es autovector con autovalor $\lambda_1 = 4$. De igual forma, para $\n{v}_2 = (0,1)^T$ se tiene 
+\[
+D \n{v}_2 = \begin{pmatrix} 0 \\ -2 \end{pmatrix} = -2 \begin{pmatrix} 0 \\ 1 \end{pmatrix},
+\]
+así que $\n{v}_2$ es autovector con autovalor $\lambda_2 = -2$.
+
+Obsérvese que, en realidad, cualquier múltiplo escalar no nulo de los autovectores encontrados también es un autovector con el mismo autovalor. En efecto, si \(c\neq 0\), entonces
+\[
+D(c\n{v}_1) = cD\n{v}_1 = c(4\n{v}_1) = 4(c\n{v}_1),
+\]
+luego \(c\n{v}_1\) es también autovector con autovalor \(4\). Análogamente, \(c\n{v}_2\) es autovector con autovalor \(-2\). Este hecho es general: los autovectores asociados a un mismo autovalor forman un espacio vectorial (el espacio propio), y cualquier vector no nulo de ese espacio es también un autovector.
+
+Consideremos ahora la matriz 
+\[
+A = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{pmatrix}.
+\]
+El escalar $\lambda=2$ es un autovalor, pues para $\n{v}_1 = (1,0,0)^T$ se tiene
+\[
+A \n{v}_1 = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{pmatrix} \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix} = \begin{pmatrix} 2 \\ 0 \\ 0 \end{pmatrix} = 2 \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix},
+\]
+y también para $\n{v}_2 = (0,0,1)^T$,
+\[
+A \n{v}_2 = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{pmatrix} \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \\ 2 \end{pmatrix} = 2 \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
+\]
+De hecho, cualquier combinación lineal no nula de $\n{v}_1$ y $\n{v}_2$, digamos $\n{w} = \alpha \n{v}_1 + \beta \n{v}_2 = (\alpha, 0, \beta)^T$, también es un autovector con el mismo autovalor, puesto que
+\[
+A \n{w} = A(\alpha \n{v}_1 + \beta \n{v}_2) = \alpha A \n{v}_1 + \beta A \n{v}_2 = 2\alpha \n{v}_1 + 2\beta \n{v}_2 = 2(\alpha \n{v}_1 + \beta \n{v}_2) = 2\n{w}.
+\]
+
+Hasta aquí solo hemos comprobado que ciertos pares vector-escalar cumplen la definición, lo cual no es más que efectuar la multiplicación matricial. Antes de abordar el problema inverso (cómo encontrar todos los autovalores y autovectores de una matriz dada) conviene destacar una propiedad estructural que ya se insinúa en los ejemplos.
+
+\begin{thm}
+  
+Sea $A$ una matriz $n\times n$ y sea $\lambda$ un autovalor de $A$. El conjunto
+\[
+E_\lambda = \{ \n{v} \in \mathbb{C}^n : A\n{v} = \lambda \n{v} \}
+\]
+es un subespacio vectorial de $\mathbb{C}^n$.
+\end{thm}
+
+\begin{proof}
+En primer lugar, el vector nulo pertenece a $E_\lambda$, pues $A\n{0} = \n{0} = \lambda \n{0}$. Si $\n{v}, \n{w} \in E_\lambda$, entonces
+\[
+A(\n{v}+\n{w}) = A\n{v} + A\n{w} = \lambda \n{v} + \lambda \n{w} = \lambda (\n{v}+\n{w}),
+\]
+luego $\n{v}+\n{w} \in E_\lambda$. Finalmente, si $\n{v}\in E_\lambda$ y $c\in\mathbb{C}$, se tiene
+\[
+A(c\n{v}) = c A\n{v} = c(\lambda \n{v}) = \lambda (c\n{v}),
+\]
+así que $c\n{v}\in E_\lambda$. Por tanto, $E_\lambda$ es cerrado para la suma y el producto por escalares, y contiene al cero; luego es un subespacio vectorial.
+\end{proof}
+
+A este subespacio $E_\lambda$ se le denomina \textbf{espacio propio} (o autoespacio)
+asociado al autovalor $\lambda$. Su dimensión, que será clave más adelante, recibe el
+nombre de \textbf{multiplicidad geométrica} de $\lambda$.
+
+Conviene observar desde ya que $E_\lambda$ no es un objeto nuevo: reescribiendo
+$A\n{v}=\lambda\n{v}$ como $(A-\lambda I)\n{v}=\n{0}$ se ve que
+\begin{equation}\label{eq:espacio-propio-nulo}
+\boxed{\ E_\lambda = N(A-\lambda I)\ }
+\end{equation}
+es el \emph{espacio nulo} de otra matriz. Todo lo que sabemos del Capítulo
+\ref{cap:algebra-lineal} se aplica entonces sin cambios: en particular, por el teorema
+de la dimensión (Teorema~\ref{teo:rango-nulidad}),
+\[
+\text{multiplicidad geométrica de }\lambda \;=\; \dim N(A-\lambda I)
+\;=\; n-\rg(A-\lambda I),
+\]
+y calcular una base de $E_\lambda$ es exactamente el cálculo del Capítulo~\ref{cap:LU}:
+llevar $A-\lambda I$ a su forma escalonada reducida y leer las variables libres.
+
+El caso $\lambda=0$ merece destacarse aparte, porque conecta toda la teoría espectral
+con lo que venimos haciendo desde el Capítulo~\ref{cap:algebra-lineal}.
+
+\begin{coro}\label{coro:lambda-cero}
+Sea $A\in\mathbb{C}^{n\times n}$. Tomando $\lambda=0$ en
+\eqref{eq:espacio-propio-nulo},
+\[
+\boxed{\ E_0 = N(A)\ }
+\]
+es decir, \emph{los autovectores de autovalor $0$ son exactamente los vectores no nulos
+del espacio nulo de $A$}. En consecuencia,
+\[
+\boxed{\ A \text{ es singular} \iff 0 \text{ es autovalor de } A\ }
+\]
+y, cuando eso ocurre, la multiplicidad geométrica de $\lambda=0$ es
+$\dim N(A) = n-\rg(A)$.
+\end{coro}
+
+\begin{proof}
+La primera igualdad es \eqref{eq:espacio-propio-nulo} con $\lambda=0$, ya que
+$A-0\cdot I=A$. Para la segunda: $0$ es autovalor si y sólo si existe $\n{v}\neq\n{0}$
+con $A\n{v}=\n{0}$, o sea si y sólo si $N(A)\neq\{\n{0}\}$, que es precisamente la
+condición de que $A$ no sea invertible (ítem 3 de la lista de equivalencias de la
+Sección~\ref{sec:conjunto-solucion}). La multiplicidad geométrica es
+$\dim E_0=\dim N(A)$, y el teorema de la dimensión da $n-\rg(A)$.
+\end{proof}
+
+Vale la pena detenerse en lo que dice este corolario, porque es el puente entre los dos
+primeros capítulos y éste. Hasta ahora teníamos una lista de ocho condiciones
+equivalentes a que $A$ sea invertible --- espacio nulo trivial, columnas independientes,
+rango $n$, determinante no nulo, y las demás ---; el corolario agrega una novena, de
+naturaleza distinta: \emph{que $0$ no esté en el espectro}. Y al revés, cada vez que
+una matriz resulte singular ya sabemos, sin calcular nada, que $0$ es uno de sus
+autovalores y que su espacio propio es el espacio nulo que aprendimos a describir con
+la eliminación. El espacio nulo, que apareció como el conjunto de soluciones de
+$A\n{x}=\n{0}$, es entonces un espacio propio: el del autovalor $0$.
+
+Terminamos esta sección con una observación que demuestra la utilidad de los autovalores y autovectores. Si $\n{x}$ es un autovector de $A$ con autovalor $\lambda$, entonces $A\n{x} = \lambda \n{x}$; por lo tanto, calcular la potencia $n$-ésima de $A$ aplicada a $\n{x}$ resulta inmediato:
+\[
+A^n \n{x} = \lambda^n \n{x}.
+\]
+
+Este procedimiento no se limita a autovectores aislados, sino que puede extenderse a cualquier vector de $\mathbb{R}^n$ en ciertos casos de especial importancia. Supongamos que $A\in\mathbb{R}^{n\times n}$ admite $n$ autovectores linealmente independientes, digamos $\{\n{x}_1,\dots,\n{x}_n\}$, con sus correspondientes autovalores $\lambda_1,\dots,\lambda_n$ (no necesariamente distintos). Entonces estos autovectores forman una base de $\mathbb{R}^n$. Dado cualquier vector $\n{v}\in\mathbb{R}^n$, existen escalares únicos $c_1,\dots,c_n$ tales que
+\[
+\n{v} = c_1 \n{x}_1 + \cdots + c_n \n{x}_n.
+\]
+Aplicando $A$ y usando la linealidad,
+\[
+A\n{v} = A(c_1 \n{x}_1 + \cdots + c_n \n{x}_n) = c_1 A\n{x}_1 + \cdots + c_n A\n{x}_n = c_1 \lambda_1 \n{x}_1 + \cdots + c_n \lambda_n \n{x}_n.
+\]
+Iterando el proceso, para cualquier entero positivo $k$ se obtiene la fórmula general
+\[
+A^k \n{v} = c_1 \lambda_1^k \n{x}_1 + \cdots + c_n \lambda_n^k \n{x}_n.
+\]
+
+Visto en términos matriciales, si definimos la matriz $P = [\n{x}_1 \cdots \n{x}_n]$ (cuya inversa existe pues sus columnas son independientes) y $D = \operatorname{diag}(\lambda_1,\dots,\lambda_n)$, entonces la relación $A \n{x}_i = \lambda_i \n{x}_i$ para cada $i$ se condensa en la igualdad $AP = PD$, o equivalentemente
+\[
+A = P D P^{-1}.
+\]
+De aquí se deduce que
+\[
+A^k = P D^k P^{-1}
+\]
+para todo $k\in\mathbb{N}$, lo que reduce el cálculo de potencias de matrices al simple cálculo de potencias de una matriz diagonal. Esta factorización es una de las aplicaciones más poderosas de la teoría espectral, y volveremos a ella en detalle en la sección dedicada a la diagonalización.
+
+
+
+
+
+\section{Cálculo de autovalores y autovectores}\label{sec:calculo}
+
+La definición $A\n{v} = \lambda \n{v}$ puede reescribirse como
+\[
+(A - \lambda I)\n{v} = \n{0}.
+\]
+Para que exista un vector $\n{v}\neq \n{0}$ que satisfaga esta ecuación, la matriz $A - \lambda I$ debe ser singular, es decir, su determinante debe anularse. Obtenemos así la ecuación fundamental
+\[
+\det(A - \lambda I) = 0,
+\]
+conocida como \textbf{ecuación característica} de $A$. El polinomio $p(\lambda) = \det(A - \lambda I)$ se denomina \textbf{polinomio característico} de $A$, y sus raíces son precisamente los autovalores de la matriz.
+
+Una vez hallados los autovalores, para cada uno de ellos $\lambda_i$ se resuelve el sistema lineal homogéneo
+\[
+(A - \lambda_i I)\n{v} = \n{0},
+\]
+cuyas soluciones no triviales constituyen el espacio propio $E_{\lambda_i}$. El procedimiento se resume en los siguientes pasos:
+
+\begin{enumerate}
+\item Calcular el polinomio característico $p(\lambda) = \det(A - \lambda I)$.
+\item Hallar las raíces de $p(\lambda)$; cada raíz es un autovalor.
+\item Para cada autovalor $\lambda$, resolver el sistema $(A - \lambda I)\n{v} = \n{0}$ para obtener una base del espacio propio asociado.
+\end{enumerate}
+
+Ilustremos este algoritmo con los ejemplos de la sección anterior y dos nuevos casos.
+
+\medskip
+
+\noindent \textbf{Ejemplo 1.} Para la matriz diagonal
+\[
+D = \begin{pmatrix} 4 & 0 \\ 0 & -2 \end{pmatrix},
+\]
+el polinomio característico es
+\[
+\det(D - \lambda I) = \det\begin{pmatrix} 4-\lambda & 0 \\ 0 & -2-\lambda \end{pmatrix} = (4-\lambda)(-2-\lambda).
+\]
+Las raíces son $\lambda_1 = 4$ y $\lambda_2 = -2$, que ya habíamos verificado.
+
+Para $\lambda_1 = 4$, resolvemos $(D - 4I)\n{v} = \n{0}$:
+\[
+\begin{pmatrix} 0 & 0 \\ 0 & -6 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}
+\implies -6v_2 = 0 \implies v_2 = 0,
+\]
+luego $\n{v} = (v_1,0)^T = v_1(1,0)^T$, y el espacio propio es $E_4 = \operatorname{span}\{(1,0)^T\}$.
+
+Para $\lambda_2 = -2$, resolvemos $(D + 2I)\n{v} = \n{0}$:
+\[
+\begin{pmatrix} 6 & 0 \\ 0 & 0 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}
+\implies 6v_1 = 0 \implies v_1 = 0,
+\]
+así que $\n{v} = (0,v_2)^T = v_2(0,1)^T$, y $E_{-2} = \operatorname{span}\{(0,1)^T\}$.
+
+\medskip
+
+\noindent \textbf{Ejemplo 2.} Para la matriz simétrica
+\[
+A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix},
+\]
+el polinomio característico es
+\[
+\det(A - \lambda I) = \det\begin{pmatrix} 2-\lambda & 1 \\ 1 & 2-\lambda \end{pmatrix} = (2-\lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = (\lambda - 1)(\lambda - 3).
+\]
+Por tanto, los autovalores son $\lambda_1 = 1$ y $\lambda_2 = 3$.
+
+Para $\lambda_1 = 1$, resolvemos $(A - I)\n{v} = \n{0}$:
+\[
+\begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}
+\implies v_1 + v_2 = 0 \implies v_1 = -v_2,
+\]
+luego $\n{v} = (-v_2, v_2)^T = v_2(-1,1)^T$, y $E_1 = \operatorname{span}\{(-1,1)^T\}$.
+
+Para $\lambda_2 = 3$, resolvemos $(A - 3I)\n{v} = \n{0}$:
+\[
+\begin{pmatrix} -1 & 1 \\ 1 & -1 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}
+\implies -v_1 + v_2 = 0 \implies v_1 = v_2,
+\]
+así que $\n{v} = (v_1, v_1)^T = v_1(1,1)^T$, y $E_3 = \operatorname{span}\{(1,1)^T\}$.
+
+\medskip
+
+\noindent \textbf{Ejemplo 3.} Para la matriz singular
+\[
+B = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix},
+\]
+el polinomio característico es
+\[
+\det(B - \lambda I) = \det\begin{pmatrix} 1-\lambda & 1 \\ 1 & 1-\lambda \end{pmatrix} = (1-\lambda)^2 - 1 = \lambda^2 - 2\lambda = \lambda(\lambda - 2).
+\]
+Los autovalores son $\lambda_1 = 0$ y $\lambda_2 = 2$.
+
+Para $\lambda_1 = 0$, resolvemos $B\n{v} = \n{0}$:
+\[
+\begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}
+\implies v_1 + v_2 = 0 \implies v_1 = -v_2,
+\]
+luego $\n{v} = (-v_2, v_2)^T = v_2(-1,1)^T$, y $E_0 = \operatorname{span}\{(-1,1)^T\}$.
+
+Para $\lambda_2 = 2$, resolvemos $(B - 2I)\n{v} = \n{0}$:
+\[
+\begin{pmatrix} -1 & 1 \\ 1 & -1 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}
+\implies -v_1 + v_2 = 0 \implies v_1 = v_2,
+\]
+así que $\n{v} = (v_1, v_1)^T = v_1(1,1)^T$, y $E_2 = \operatorname{span}\{(1,1)^T\}$.
+
+Obsérvese que la presencia del autovalor $\lambda=0$ confirma que la matriz es singular.
+
+\medskip
+
+\noindent \textbf{Ejemplo 4 (autovalores complejos).} Consideremos la matriz de rotación de $45^\circ$ en el plano:
+\[
+R = \begin{pmatrix} \cos 45^\circ & -\sin 45^\circ \\ \sin 45^\circ & \cos 45^\circ \end{pmatrix}
+= \begin{pmatrix} \frac{\sqrt{2}}{2} & -\frac{\sqrt{2}}{2} \\[2mm] \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2} \end{pmatrix}.
+\]
+Su polinomio característico es
+\[
+\det(R - \lambda I) = \det\begin{pmatrix} \frac{\sqrt{2}}{2}-\lambda & -\frac{\sqrt{2}}{2} \\[1mm] \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2}-\lambda \end{pmatrix}
+= \left(\frac{\sqrt{2}}{2}-\lambda\right)^2 + \left(\frac{\sqrt{2}}{2}\right)^2
+= \lambda^2 - \sqrt{2}\lambda + 1.
+\]
+Resolviendo la ecuación cuadrática,
+\[
+\lambda = \frac{\sqrt{2} \pm \sqrt{2 - 4}}{2} = \frac{\sqrt{2} \pm i\sqrt{2}}{2}
+= \frac{\sqrt{2}}{2} \pm i\frac{\sqrt{2}}{2}.
+\]
+Por tanto, los autovalores son $\lambda_1 = \frac{\sqrt{2}}{2} + i\frac{\sqrt{2}}{2}$ y $\lambda_2 = \frac{\sqrt{2}}{2} - i\frac{\sqrt{2}}{2}$, que son complejos conjugados. Este ejemplo pone de manifiesto que, incluso para matrices reales, los autovalores pueden ser complejos si el cuerpo base es $\mathbb{R}$. En tal caso, no existen autovectores reales (la rotación no deja invariante ninguna dirección real), pero sí existen autovectores en $\mathbb{C}^2$. Para trabajar con total generalidad, conviene considerar el polinomio característico sobre los complejos, donde el teorema fundamental del álgebra garantiza que siempre tiene $n$ raíces contando multiplicidades.
+
+\medskip
+
+\noindent \textbf{Ejemplo 5 (multiplicidades distintas).} Consideremos ahora la matriz
+\[
+A = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{pmatrix}.
+\]
+Al ser triangular superior, su polinomio característico es el producto de los elementos de la diagonal:
+\[
+\det(A - \lambda I) = \det\begin{pmatrix} 2-\lambda & 1 & 0 \\ 0 & 2-\lambda & 0 \\ 0 & 0 & 2-\lambda \end{pmatrix} = (2-\lambda)^3.
+\]
+La única raíz es $\lambda = 2$, con multiplicidad $3$ como raíz del polinomio.
+
+Para hallar el espacio propio, resolvemos $(A - 2I)\n{v} = \n{0}$:
+\[
+\begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \begin{pmatrix} v_1 \\ v_2 \\ v_3 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \\ 0 \end{pmatrix}
+\implies v_2 = 0.
+\]
+Por tanto, $\n{v} = (v_1, 0, v_3)^T = v_1(1,0,0)^T + v_3(0,0,1)^T$, y el espacio propio es
+\[
+E_2 = \operatorname{span}\{(1,0,0)^T, (0,0,1)^T\},
+\]
+cuya dimensión es $2$.
+
+\medskip
+
+\noindent \textbf{Multiplicidades algebraica y geométrica.} Los ejemplos anteriores motivan dos definiciones fundamentales. Dado un autovalor $\lambda_i$ de una matriz $A$ de tamaño $n\times n$:
+
+\begin{itemize}
+\item Su \textbf{multiplicidad algebraica} es la multiplicidad de $\lambda_i$ como raíz del polinomio característico $p(\lambda)$. Es decir, el exponente del factor $(\lambda - \lambda_i)$ en la factorización de $p(\lambda)$.
+\item Su \textbf{multiplicidad geométrica} es la dimensión del espacio propio asociado, $\dim E_{\lambda_i}$.
+\end{itemize}
+
+El teorema fundamental del álgebra asegura que, trabajando sobre $\mathbb{C}$, el polinomio característico de grado $n$ se factoriza completamente en $n$ factores lineales. Por tanto, si contamos cada autovalor tantas veces como indique su multiplicidad algebraica, la suma de todas las multiplicidades algebraicas es exactamente $n$. En el ejemplo 5, el autovalor $\lambda=2$ tiene multiplicidad algebraica $3$.
+
+Sin embargo, como también hemos visto, la multiplicidad geométrica puede ser estrictamente menor que la algebraica. En el ejemplo 5, la multiplicidad geométrica de $\lambda=2$ es $2$, que es menor que $3$. En general, siempre se cumple la desigualdad
+\[
+1 \le \text{multiplicidad geométrica de } \lambda_i \le \text{multiplicidad algebraica de } \lambda_i.
+\]
+La primera desigualdad refleja que todo autovalor posee al menos un autovector asociado (por definición). La segunda es una propiedad fundamental que demostraremos más adelante. Lo relevante es que la igualdad no está garantizada: la suma de las multiplicidades geométricas de todos los autovalores puede ser estrictamente menor que $n$, como ocurre en el ejemplo 5 ($2<3$). Cuando esto sucede, la matriz no posee suficientes autovectores linealmente independientes como para formar una base del espacio total, y por tanto no es diagonalizable. La condición necesaria y suficiente para que una matriz sea diagonalizable es precisamente que, para cada autovalor, su multiplicidad geométrica coincida con su multiplicidad algebraica. Volveremos a esto en siguientes secciones.
+
+El procedimiento que hemos descrito (calcular el polinomio característico, hallar sus raíces y resolver los sistemas lineales asociados) es conceptualmente sencillo y funciona perfectamente para matrices de tamaño pequeño, como las de los ejemplos que hemos visto. Sin embargo, su utilidad práctica se desvanece rápidamente cuando las dimensiones crecen. En primer lugar, el polinomio característico de una matriz $n\times n$ tiene grado $n$, y obtener sus coeficientes requiere un número de operaciones que crece como $O(n^3)$, pero lo más gravoso es que, para $n\geq 5$, el teorema de Abel-Ruffini establece que no existen fórmulas algebraicas generales que expresen las raíces del polinomio en términos de radicales. Esto hace que el método sea impracticable, tanto por el costo computacional como por la inestabilidad numérica que sufren los algoritmos basados en el polinomio característico. En la práctica, los autovalores y autovectores de matrices grandes se calculan mediante métodos iterativos como el método de la potencia, el método de iteración de subespacios o el algoritmo QR, que evitan por completo el polinomio característico y se basan en aproximaciones sucesivas que convergen a los valores deseados. El estudio de estos algoritmos constituye una parte fundamental del análisis numérico matricial, que probablemente se aborde en cursos más avanzados.
+
+\section{Propiedades de los autovalores y autovectores}
+\subsection{Traza y determinante de una matriz}
+
+Los autovalores de una matriz no solo determinan su comportamiento espectral, sino que también se relacionan directamente con dos de los invariantes más importantes del álgebra lineal: la traza y el determinante. Estas relaciones, que enunciamos a continuación, ofrecen una herramienta poderosa para verificar cálculos y extraer información
+estructural de una matriz sin necesidad de diagonalizarla explícitamente. La demostración
+es mucho más limpia con la factorización de Schur, así que la dejamos para el
+Capítulo~\ref{cap:schur} (Corolario~\ref{cor:traza-det}), donde sale en tres renglones.
+
+\begin{thm}
+Sea $A$ una matriz $n\times n$ con autovalores $\lambda_1, \dots, \lambda_n$ (contados con su multiplicidad algebraica). Entonces:
+\begin{enumerate}
+\item $\operatorname{tr}(A) = \lambda_1 + \lambda_2 + \cdots + \lambda_n$.
+\item $\det(A) = \lambda_1 \lambda_2 \cdots \lambda_n$.
+\end{enumerate}
+\end{thm}
+
+% \begin{proof}
+% El polinomio característico de $A$ es $p(\lambda) = \det(A - \lambda I)$. Por definición, los autovalores son las raíces de $p(\lambda)$, de modo que, contando multiplicidades,
+% \[
+% p(\lambda) = (\lambda_1 - \lambda)(\lambda_2 - \lambda) \cdots (\lambda_n - \lambda).
+% \]
+% Desarrollando este producto, el término de grado $n-1$ en $\lambda$ es
+% \[
+% (-1)^{n-1}(\lambda_1 + \cdots + \lambda_n) \lambda^{n-1},
+% \]
+% y el término independiente (evaluando en $\lambda=0$) es $\lambda_1 \lambda_2 \cdots \lambda_n$.
+
+% Por otra parte, de la definición $p(\lambda) = \det(A - \lambda I)$ y de la fórmula del determinante, el coeficiente de $\lambda^{n-1}$ en $p(\lambda)$ es $(-1)^{n-1}\operatorname{tr}(A)$, mientras que el término independiente es $\det(A)$. Igualando los coeficientes se obtienen las dos fórmulas.
+% \end{proof}
+
+
+Estas propiedades pueden verificarse directamente en los ejemplos de la sección anterior:
+para $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ se tiene $\operatorname{tr}(A)=4$ y
+$\det(A)=3$, y los autovalores $1$ y $3$ suman $4$ y multiplican $3$; para la rotación
+$R$, $\operatorname{tr}(R)=\sqrt2$ y $\det(R)=1$, y los autovalores complejos
+$\frac{\sqrt2}{2}\pm i\frac{\sqrt2}{2}$ suman $\sqrt2$ y multiplican $1$ (obsérvese que
+la fórmula necesita los autovalores complejos: con los reales no cerraría).
+Los demás ejemplos del capítulo quedan como verificación para el lector.
+
+
+Estas dos propiedades son especialmente útiles en la práctica: la traza y el determinante de una matriz pueden calcularse directamente a partir de sus entradas, y proporcionan una comprobación inmediata de que los autovalores hallados son correctos. Además, la relación con el determinante vuelve a dar, por otro camino, el
+Corolario~\ref{coro:lambda-cero}: el producto de los autovalores es $\det(A)$, que se
+anula si y sólo si alguno de los factores es cero.
+
+\medskip
+
+\subsection{La traspuesta: $A$ y $A^T$}
+
+Antes de seguir conviene aislar un hecho que usaremos varias veces y que es inmediato a
+partir del polinomio característico.
+
+\begin{prop}\label{prop:autovalores-traspuesta}
+Sea $A\in\mathbb{C}^{n\times n}$. Entonces $A$ y $A^T$ tienen \emph{el mismo polinomio
+característico} y, por lo tanto, \emph{los mismos autovalores con las mismas
+multiplicidades algebraicas}.
+\end{prop}
+
+\begin{proof}
+Una matriz y su traspuesta tienen el mismo determinante (Sección~\ref{sec:determinante}
+del Capítulo~\ref{cap:algebra-lineal}). Aplicándolo a $A-\lambda I$ y usando que
+$(A-\lambda I)^T = A^T-\lambda I$, porque $I$ es simétrica,
+\[
+\det(A-\lambda I) = \det\big((A-\lambda I)^T\big) = \det(A^T-\lambda I)
+\qquad\text{para todo }\lambda .
+\]
+Los dos polinomios característicos coinciden, y con ellos sus raíces y las
+multiplicidades de cada raíz.
+\end{proof}
+
+\begin{remark}[Los autovalores sí, los autovectores no]\label{obs:autovect-traspuesta}
+La proposición habla de \emph{autovalores} y nada dice de los autovectores: en general
+$A$ y $A^T$ tienen autovectores completamente distintos. Por ejemplo,
+\[
+A=\begin{bmatrix}1&1\\ 0&2\end{bmatrix}
+\qquad\text{y}\qquad
+A^T=\begin{bmatrix}1&0\\ 1&2\end{bmatrix}
+\]
+tienen ambas autovalores $1$ y $2$, pero el autovector de $A$ para $\lambda=1$ es
+$(1,0)^T$ mientras que el de $A^T$ es $(1,-1)^T$. Los autovectores de $A^T$ se llaman
+\emph{autovectores a izquierda} de $A$, porque $A^T\n{y}=\lambda\n{y}$ equivale a
+$\n{y}^TA=\lambda\n{y}^T$: son los vectores fila que $A$ deja invariantes al
+multiplicar por la izquierda. Coinciden con los de $A$ exactamente cuando $A$ es
+simétrica, y volverán a aparecer con las matrices de Markov y en el
+Capítulo~\ref{cap:SVD}.
+\end{remark}
+
+\subsection{$AB$ y $BA$}
+\label{sec:AB-BA}
+
+Otro hecho que no depende de ninguna factorización y que conviene tener
+aislado: dos matrices rectangulares multiplicadas en los dos órdenes dan
+matrices de tamaños distintos, pero casi los mismos autovalores.
+
+\begin{prop}\label{prop:AB-BA}
+Si $A\in\R^{m\times n}$ y $B\in\R^{n\times m}$, entonces $AB$ (de
+$m\times m$) y $BA$ (de $n\times n$) tienen los mismos autovalores no nulos.
+\end{prop}
+
+\begin{proof}
+Sea $AB\n{x}=\lambda\n{x}$ con $\n{x}\neq\n{0}$ y $\lambda\neq0$.
+Multiplicando por $B$ a izquierda,
+\[
+BA(B\n{x})=B(AB\n{x})=B(\lambda\n{x})=\lambda(B\n{x}) ,
+\]
+así que $B\n{x}$ sería un autovector de $BA$ con autovalor $\lambda$, siempre
+que no sea nulo. Y no lo es: si fuera $B\n{x}=\n{0}$, entonces
+$\lambda\n{x}=AB\n{x}=\n{0}$ y, como $\lambda\neq0$, sería $\n{x}=\n{0}$,
+contra lo supuesto. Luego todo autovalor no nulo de $AB$ lo es de $BA$. El
+argumento simétrico ---intercambiando los papeles de $A$ y $B$--- da la otra
+inclusión.
+\end{proof}
+
+\begin{remark}\label{obs:AB-BA}
+Cuando $B$ es cuadrada e invertible el resultado sale solo: de
+$B^{-1}(BA)B=AB$ se ve que $AB$ y $BA$ son \emph{semejantes}
+(Sección~\ref{sec:semejanza}) y las matrices semejantes tienen los mismos
+autovalores. La gracia de la demostración de arriba es que no pide nada: vale
+para matrices rectangulares, donde ni siquiera tiene sentido hablar de
+semejanza porque $AB$ y $BA$ son de tamaños distintos.
+
+La palabra importante del enunciado es \emph{no nulos}. Los autovalores cero
+sí pueden diferir, y de hecho tienen que hacerlo cuando $m\neq n$, porque una
+matriz de $m\times m$ tiene $m$ autovalores contados con multiplicidad y una
+de $n\times n$ tiene $n$. El caso extremo es $A=\n{u}$ y $B=\n{v}^T$ con
+$\n{u},\n{v}\in\R^n$: entonces $BA=\n{v}^T\n{u}$ es un número ---un único
+autovalor--- mientras que $AB=\n{u}\n{v}^T$ es una matriz de $n\times n$ de
+rango uno, cuyos autovalores son $\n{v}^T\n{u}$ y $0$ repetido $n-1$ veces.
+
+Lo vamos a usar con $B=A^T$ en el Capítulo~\ref{cap:SVD}: dirá que $A^TA$ y
+$AA^T$ tienen los mismos autovalores no nulos, que es lo que hace que los
+valores singulares de una matriz no dependan de por cuál de las dos se
+empiece.
+\end{remark}
+
+\medskip
+
+\subsection{Potencias y traslaciones de una matriz.} 
+Una de las grandes ventajas de trabajar con autovalores es que las operaciones algebraicas básicas sobre la matriz se traducen en operaciones elementales sobre sus autovalores, manteniendo los mismos autovectores.
+
+\begin{prop}\label{prop:potencias}
+Sea $A$ una matriz $n\times n$, sea $\lambda$ un autovalor de $A$ y sea $\n{v}$ un
+autovector asociado. Entonces, \emph{con el mismo autovector}:
+\begin{enumerate}
+\item $A^k\n{v}=\lambda^k\n{v}$ para todo entero positivo $k$;
+\item $(A+\alpha I)\n{v}=(\lambda+\alpha)\n{v}$ para todo escalar $\alpha$;
+\item $p(A)\n{v}=p(\lambda)\n{v}$ para todo polinomio $p$;
+\item si $A$ es invertible, $A^{-1}\n{v}=\lambda^{-1}\n{v}$.
+\end{enumerate}
+\end{prop}
+
+\begin{remark}
+La proposición dice que $\lambda^k$ \emph{es} un autovalor de $A^k$, pero no que esos
+sean \emph{todos} los autovalores de $A^k$ ni con qué multiplicidad aparecen. Eso
+también es cierto, y lo probaremos en el Capítulo~\ref{cap:schur}
+(Corolario~\ref{cor:traza-det}), donde triangularizar de una sola vez resuelve las dos
+cuestiones.
+\end{remark}
+
+\begin{proof}
+Todas las afirmaciones se siguen directamente de la definición, aplicada al mismo autovector.
+
+Para la potencia, procedemos por inducción. El caso $k=1$ es trivial. Supongamos que $A^{k-1}\n{v} = \lambda^{k-1}\n{v}$; entonces
+\[
+A^k \n{v} = A(A^{k-1}\n{v}) = A(\lambda^{k-1}\n{v}) = \lambda^{k-1}(A\n{v}) = \lambda^{k-1}(\lambda \n{v}) = \lambda^k \n{v}.
+\]
+
+Para la traslación, calculamos directamente:
+\[
+(A + \alpha I)\n{v} = A\n{v} + \alpha I\n{v} = \lambda \n{v} + \alpha \n{v} = (\lambda + \alpha)\n{v}.
+\]
+Para un polinomio $p(x)=c_0+c_1x+\cdots+c_dx^d$ basta combinar los dos puntos anteriores.
+Y si $A$ es invertible, de $A\n{v}=\lambda\n{v}$ se sigue $\lambda\neq0$ (si no,
+$\n{v}\in N(A)=\{\n{0}\}$), y multiplicando por $A^{-1}$ queda
+$\n{v}=\lambda A^{-1}\n{v}$, o sea $A^{-1}\n{v}=\lambda^{-1}\n{v}$.
+\end{proof}
+
+\begin{remark}
+Estas propiedades son particularmente útiles para el cálculo rápido de autovalores de matrices que provienen de polinomios en $A$. Por ejemplo, si $p(x)$ es cualquier polinomio, entonces los autovalores de $p(A)$ son exactamente $p(\lambda_1), \dots, p(\lambda_n)$. La demostración es idéntica: basta aplicar el polinomio al autovector.
+
+Retomando los ejemplos anteriores:
+\begin{itemize}
+\item Para la matriz $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$, cuyos autovalores son $1$ y $3$, se tiene que $A^2$ tiene autovalores $1^2=1$ y $3^2=9$. El lector puede verificar que $\det(A^2 - \mu I) = (\mu-1)(\mu-9)$.
+\item Para la matriz diagonal $D = \operatorname{diag}(4,-2)$, la matriz $D + 3I = \operatorname{diag}(7,1)$ tiene autovalores $4+3=7$ y $-2+3=1$, como era de esperar.
+\item En el caso de la rotación $R$ de $45^\circ$, con autovalores $\lambda = \frac{\sqrt{2}}{2} \pm i\frac{\sqrt{2}}{2}$, la matriz $R^2$ corresponde a una rotación de $90^\circ$ y debe tener autovalores $\lambda^2$. Efectivamente, $\lambda^2 = (\frac{\sqrt{2}}{2} \pm i\frac{\sqrt{2}}{2})^2 = \pm i$, que son los autovalores de la matriz de rotación de $90^\circ$ (sin autovalores reales).
+\item Para la matriz singular $B = \begin{pmatrix}1&1\\1&1\end{pmatrix}$ con autovalores $0$ y $2$, la matriz $B - I = \begin{pmatrix}0&1\\1&0\end{pmatrix}$ debe tener autovalores $0-1=-1$ y $2-1=1$. Esto es correcto, pues la matriz $\begin{pmatrix}0&1\\1&0\end{pmatrix}$ tiene autovalores $\pm 1$.
+\end{itemize}
+\end{remark}
+
+Estas sencillas reglas nos permiten extender el conocimiento espectral de una matriz a
+toda una familia de matrices relacionadas con ella, sin necesidad de recalcular el
+polinomio característico. Volveremos sobre ellas en la Sección~\ref{sec:dinamica}, donde
+veremos que si todos los autovalores tienen módulo menor que $1$ entonces
+$A^k\to 0$.
+
+Dado que los autovalores se comportan bien con potencias, polinomios y traslaciones de una misma matriz, es natural preguntarse si existe una regla análoga para la suma o el producto de dos matrices distintas. La respuesta es negativa: en general, no hay ninguna relación simple entre los autovalores de $A+B$ y los de $A$ y $B$, ni entre los de $AB$ y los de $A$ y $B$. La razón profunda es que los autovalores de una matriz dependen de la transformación lineal completa, no solo de los autovalores de sus sumandos, y la interacción entre las direcciones propias de cada matriz destruye cualquier posible correspondencia.
+
+Para convencerse de ello, basta con considerar dos ejemplos sencillos en dimensión $2$. Tomemos 
+\[
+A = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}, \qquad 
+B = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}.
+\]
+Ambas tienen autovalores $\{1,-1\}$. Sin embargo, su suma es 
+\[
+A+B = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix},
+\]
+cuyos autovalores son $\pm\sqrt{2}$, que no son ni la suma ni la resta de los autovalores originales. De igual modo, el producto
+\[
+AB = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}
+\]
+tiene autovalores $\pm i$, mientras que el producto de los autovalores de $A$ y $B$ sería $1\cdot 1=1$, $1\cdot(-1)=-1$, etc., pero nunca $i$. Estos contraejemplos muestran que no existe una fórmula general que exprese los autovalores de $A+B$ o $AB$ en términos de los autovalores de $A$ y $B$ por separado. 
+
+\subsection{Autovalores y autovectores de matrices simétricas y matrices ortogonales}
+
+Las matrices simétricas reales ocupan un lugar privilegiado en el álgebra lineal por sus extraordinarias propiedades espectrales. A continuación demostramos las dos propiedades fundamentales que las caracterizan.
+
+\begin{thm}
+Sea $S\in\mathbb{R}^{n\times n}$ una matriz simétrica ($S^T = S$). Entonces:
+\begin{enumerate}
+\item Todos los autovalores de $S$ son números reales.
+\item Los autovectores correspondientes a autovalores distintos son ortogonales (con el producto escalar usual de $\mathbb{R}^n$).
+\end{enumerate}
+\end{thm}
+
+\begin{proof}
+\textbf{Autovalores reales.} Sea $\lambda\in\mathbb{C}$ un autovalor de $S$ y sea $\n{v}\in\mathbb{C}^n$ un autovector asociado, $\n{v}\neq \n{0}$. Por definición,
+\[
+S\n{v} = \lambda \n{v}.
+\]
+Tomando conjugado traspuesto (operación denotada por $^*$) y usando que $S$ es real y simétrica ($S^* = S^T = S$), obtenemos
+\[
+\n{v}^* S = \overline{\lambda} \n{v}^*.
+\]
+Multiplicando la primera ecuación a la izquierda por $\n{v}^*$ y la segunda a la derecha por $\n{v}$, se tiene
+\[
+\n{v}^* S\n{v} = \lambda \n{v}^*\n{v}, \qquad 
+\n{v}^* S\n{v} = \overline{\lambda} \n{v}^*\n{v}.
+\]
+Igualando ambas expresiones y como $\n{v}^*\n{v} = \sum |v_i|^2 > 0$, concluimos que $\lambda = \overline{\lambda}$, luego $\lambda\in\mathbb{R}$.
+
+\textbf{Ortogonalidad de autovectores.} Sean $\lambda\neq \mu$ dos autovalores reales de $S$, con autovectores $\n{u}$ y $\n{v}$ respectivamente, ambos en $\mathbb{R}^n$. Entonces
+\[
+S\n{u} = \lambda \n{u}, \qquad S\n{v} = \mu \n{v}.
+\]
+Calculemos el producto escalar $\n{u}^T S\n{v}$ de dos maneras. Por un lado,
+\[
+\n{u}^T S\n{v} = \n{u}^T (\mu \n{v}) = \mu (\n{u}^T\n{v}).
+\]
+Por otro lado, usando la simetría de $S$,
+\[
+\n{u}^T S\n{v} = (S\n{u})^T \n{v} = (\lambda \n{u})^T \n{v} = \lambda (\n{u}^T\n{v}).
+\]
+Igualando obtenemos
+\[
+\mu (\n{u}^T\n{v}) = \lambda (\n{u}^T\n{v}) \quad\Longrightarrow\quad (\lambda - \mu)(\n{u}^T\n{v}) = 0.
+\]
+Como $\lambda \neq \mu$, se sigue que $\n{u}^T\n{v} = 0$, es decir, $\n{u}$ y $\n{v}$ son ortogonales.
+\end{proof}
+
+
+La primera propiedad garantiza que el polinomio característico de una matriz simétrica tiene todas sus raíces reales, por lo que se factoriza completamente sobre $\mathbb{R}$. La segunda propiedad asegura que los espacios propios correspondientes a distintos autovalores son mutuamente ortogonales. Además, dentro de cada espacio propio $E_\lambda$ (que ya sabemos que es un subespacio de $\mathbb{R}^n$), siempre es posible elegir una base ortonormal mediante el proceso de Gram-Schmidt. Por tanto, se puede construir una base ortonormal de $\mathbb{R}^n$ formada íntegramente por autovectores de $S$.
+
+Verifiquemos estas propiedades en los ejemplos que hemos manejado. Para la matriz $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$, los autovalores $1$ y $3$ son reales y los autovectores $(-1,1)^T$ y $(1,1)^T$ son ortogonales: $(-1)\cdot 1 + 1\cdot 1 = 0$. Para la matriz diagonal $D = \operatorname{diag}(4,-2)$, los autovalores son reales y los autovectores $(1,0)^T$ y $(0,1)^T$ son ortogonales. En cambio, para la rotación $R$, que no es simétrica, sus autovalores no son reales (son complejos) y no existen autovectores reales, lo que confirma la necesidad de la hipótesis de simetría.
+
+
+
+Las matrices ortogonales son aquellas que preservan el producto escalar y, por tanto, las longitudes y ángulos. Su estructura espectral tiene una característica muy particular: todos sus autovalores se encuentran sobre la circunferencia unidad en el plano complejo.
+Recordemos que 
+una matriz $Q\in\mathbb{R}^{n\times n}$ se dice \textbf{ortogonal} si satisface $Q^T Q = I$, o equivalentemente $Q^{-1} = Q^T$.
+
+\begin{thm}
+Sea $Q$ una matriz ortogonal. Entonces todos sus autovalores tienen módulo $1$, es decir, si $\lambda$ es un autovalor de $Q$, entonces $|\lambda| = 1$.
+\end{thm}
+
+\begin{proof}
+Sea $\lambda\in\mathbb{C}$ un autovalor de $Q$ y sea $\n{v}\in\mathbb{C}^n$ un autovector asociado, $\n{v}\neq \n{0}$. Por definición,
+\[
+Q\n{v} = \lambda \n{v}.
+\]
+Tomando conjugado traspuesto en ambos lados y usando que $Q$ es real ($\overline{Q}=Q$) y ortogonal ($Q^T Q = I$), se tiene
+\[
+(Q\n{v})^* = (\lambda \n{v})^*. \]
+Por lo que
+\[\n{v}^* Q^T = \overline{\lambda} \n{v}^*.
+\]
+Multipliquemos ahora a la derecha por $Q\n{v}$ en ambos lados de esta última ecuación:
+\[
+\n{v}^* Q^T Q \n{v} = \overline{\lambda} \n{v}^* \n{v}.
+\]
+Como $Q^T Q = I$ y $Q\n{v} = \lambda \n{v}$, obtenemos
+\[
+\n{v}^* \n{v} = \overline{\lambda} \n{v}^* Q\n{v} = \overline{\lambda} \n{v}^* (\lambda \n{v}) = |\lambda|^2 \n{v}^* \n{v}.
+\]
+Dado que $\n{v}\neq \n{0}$, se tiene $\n{v}^*\n{v} = \sum |v_i|^2 > 0$, por lo que podemos cancelar y concluir que
+\[
+|\lambda|^2 = 1 \quad\text{y}\quad |\lambda| = 1.
+\]
+\end{proof}
+
+
+Puesto que el polinomio característico de una matriz ortogonal real tiene coeficientes reales, si $\lambda$ es un autovalor complejo, su conjugado $\overline{\lambda}$ también lo es, y ambos tienen módulo $1$. Además, si $\lambda$ es real, entonces $\lambda = \pm 1$. Por tanto, los autovalores de una matriz ortogonal real solo pueden ser $1$, $-1$, o pares de números complejos conjugados de la forma $e^{\pm i\theta}$, con $\theta\in\mathbb{R}$.
+
+Verifiquemos esta propiedad en los ejemplos que hemos visto. Para la matriz de rotación $R$ de $45^\circ$,
+\[
+R = \begin{pmatrix} \frac{\sqrt{2}}{2} & -\frac{\sqrt{2}}{2} \\[1mm] \frac{\sqrt{2}}{2} & \frac{\sqrt{2}}{2} \end{pmatrix},
+\]
+se tiene $R^T R = I$, luego es ortogonal. Sus autovalores son $\lambda = \frac{\sqrt{2}}{2} \pm i\frac{\sqrt{2}}{2}$, cuyo módulo es
+\[
+\left|\frac{\sqrt{2}}{2} \pm i\frac{\sqrt{2}}{2}\right| = \sqrt{\frac{1}{2} + \frac{1}{2}} = 1.
+\]
+Esta es la expresión general: una rotación en el plano tiene autovalores $e^{\pm i\theta}$, donde $\theta$ es el ángulo de rotación.
+
+En el otro extremo, la matriz
+\[
+Q = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+\]
+es ortogonal (reflexión respecto al eje $x$) y tiene autovalores $1$ y $-1$, ambos de módulo $1$. En general, las matrices de reflexión tienen autovalores $\pm 1$.
+
+Observamos así una diferencia fundamental con las matrices simétricas: mientras que estas últimas tienen autovalores reales, las matrices ortogonales, que representan isometrías, tienen autovalores sobre la circunferencia unidad, reflejando que estas transformaciones no alteran las normas de los vectores.
+
+
+\section{Matrices semejantes y diagonalización}\label{sec:semejanza}
+
+En esta sección introducimos un concepto fundamental que nos permitirá comprender cuándo dos matrices representan la misma transformación lineal en distintas bases, y que está íntimamente relacionado con la diagonalización.
+
+
+Dos matrices $A, C \in \mathbb{R}^{n\times n}$ se dicen \textbf{semejantes} si existe una matriz invertible $P \in \mathbb{R}^{n\times n}$ tal que
+\[
+C = P^{-1} A P.
+\]
+
+Equivalentemente, $A$ y $C$ son semejantes si $A = P C P^{-1}$. La semejanza expresa que $A$ y $C$ son representaciones de una misma transformación lineal en diferentes bases: si $A$ representa la transformación en la base canónica, entonces $C = P^{-1} A P$ es la representación en la base cuyas columnas son los vectores de $P$.
+
+
+\begin{prop}
+La relación de semejanza es una relación de equivalencia en el conjunto de matrices cuadradas.
+\end{prop}
+
+\begin{proof}
+Reflexiva: $A=I^{-1}AI$. Simétrica: si $C=P^{-1}AP$, entonces
+$A=(P^{-1})^{-1}C(P^{-1})$. Transitiva: si $C=P^{-1}AP$ y $D=Q^{-1}CQ$, entonces
+$D=(PQ)^{-1}A(PQ)$.
+\end{proof}
+
+El siguiente resultado es el que justifica la importancia de la semejanza en el estudio de los autovalores.
+
+\begin{thm}
+Si $A$ y $C$ son matrices semejantes, entonces tienen el mismo polinomio característico y, en consecuencia, los mismos autovalores (con las mismas multiplicidades algebraicas).
+\end{thm}
+\begin{proof}
+Sea $C=P^{-1}AP$. Sacando factor común $P^{-1}$ y $P$,
+\[
+C-\lambda I = P^{-1}AP-\lambda P^{-1}P = P^{-1}(A-\lambda I)P ,
+\]
+y tomando determinantes, que son multiplicativos,
+\[
+\det(C-\lambda I)=\det(P^{-1})\det(A-\lambda I)\det(P)=\det(A-\lambda I),
+\]
+porque $\det(P^{-1})\det(P)=1$. Los dos polinomios característicos coinciden, y por lo
+tanto también sus raíces y las multiplicidades de esas raíces.
+\end{proof}
+
+\begin{remark}
+El cálculo anterior dice más: si $A\n{x}=\lambda\n{x}$ entonces
+$C(P^{-1}\n{x})=P^{-1}AP P^{-1}\n{x}=P^{-1}A\n{x}=\lambda\,(P^{-1}\n{x})$, de modo que
+$\n{x}\mapsto P^{-1}\n{x}$ es una biyección entre $E_\lambda(A)$ y $E_\lambda(C)$. Los
+espacios propios tienen la misma dimensión: \emph{la semejanza también conserva las
+multiplicidades geométricas}.
+\end{remark}
+
+
+Antes de adentrarnos en la noción de diagonalización, observemos un hecho sencillo pero fundamental sobre las matrices triangulares. Si $T$ es una matriz triangular superior (o inferior), entonces su polinomio característico es
+\[
+p_T(\lambda) = \det(T - \lambda I) = \prod_{i=1}^n (t_{ii} - \lambda),
+\]
+pues el determinante de una matriz triangular es el producto de los elementos de su diagonal. Por tanto, las raíces de $p_T(\lambda)$ son precisamente los elementos de la diagonal de $T$. En particular, si $D$ es una matriz diagonal, sus autovalores son exactamente las entradas $d_{11}, d_{22}, \dots, d_{nn}$ que aparecen en su diagonal. Este hecho ya lo habíamos verificado en los ejemplos de la sección anterior.
+
+La pregunta natural que surge es: ¿qué matrices pueden transformarse, mediante un cambio de base, en una matriz diagonal? Es decir, ¿cuándo una matriz es semejante a una matriz diagonal? Esta cuestión es central en el álgebra lineal y da origen a la siguiente definición.
+
+Una matriz $A \in \mathbb{R}^{n\times n}$ se dice \textbf{diagonalizable} si es semejante a una matriz diagonal. Es decir, si existe una matriz invertible $P$ y una matriz diagonal $D$ tales que $A = P D P^{-1}$, o equivalentemente $D = P^{-1} A P$. En tal caso, la matriz $P$ se llama la matriz de paso y la diagonal de $D$ contiene los autovalores de $A$ (con sus multiplicidades algebraicas correspondientes).
+
+La cuestión que nos ocupa ahora es determinar cuándo una matriz admite tal representación diagonal. El siguiente resultado proporciona una condición suficiente y, como veremos más adelante, también necesaria.
+
+Si una matriz $A \in \mathbb{R}^{n\times n}$ posee $n$ autovectores linealmente independientes, entonces $A$ es diagonalizable. En efecto, supongamos que $\n{x}_1, \dots, \n{x}_n$ son autovectores de $A$ linealmente independientes, con autovalores asociados $\lambda_1, \dots, \lambda_n$ (no necesariamente distintos). Definamos la matriz $X \in \mathbb{R}^{n\times n}$ cuyas columnas son esos autovectores:
+\[
+X = [\n{x}_1 \; \n{x}_2 \; \cdots \; \n{x}_n].
+\]
+Puesto que las columnas de $X$ son linealmente independientes, $X$ es invertible. Sea $\Lambda$ la matriz diagonal con los autovalores en la diagonal:
+\[
+\Lambda = \operatorname{diag}(\lambda_1, \lambda_2, \dots, \lambda_n).
+\]
+Ahora calculemos el producto $A X$. Por definición de producto matricial, la columna $j$-ésima de $A X$ es $A \n{x}_j$, que por hipótesis es $\lambda_j \n{x}_j$. Por otro lado, la columna $j$-ésima de $X \Lambda$ es $\lambda_j \n{x}_j$ (pues $\Lambda$ es diagonal y multiplica a la derecha a $X$ escalando cada columna por el correspondiente $\lambda_j$). Por lo tanto, las columnas de $A X$ y de $X \Lambda$ coinciden, luego
+\[
+A X = X \Lambda.
+\]
+Multiplicando a la derecha por $X^{-1}$ (que existe porque $X$ es invertible), obtenemos
+\[
+A = X \Lambda X^{-1}.
+\]
+Esto expresa que $A$ es semejante a la matriz diagonal $\Lambda$, con matriz de paso $X$. Por tanto, $A$ es diagonalizable. Hemos probado así que la existencia de $n$ autovectores linealmente independientes es suficiente para garantizar la diagonalización de la matriz.
+
+Ilustremos el proceso de diagonalización con un ejemplo concreto. Consideremos la matriz
+\[
+A = \begin{pmatrix} 0.8 & 0.3 \\ 0.2 & 0.7 \end{pmatrix}.
+\]
+Se trata de una matriz estocástica (sus columnas suman \(1\)) y, como veremos, es diagonalizable.
+
+Comenzamos calculando su polinomio característico:
+\[
+\det(A - \lambda I) = \det\begin{pmatrix} 0.8-\lambda & 0.3 \\ 0.2 & 0.7-\lambda \end{pmatrix}
+= (0.8-\lambda)(0.7-\lambda) - 0.06.
+\]
+Desarrollando, \((0.8-\lambda)(0.7-\lambda) = 0.56 - 1.5\lambda + \lambda^2\), restando \(0.06\) queda \(\lambda^2 - 1.5\lambda + 0.5\). Factorizando, \((\lambda - 1)(\lambda - 0.5) = 0\). Por tanto, los autovalores son \(\lambda_1 = 1\) y \(\lambda_2 = 0.5\).
+
+Ahora hallamos los autovectores. Para \(\lambda_1 = 1\), resolvemos \((A - I)\n{x} = \n{0}\):
+\[
+\begin{pmatrix} -0.2 & 0.3 \\ 0.2 & -0.3 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix},
+\]
+que da la ecuación \(-0.2x_1 + 0.3x_2 = 0\), es decir, \(x_1 = 1.5 x_2\). Elegimos, por simplicidad, \(\n{x}_1 = (3,2)^T\). Verifiquemos:
+\[
+A\n{x}_1 = \begin{pmatrix} 0.8 & 0.3 \\ 0.2 & 0.7 \end{pmatrix} \begin{pmatrix} 3 \\ 2 \end{pmatrix}
+= \begin{pmatrix} 2.4 + 0.6 \\ 0.6 + 1.4 \end{pmatrix} = \begin{pmatrix} 3 \\ 2 \end{pmatrix} = 1 \cdot \n{x}_1.
+\]
+Efectivamente, \(\n{x}_1\) es autovector con autovalor \(1\).
+
+Para \(\lambda_2 = 0.5\), resolvemos \((A - 0.5 I)\n{x} = \n{0}\):
+\[
+\begin{pmatrix} 0.3 & 0.3 \\ 0.2 & 0.2 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix},
+\]
+de donde \(0.3x_1 + 0.3x_2 = 0\), o \(x_1 = -x_2\). Tomamos \(\n{x}_2 = (1,-1)^T\). Comprobamos:
+\[
+A\n{x}_2 = \begin{pmatrix} 0.8 & 0.3 \\ 0.2 & 0.7 \end{pmatrix} \begin{pmatrix} 1 \\ -1 \end{pmatrix}
+= \begin{pmatrix} 0.8 - 0.3 \\ 0.2 - 0.7 \end{pmatrix} = \begin{pmatrix} 0.5 \\ -0.5 \end{pmatrix} = 0.5 \cdot \begin{pmatrix} 1 \\ -1 \end{pmatrix}.
+\]
+Así, \(\n{x}_2\) es autovector con autovalor \(0.5\).
+
+Los dos autovectores \(\n{x}_1 = (3,2)^T\) y \(\n{x}_2 = (1,-1)^T\) son linealmente independientes (su determinante es \(3\cdot(-1) - 2\cdot 1 = -5 \neq 0\)), por lo que forman una base de \(\mathbb{R}^2\). Por el teorema anterior, la matriz \(A\) es diagonalizable. Construimos la matriz de paso
+\[
+X = [\n{x}_1 \; \n{x}_2] = \begin{pmatrix} 3 & 1 \\ 2 & -1 \end{pmatrix},
+\]
+y la matriz diagonal de autovalores
+\[
+\Lambda = \begin{pmatrix} 1 & 0 \\ 0 & 0.5 \end{pmatrix}.
+\]
+Entonces se cumple \(A X = X \Lambda\), y por tanto \(A = X \Lambda X^{-1}\). La inversa de \(X\) es
+\[
+X^{-1} = \frac{1}{-5} \begin{pmatrix} -1 & -1 \\ -2 & 3 \end{pmatrix} = \begin{pmatrix} 0.2 & 0.2 \\ 0.4 & -0.6 \end{pmatrix},
+\]
+como puede comprobarse multiplicando.
+
+La utilidad de esta descomposición se aprecia al calcular potencias de \(A\) aplicadas a un vector. Supongamos que queremos estudiar el comportamiento de \(A^n \n{v}\) para un vector inicial \(\n{v} \in \mathbb{R}^2\). Como \(\{\n{x}_1, \n{x}_2\}\) es una base, existen escalares únicos \(c_1, c_2\) tales que
+\[
+\n{v} = c_1 \n{x}_1 + c_2 \n{x}_2.
+\]
+Entonces, aplicando \(A\) y usando la linealidad,
+\[
+A\n{v} = c_1 A\n{x}_1 + c_2 A\n{x}_2 = c_1 \lambda_1 \n{x}_1 + c_2 \lambda_2 \n{x}_2.
+\]
+Iterando, para todo \(n \in \mathbb{N}\),
+\[
+A^n \n{v} = c_1 \lambda_1^n \n{x}_1 + c_2 \lambda_2^n \n{x}_2 = c_1 \cdot 1^n \cdot (3,2)^T + c_2 \cdot (0.5)^n \cdot (1,-1)^T.
+\]
+Esta expresión revela el comportamiento asintótico: como \(0.5^n \to 0\) cuando \(n\to\infty\), el término correspondiente al autovalor \(0.5\) se desvanece, y \(A^n \n{v} \to c_1 (3,2)^T\). Es decir, la iteración de \(A\) converge a un múltiplo del autovector de autovalor \(1\), lo que refleja la propiedad de estas matrices estocásticas de converger a un estado estacionario.
+
+Para concretar con un ejemplo, tomemos \(\n{v} = (1,0)^T\). Resolvemos \(c_1 \n{x}_1 + c_2 \n{x}_2 = (1,0)^T\):
+\[
+\begin{pmatrix} 3 & 1 \\ 2 & -1 \end{pmatrix} \begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}.
+\]
+La solución es \(c_1 = 0.2\), \(c_2 = 0.4\) (usando \(X^{-1}\) obtenemos \(c = X^{-1}\n{v}\)). Por tanto,
+\[
+A^n \begin{pmatrix}1\\0\end{pmatrix} = 0.2 \cdot 1^n \begin{pmatrix}3\\2\end{pmatrix} + 0.4 \cdot (0.5)^n \begin{pmatrix}1\\-1\end{pmatrix}.
+\]
+Por ejemplo, para \(n=1\), esto da \(0.2(3,2)^T + 0.4\cdot 0.5(1,-1)^T = (0.6,0.4)^T + (0.2,-0.2)^T = (0.8,0.2)^T\), que es exactamente la primera columna de \(A\), como cabía esperar. Para \(n\) grande, el segundo término tiende a cero y \(A^n (1,0)^T \to 0.2(3,2)^T = (0.6,0.4)^T\), que es el vector estacionario (las columnas de \(A\) convergen a \((0.6,0.4)^T\)).
+
+En forma matricial, la potencia \(n\)-ésima de \(A\) se calcula como
+\[
+A^n = X \Lambda^n X^{-1} = \begin{pmatrix} 3 & 1 \\ 2 & -1 \end{pmatrix}
+\begin{pmatrix} 1 & 0 \\ 0 & (0.5)^n \end{pmatrix}
+X^{-1},
+\]
+lo que evita tener que multiplicar la matriz \(A\) repetidamente. Este procedimiento es el núcleo de la utilidad práctica de la diagonalización: reduce el cálculo de potencias de matrices al simple cálculo de potencias de números escalares.
+
+
+
+
+Retomemos ahora las nociones de multiplicidades que introdujimos en la sección de cálculo de autovalores y conectémoslas con la diagonalización.
+
+Recordemos que para cada autovalor $\lambda_i$ de una matriz $A$ definimos dos números: su \textbf{multiplicidad algebraica}, que es la potencia del factor $(\lambda - \lambda_i)$ en el polinomio característico, y su \textbf{multiplicidad geométrica}, que es la dimensión del espacio propio $E_{\lambda_i}$, es decir, el número máximo de autovectores linealmente independientes asociados a $\lambda_i$. Siempre se cumple que
+\[
+1 \le \text{mult. geométrica de } \lambda_i \le \text{mult. algebraica de } \lambda_i.
+\]
+La primera desigualdad es cierta porque todo autovalor tiene al menos un autovector; la segunda es una propiedad general que no demostraremos aquí, pero que es fundamental.
+
+El ejemplo que vimos en la sección anterior, con la matriz
+\[
+A = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{pmatrix},
+\]
+es particularmente ilustrativo. Su polinomio característico es $(2-\lambda)^3$, luego el único autovalor es $\lambda=2$ con multiplicidad algebraica $3$. Sin embargo, al resolver el sistema $(A-2I)\n{v}=0$, obtuvimos que el espacio propio $E_2$ tiene dimensión $2$, pues los autovectores son de la forma $(v_1,0,v_3)^T$. Por tanto, la multiplicidad geométrica de $\lambda=2$ es $2$, estrictamente menor que la algebraica.
+
+¿Qué consecuencias tiene esta deficiencia? Si una matriz es diagonalizable, debe existir una base de $\mathbb{R}^n$ formada por autovectores. Pero en el ejemplo anterior, el espacio propio $E_2$ solo aporta dos direcciones independientes, y no hay otros autovalores que contribuyan con más direcciones, ya que $\lambda=2$ es el único. En total, solo podemos reunir dos autovectores linealmente independientes, no tres. Por tanto, no existe una base de autovectores de $\mathbb{R}^3$, y la matriz no puede ser semejante a una diagonal. En general, si para algún autovalor la multiplicidad geométrica es menor que la algebraica, la matriz carece de suficientes autovectores para completar una base del espacio total. En consecuencia, la matriz no es diagonalizable.
+
+Podemos enunciar entonces el siguiente criterio: una matriz $A \in \mathbb{R}^{n\times n}$ es diagonalizable si y solo si para cada uno de sus autovalores, la multiplicidad geométrica coincide con la multiplicidad algebraica. Cuando esta condición se cumple, podemos escoger, para cada autovalor, una base de su espacio propio; la unión de todas esas bases proporciona exactamente $n$ vectores linealmente independientes, que forman la base de autovectores que necesitamos. Si falla para al menos un autovalor, la matriz es no diagonalizable, y decimos que es defectuosa (o que tiene un defecto espectral). Este es el caso del ejemplo anterior: el defecto es la diferencia $3-2=1$.
+
+En la práctica, cuando una matriz no es diagonalizable, no podemos simplificar su potencia
+mediante una matriz diagonal. No obstante, existe una forma canónica más general, llamada
+forma de Jordan, que permite un tratamiento sistemático de estos casos, aunque su estudio
+queda fuera del alcance de este capítulo.
+
+Nos queda entonces enunciar con precisión lo que venimos usando. La pieza que falta es el
+siguiente lema, que explica por qué autovalores distintos aportan direcciones
+\emph{genuinamente} nuevas.
+
+\begin{thm}[Independencia y criterio de diagonalización]\label{teo:criterio-diag}
+Sea $A\in\mathbb{C}^{n\times n}$.
+\begin{enumerate}
+\item Autovectores correspondientes a autovalores \emph{distintos} son linealmente
+independientes.
+\item Si $A$ tiene $n$ autovalores distintos, entonces $A$ es diagonalizable.
+\item Para todo autovalor $\lambda$ vale
+$\ 1\le \dim E_\lambda \le \text{mult.\ algebraica de }\lambda$.
+\item $A$ es diagonalizable si y sólo si, para \emph{cada} autovalor, la multiplicidad
+geométrica coincide con la algebraica.
+\end{enumerate}
+\end{thm}
+
+La demostración es el ejercicio de desarrollo que sigue. Vale la pena subrayar que el
+recíproco de (2) es falso: la identidad tiene un solo autovalor y es diagonalizable.
+Tener autovalores distintos es cómodo, pero no necesario.
+
+\begin{entrega}{Multiplicidades y el criterio de diagonalización}\label{ent:multiplicidades}
+Este ejercicio demuestra el Teorema~\ref{teo:criterio-diag}. Sea
+$A\in\mathbb{C}^{n\times n}$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Sean $\lambda_1,\dots,\lambda_k$ autovalores distintos de $A$ con autovectores
+$\n{v}_1,\dots,\n{v}_k$. Probar que son linealmente independientes.
+\emph{Sugerencia:} por inducción en $k$; si
+$c_1\n{v}_1+\cdots+c_k\n{v}_k=\n{0}$, aplicar $A-\lambda_kI$ a los dos miembros y ver
+qué término desaparece.
+
+\item Deducir que si $A$ tiene $n$ autovalores distintos entonces es diagonalizable, y
+dar un ejemplo de matriz diagonalizable con autovalores repetidos (para ver que la
+implicación no se invierte).
+
+\item Probar que $\dim E_\lambda\ge1$ para todo autovalor, y que la desigualdad puede
+ser estricta en el otro extremo: exhibir una matriz de $3\times3$ con un autovalor de
+multiplicidad algebraica $3$ y multiplicidad geométrica $1$.
+
+\item \emph{(La desigualdad de las multiplicidades.)} Sea $\lambda$ un autovalor con
+$\dim E_\lambda=g$. Tomar una base $\n{v}_1,\dots,\n{v}_g$ de $E_\lambda$, extenderla a
+una base de $\mathbb{C}^n$ y llamar $P$ a la matriz que tiene esos $n$ vectores como
+columnas. Probar que
+\[
+P^{-1}AP=\begin{bmatrix}\lambda I_g & B\\ 0 & C\end{bmatrix}
+\]
+y deducir, usando el determinante de una matriz triangular por bloques
+(Sección~\ref{sec:schur-complemento}) y que la semejanza conserva el polinomio
+característico, que $(\lambda-t)^g$ divide a $\det(A-tI)$. Concluir que
+\[
+\text{multiplicidad geométrica de }\lambda\ \le\ \text{multiplicidad algebraica de }\lambda .
+\]
+
+\item Probar que la suma de los espacios propios de autovalores distintos es directa:
+si $\n{w}_1+\cdots+\n{w}_k=\n{0}$ con $\n{w}_i\in E_{\lambda_i}$ y los $\lambda_i$
+distintos, entonces todos los $\n{w}_i$ son nulos. \emph{Sugerencia:} es el ítem (a)
+aplicado a los $\n{w}_i$ no nulos.
+
+\item Concluir el criterio: $A$ es diagonalizable si y sólo si
+$\sum_\lambda \dim E_\lambda = n$, y esto ocurre si y sólo si para cada autovalor las
+dos multiplicidades coinciden.
+
+\item Aplicar el criterio a
+\[
+A_1=\begin{bmatrix}2&1&0\\0&2&0\\0&0&2\end{bmatrix},
+\qquad
+A_2=\begin{bmatrix}2&0&0\\0&2&0\\0&0&5\end{bmatrix},
+\qquad
+A_3=\begin{bmatrix}0&1\\-1&0\end{bmatrix},
+\]
+decidiendo en cada caso si es diagonalizable sobre $\mathbb{R}$ y sobre $\mathbb{C}$.
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (d) usa el cálculo de
+determinantes por bloques del Capítulo~\ref{cap:LU}; el ítem (a) es el argumento que
+reaparece cada vez que hay que probar que una familia de autovectores es una base.}}
+\end{entrega}
+
+\section{Autovalores de las matrices que ya conocemos}
+\label{sec:catalogo}
+
+Antes de seguir conviene detenerse a mirar el espectro de las matrices que venimos
+usando desde el primer capítulo. En casi todos los casos los autovalores se leen sin
+calcular ningún polinomio característico: alcanza con reconocer qué hace la matriz.
+
+El caso más simple es el de las \textbf{matrices triangulares}: como el determinante de
+una triangular es el producto de su diagonal, los autovalores son los elementos
+diagonales, y esto incluye a las diagonales y a la identidad.
+
+Otro caso que ya sabemos leer es el de las \textbf{matrices de rango uno}. Si
+$A=\n{u}\n{v}^T$ con $\n{u},\n{v}\neq\n{0}$, entonces para todo $\n{x}$
+\[
+A\n{x}=\n{u}(\n{v}^T\n{x}),
+\]
+de modo que la imagen de $A$ es la recta generada por $\n{u}$. Tomando $\n{x}=\n{u}$
+queda $A\n{u}=(\n{v}^T\n{u})\,\n{u}$: el propio $\n{u}$ es autovector, con autovalor
+$\n{v}^T\n{u}$. Y todo $\n{x}$ ortogonal a $\n{v}$ cumple $A\n{x}=\n{0}$, de modo que
+$E_0=N(A)=\{\n{v}\}^{\perp}$ tiene dimensión $n-1$. En total: los autovalores de
+$\n{u}\n{v}^T$ son $\n{v}^T\n{u}$ y $0$ con multiplicidad $n-1$, y la traza
+$\operatorname{tr}(\n{u}\n{v}^T)=\n{v}^T\n{u}$ confirma la cuenta.
+
+El resto del catálogo queda como ejercicio de desarrollo.
+
+\begin{entrega}{El espectro de las matrices conocidas}\label{ent:catalogo}
+En todos los ítems, identificar los autovalores \emph{con su multiplicidad} y los
+espacios propios, y decidir si la matriz es diagonalizable.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item \emph{(Rango uno.)} Completar el razonamiento del texto: probar que
+$\n{u}\n{v}^T$ es diagonalizable si y sólo si $\n{v}^T\n{u}\neq0$, y describir qué pasa
+geométricamente en el caso $\n{v}^T\n{u}=0$ (mirar
+$\begin{bsmallmatrix}0&1\\0&0\end{bsmallmatrix}$).
+
+\item \emph{(Proyecciones ortogonales.)} Sea $P$ con $P^2=P=P^T$. Probar que sus únicos
+autovalores posibles son $0$ y $1$, que $E_1=C(P)$ y $E_0=N(P)$, que $P$ es siempre
+diagonalizable, y deducir
+\[
+\operatorname{tr}(P)=\rg(P).
+\]
+\emph{(Esta es la relación que quedó anunciada en el Ejercicio~1.10 del
+Capítulo~\ref{cap:algebra-lineal}.)}
+
+\item \emph{(Proyecciones oblicuas.)} Si sólo se pide $P^2=P$, ¿siguen valiendo las
+conclusiones del ítem anterior? Decidir cuáles sí y cuáles no, usando
+$P=\begin{bsmallmatrix}1&1\\0&0\end{bsmallmatrix}$ del Ejercicio de
+desarrollo~\ref{ent:oblicuas}.
+
+\item \emph{(Householder.)} Sea $H=I-2\n{u}\n{u}^T$ con $\|\n{u}\|=1$. Probar
+directamente, sin calcular ningún determinante, que $-1$ es autovalor simple (con
+$E_{-1}=\gen\{\n{u}\}$) y que $1$ tiene multiplicidad $n-1$ (con
+$E_1=\{\n{u}\}^{\perp}$). Deducir $\det H=-1$ y $\operatorname{tr}H=n-2$, que en el
+Capítulo~\ref{cap:ortogonalidad} habíamos obtenido por otro camino.
+
+\item \emph{(Permutación cíclica.)} Sea $P$ la matriz de $n\times n$ que manda
+$(x_1,x_2,\dots,x_n)$ en $(x_2,\dots,x_n,x_1)$. Probar que $P^n=I$ y deducir que sus
+autovalores están entre las raíces $n$-ésimas de la unidad. Verificar que, en efecto,
+son todas: para $\omega=e^{2\pi i/n}$, el vector
+$(1,\omega^{k},\omega^{2k},\dots,\omega^{(n-1)k})^T$ es autovector. Las columnas que
+resultan forman la \textbf{matriz de Fourier} del Ejercicio~3.12.
+
+\item \emph{(Rotaciones de Givens.)} Calcular los autovalores de $G(i,j,\theta)$ del
+Capítulo~\ref{cap:ortogonalidad}. ¿Para qué valores de $\theta$ es diagonalizable sobre
+$\mathbb{R}$?
+
+\item \emph{(Triangular por bloques.)} Probar que los autovalores de
+$\begin{bsmallmatrix}A&B\\0&C\end{bsmallmatrix}$ son los de $A$ junto con los de $C$.
+Dar un ejemplo donde la matriz completa no sea diagonalizable aunque $A$ y $C$ sí lo
+sean.
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (b) cierra una promesa del
+Capítulo~\ref{cap:algebra-lineal} y el (d) una del
+Capítulo~\ref{cap:ortogonalidad}.}}
+\end{entrega}
+
+\section{Potencias y sistemas dinámicos}
+\label{sec:dinamica}
+
+El ejemplo de la matriz de Markov de la sección anterior no era un ejemplo suelto: es el
+prototipo de una situación que aparece por todas partes. Un \textbf{sistema dinámico
+lineal discreto} es una sucesión de vectores definida por
+\[
+\n{x}_{k+1}=A\n{x}_k ,\qquad \n{x}_0 \ \text{dado},
+\]
+de modo que $\n{x}_k=A^k\n{x}_0$. La pregunta es siempre la misma: ¿qué le pasa a
+$\n{x}_k$ cuando $k$ crece?
+
+Si $A$ es diagonalizable, la respuesta es completa. Sea $\n{v}_1,\dots,\n{v}_n$ una base
+de autovectores con autovalores $\lambda_1,\dots,\lambda_n$, y escribamos el dato
+inicial en esa base, $\n{x}_0=c_1\n{v}_1+\cdots+c_n\n{v}_n$. Entonces
+\begin{equation}\label{eq:dinamica}
+\boxed{\ \n{x}_k=A^k\n{x}_0=c_1\lambda_1^{k}\n{v}_1+\cdots+c_n\lambda_n^{k}\n{v}_n\ }
+\end{equation}
+Toda la dinámica está en los $n$ números $\lambda_i^k$: cada dirección propia evoluciona
+por su cuenta, multiplicándose por su autovalor en cada paso. Esa es la razón profunda
+por la que los autovalores importan.
+
+De \eqref{eq:dinamica} se leen de inmediato los tres comportamientos posibles. Llamemos
+\[
+\rho(A)=\max_i|\lambda_i|
+\]
+al \textbf{radio espectral} de $A$. Si $\rho(A)<1$, todos los términos tienden a cero y
+$\n{x}_k\to\n{0}$ para todo dato inicial. Si $\rho(A)>1$, el término de mayor módulo
+domina y $\|\n{x}_k\|\to\infty$ salvo que el dato inicial no tenga componente en esas
+direcciones. Y si $\rho(A)=1$ el sistema se mantiene acotado, con un caso especialmente
+importante: cuando $\lambda=1$ es autovalor y todos los demás tienen módulo menor que
+$1$, la sucesión converge a $c_1\n{v}_1$, la componente del dato inicial en la dirección
+de $\lambda=1$. Eso es exactamente lo que pasaba con la matriz de Markov, y explica por
+qué convergía a un estado estacionario independiente de casi todo.
+
+\begin{remark}
+El radio espectral vuelve a aparecer, ahora medido con normas de matrices, en el
+capítulo de normas de matrices. Allí veremos que $A^k\to0$ si y sólo si
+$\rho(A)<1$, \emph{sin} suponer que $A$ sea diagonalizable.
+\end{remark}
+
+\subsection*{El caso continuo: sistemas de ecuaciones diferenciales}
+
+Todo lo anterior tiene un gemelo continuo, y la analogía es tan exacta que conviene
+verla en paralelo. El punto de partida es la ecuación escalar más simple que existe:
+\[
+u'(t)=a\,u(t),\qquad u(0)=v
+\qquad\Longrightarrow\qquad
+u(t)=v\,e^{at}.
+\]
+La derivada es proporcional a la función, y la solución es una exponencial. Pasemos
+ahora a $n$ funciones acopladas:
+\[
+\n{u}'(t)=A\,\n{u}(t),\qquad \n{u}(0)=\n{v},
+\]
+donde $\n{u}(t)=(u_1(t),\dots,u_n(t))^T$ y la derivada se toma coordenada a coordenada.
+Las ecuaciones están mezcladas entre sí --- cada $u_i'$ depende de todas las $u_j$ ---
+y esa es justamente la dificultad.
+
+Los autovectores la deshacen. Si $A\n{x}=\lambda\n{x}$, la función
+$\n{u}(t)=e^{\lambda t}\n{x}$ cumple
+\[
+\n{u}'(t)=\lambda e^{\lambda t}\n{x}=e^{\lambda t}(A\n{x})=A\,\n{u}(t):
+\]
+\emph{en la dirección de un autovector, el sistema se comporta como la ecuación escalar}.
+Si $A$ es diagonalizable, con base de autovectores $\n{x}_1,\dots,\n{x}_n$, escribimos el
+dato inicial en esa base, $\n{v}=c_1\n{x}_1+\cdots+c_n\n{x}_n$, y sumamos:
+\begin{equation}\label{eq:dinamica-continua}
+\boxed{\ \n{u}(t)=c_1e^{\lambda_1 t}\n{x}_1+c_2e^{\lambda_2 t}\n{x}_2
++\cdots+c_ne^{\lambda_n t}\n{x}_n\ }
+\end{equation}
+Comparada con \eqref{eq:dinamica}, la única diferencia es que $\lambda_i^{k}$ se
+reemplazó por $e^{\lambda_i t}$. En forma matricial esto se escribe
+$\n{u}(t)=e^{At}\n{v}$, donde la \textbf{exponencial de una matriz} se define por la
+misma serie que la exponencial de un número,
+\[
+e^{At}=\sum_{k=0}^{\infty}\frac{(At)^k}{k!},
+\qquad\text{y para $A=X\Lambda X^{-1}$ resulta}\qquad
+e^{At}=X\,e^{\Lambda t}\,X^{-1}
+\]
+con $e^{\Lambda t}=\diag(e^{\lambda_1t},\dots,e^{\lambda_nt})$: otra vez, diagonalizar
+convierte un problema matricial en $n$ problemas escalares.
+
+\begin{remark}[El diccionario entre los dos casos]
+La correspondencia se resume así:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lll@{}}
+\hline
+ & \textbf{discreto} $\n{x}_{k+1}=A\n{x}_k$ & \textbf{continuo} $\n{u}'=A\n{u}$\\
+\hline
+solución & $\n{x}_k=A^k\n{x}_0=\sum c_i\lambda_i^{k}\n{v}_i$
+         & $\n{u}(t)=e^{At}\n{u}_0=\sum c_ie^{\lambda_i t}\n{x}_i$\\
+tiende a $\n{0}$ & $|\lambda_i|<1$ para todo $i$ & $\operatorname{Re}\lambda_i<0$ para todo $i$\\
+región estable & interior del círculo unitario & semiplano izquierdo\\
+queda acotado & $|\lambda_i|\le1$ & $\operatorname{Re}\lambda_i\le0$\\
+\hline
+\end{tabular}
+\end{center}
+Las dos columnas no son independientes: evaluar la solución continua en tiempos
+$t=0,1,2,\dots$ da un sistema discreto con matriz $e^{A}$, cuyos autovalores son
+$e^{\lambda_i}$. Y en efecto $|e^{\lambda}|=e^{\operatorname{Re}\lambda}<1$ si y sólo si
+$\operatorname{Re}\lambda<0$: las dos condiciones de estabilidad son la misma.
+\end{remark}
+
+\begin{remark}[Para qué sirven los autovalores complejos]
+Acá se ve por fin qué significan los autovalores complejos que aparecieron con la
+rotación. Si $\lambda=\alpha+i\beta$, entonces
+\[
+e^{\lambda t}=e^{\alpha t}\big(\cos\beta t+i\,\sen\beta t\big):
+\]
+la parte real de $\lambda$ controla el crecimiento o el amortiguamiento, y la parte
+imaginaria controla la \emph{oscilación}, con frecuencia $\beta$. Un par de autovalores
+complejos conjugados con parte real negativa describe exactamente una oscilación que se
+apaga. Sin números complejos no hay manera de escribir eso.
+\end{remark}
+
+\begin{entrega}{Fibonacci y sistemas dinámicos}\label{ent:fibonacci}
+La sucesión de Fibonacci se define por $F_0=0$, $F_1=1$ y
+$F_{k+1}=F_k+F_{k-1}$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Verificar que, tomando $\n{x}_k=(F_{k+1},F_k)^T$, la recursión se escribe
+$\n{x}_{k+1}=A\n{x}_k$ con
+\[
+A=\begin{bmatrix}1&1\\ 1&0\end{bmatrix},
+\qquad \n{x}_0=\begin{bmatrix}1\\ 0\end{bmatrix}.
+\]
+
+\item Calcular los autovalores de $A$ y comprobar que son
+$\varphi=\frac{1+\sqrt5}{2}$ y $\psi=\frac{1-\sqrt5}{2}$, con
+$\varphi+\psi=1$ y $\varphi\psi=-1$. Hallar autovectores y verificar que $A$ es
+diagonalizable (¿qué ítem del Teorema~\ref{teo:criterio-diag} lo garantiza sin hacer
+cuentas?).
+
+\item Usar \eqref{eq:dinamica} para deducir la \textbf{fórmula de Binet}
+\[
+F_k=\frac{\varphi^{k}-\psi^{k}}{\sqrt5},
+\]
+y verificarla para $k=1,\dots,6$.
+
+\item Como $|\psi|<1$, probar que $F_k$ es el entero más cercano a
+$\varphi^{k}/\sqrt5$ y que $F_{k+1}/F_k\to\varphi$. Explicar, en términos de
+\eqref{eq:dinamica}, por qué el cociente converge al autovalor dominante
+\emph{cualquiera sea} el dato inicial (con tal de que $c_1\neq0$).
+
+\item \emph{(El caso general.)} Sea $A$ diagonalizable con
+$|\lambda_1|>|\lambda_2|\ge\cdots\ge|\lambda_n|$ y sea $\n{x}_0$ con $c_1\neq0$.
+Probar que $\n{x}_k/\lambda_1^{k}\to c_1\n{v}_1$, y caracterizar en términos de
+$\rho(A)$ cuándo $\n{x}_k\to\n{0}$, cuándo queda acotada y cuándo explota.
+
+\item \emph{(Markov.)} Sea $A$ con entradas no negativas y columnas que suman $1$.
+Probar que $\lambda=1$ siempre es autovalor. \emph{Sugerencia:} mirar $A^T$ y el vector
+de unos, y usar la Proposición~\ref{prop:autovalores-traspuesta}. Probar además que todo
+autovalor cumple $|\lambda|\le1$.
+\emph{Sugerencia:} si $A^T\n{y}=\lambda\n{y}$, tomar la coordenada $i$ de mayor módulo
+de $\n{y}$ y acotar.
+
+\item Aplicar lo anterior a
+$A=\begin{bsmallmatrix}0{,}6&0{,}2\\ 0{,}4&0{,}8\end{bsmallmatrix}$: hallar el estado
+estacionario y estimar cuántos pasos hacen falta para que el término transitorio sea
+menor que $10^{-3}$.
+
+\item \emph{(El caso continuo.)} Resolver
+$\n{u}'=A\n{u}$ con $A=\begin{bsmallmatrix}0&1\\ 1&0\end{bsmallmatrix}$ y
+$\n{u}(0)=(1,0)^T$ usando \eqref{eq:dinamica-continua}, y verificar que la solución
+obtenida satisface efectivamente el sistema. Identificar las funciones que aparecen.
+
+\item \emph{(Estabilidad.)} Probar que, si $A$ es diagonalizable, entonces
+$\n{u}(t)\to\n{0}$ para \emph{todo} dato inicial si y sólo si
+$\operatorname{Re}\lambda_i<0$ para todos los autovalores. Comparar con la condición
+$\rho(A)<1$ del caso discreto y explicar, usando el diccionario, por qué las dos
+condiciones dicen lo mismo.
+
+\item \emph{(Un oscilador.)} La ecuación $y''(t)+y(t)=0$ se convierte en un sistema de
+primer orden tomando $\n{u}=(y,y')^T$. Escribir la matriz $A$ correspondiente, calcular
+sus autovalores y deducir, vía \eqref{eq:dinamica-continua}, la solución general
+$y(t)=c\cos t+d\,\sen t$. ¿Qué pasa con $y''+2\mu y'+y=0$ cuando $\mu>0$? Relacionar el
+signo de $\operatorname{Re}\lambda$ con el amortiguamiento.
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (e) es el fundamento del
+método de la potencia de la sección siguiente.}}
+\end{entrega}
+
+\section{El método de la potencia}
+\label{sec:metodo-potencia}
+
+Dijimos al final de la Sección~\ref{sec:calculo} que en la práctica los autovalores no se
+calculan con el polinomio característico. Ahora estamos en condiciones de entender el más
+simple de los métodos que sí se usan, y que además es la contracara constructiva de todo
+lo que acabamos de ver: la fórmula \eqref{eq:dinamica} dice que iterar $A$ \emph{amplifica
+automáticamente} la dirección del autovalor de mayor módulo. Si en lugar de pelear contra
+ese efecto lo aprovechamos, tenemos un algoritmo.
+
+La idea es iterar $\n{x}_{k+1}=A\n{x}_k$ normalizando en cada paso para que el vector no
+se desborde ni se desvanezca:
+\[
+\n{y}_{k+1}=A\n{x}_k,
+\qquad
+\n{x}_{k+1}=\frac{\n{y}_{k+1}}{\|\n{y}_{k+1}\|}.
+\]
+Si hay un autovalor dominante, $\n{x}_k$ se alinea con su autovector y la constante de
+proporcionalidad entre $A\n{x}_k$ y $\n{x}_k$ se acerca al autovalor. El método es
+barato --- cada paso es un producto matriz-vector --- y no necesita conocer la matriz
+completa: alcanza con saber multiplicar por ella, que es la situación típica cuando $A$
+es enorme y rala.
+
+\begin{entrega}{El método de la potencia}\label{ent:potencia}
+Sea $A\in\mathbb{R}^{n\times n}$ diagonalizable con autovalores
+$|\lambda_1|>|\lambda_2|\ge\cdots\ge|\lambda_n|$ y autovectores
+$\n{v}_1,\dots,\n{v}_n$, y sea $\n{x}_0$ un vector con componente no nula en la
+dirección de $\n{v}_1$.
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=3pt,topsep=4pt]
+\item Probar que, si $\n{x}_k$ se define normalizando como arriba, entonces
+$\n{x}_k$ converge a $\pm\n{v}_1/\|\n{v}_1\|$ (el signo puede alternar: explicar
+cuándo). \emph{Sugerencia:} escribir $A^k\n{x}_0$ con \eqref{eq:dinamica} y sacar
+factor común $\lambda_1^k$.
+
+\item Probar que el error se comporta como $\big|\lambda_2/\lambda_1\big|^{k}$: el
+método converge \emph{linealmente} y tanto más rápido cuanto más separado esté el
+autovalor dominante del siguiente.
+
+\item Dar dos maneras de estimar $\lambda_1$ a partir de $\n{x}_k$: el cociente entre
+una coordenada de $A\n{x}_k$ y la misma coordenada de $\n{x}_k$, y el cociente de
+normas $\|A\n{x}_k\|/\|\n{x}_k\|$. Discutir qué pasa con el segundo si $\lambda_1<0$.
+\emph{(Más adelante en el curso veremos una tercera estimación, mejor que estas dos.)}
+
+\item Probar el método sobre $A=\begin{bsmallmatrix}2&1\\ 1&2\end{bsmallmatrix}$ con
+$\n{x}_0=(1,0)^T$: hacer cuatro iteraciones a mano y comparar con los valores exactos
+$\lambda_1=3$, $\n{v}_1=(1,1)^T$. Verificar que el error se divide aproximadamente por
+$3$ en cada paso y explicar por qué.
+
+\item \emph{(Cuándo falla.)} Analizar qué ocurre si $|\lambda_1|=|\lambda_2|$ en los
+tres casos siguientes: $\lambda_2=\lambda_1$ (autovalor repetido), $\lambda_2=-\lambda_1$
+y $\lambda_{1,2}$ complejos conjugados. Ilustrar el segundo caso con
+$\begin{bsmallmatrix}1&0\\ 0&-1\end{bsmallmatrix}$ y el tercero con una rotación.
+
+\item \emph{(Desplazamiento.)} Sea $\sigma$ un escalar que no es autovalor de $A$.
+Usando la Proposición~\ref{prop:potencias}, probar que los autovalores de
+$(A-\sigma I)^{-1}$ son $1/(\lambda_i-\sigma)$ con los \emph{mismos} autovectores.
+Deducir que aplicar el método de la potencia a $(A-\sigma I)^{-1}$ encuentra el
+autovalor de $A$ \emph{más cercano a $\sigma$}, y no el de mayor módulo. ¿Cómo se
+implementa eso sin invertir la matriz? \emph{(Sugerencia: la factorización $LU$ del
+Capítulo~\ref{cap:LU}.)}
+\end{enumerate}
+
+\medskip
+\noindent{\footnotesize\emph{Se entrega por escrito. El ítem (f) es la base de los
+algoritmos que efectivamente se usan; el ítem (b) explica por qué el método puede ser
+desesperadamente lento cuando los dos autovalores dominantes están cerca.}}
+\end{entrega}
+
+\section{Ejercicios}
+
+\begin{enumerate}
+    \item La rotación $Q=\left[\begin{array}{rr}
+\cos\theta&-\sen\theta\\
+\sen\theta&\cos\theta
+\end{array}\right]$ tiene autovalores complejos $\lambda=\cos\theta\pm i\sen\theta$\,:
+ $$Q\left[\begin{array}{r}1\\-i\end{array}\right]=(\cos\theta+i\sen\theta)\left[\begin{array}{r}1\\-i\end{array}\right]
+ \quad\text{ y\; }\quad
+ Q\left[\begin{array}{r}1\\i\end{array}\right]=(\cos\theta-i\sen\theta)\left[\begin{array}{r}1\\i\end{array}\right].$$
+
+\noindent
+% Check that $\lambda_1+\lambda_2$ equals the trace of $Q$ (sum $Q_{11}+Q_{22}$ down the diagonal). Check that $(\lambda_1)(\lambda_2)$ equals the determinant. Check that those complex eigenvectors are orthogonal, using the complex dot product $\bi{\overline{x}}_1\bfcdot\bi{x}_2$ (not just $\bi{x}_1\bfcdot\bi{x}_2$\,!).
+Verifique que $\lambda_1+\lambda_2$ es igual la traza de $Q$. Verifique que $(\lambda_1)(\lambda_2)$ es igual al determinante. Verifique que esos autovectores complejos son ortogonales, usando el producto punto complejo $\bi{\overline{x}}_1\cdot\bi{x}_2$ (¡\,no solo $\bi{x}_1\cdot\bi{x}_2$\,!).
+
+% What is $Q^{-1}$ and what are its eigenvalues\,?
+¿Qué es $Q^{-1}$ y cuáles son sus autovalores\,?
+% \item Compute the eigenvalues and eigenvectors of $A$ and   $A^{-1}$. Check the trace\:!
+\item Calcule los autovalores y autovectores de $A$ y   $A^{-1}$. ¡\,Verifique la traza\,!
+%
+\[
+A=\begin{bmatrix}
+                 0 & 2 \\
+                 1 & 1 \end{bmatrix} \qquad
+A^{-1}=
+\begin{bmatrix}
+            -1/2  & 1 \\
+             1/2  & 0\end{bmatrix}.
+\]
+%
+% $A^{-1}$ has the $\1$ eigenvectors as $A$.  When $A$ has eigenvalues $\la_1$ and $\la_2$, its inverse has eigenvalues $\1$.
+% $A^{-1}$ tiene ____ autovectores que $A$.  Cuando $A$ tiene autovalores $\lambda_1$ y $\lambda_2$, su inversa tiene autovalores _____.
+
+% \item Find the eigenvalues of $A$ and $B$ (easy for triangular
+% matrices) and $A+B$:
+\item Encuentre los autovalores de $A$ y $B$ (fácil en matrices triangulares) y $A+B$:
+$$
+A=\begin{bmatrix} 3&0\\ 1&1\end{bmatrix}\qquad
+B=
+\begin{bmatrix} 1&1\\ 0&3\end{bmatrix}
+\qquad
+A+B=\begin{bmatrix} 4&1\\ 1&4\end{bmatrix}.
+$$
+% Eigenvalues of $A+B$ (\emph{are equal to})(\emph{are not equal to}) eigenvalues of $A$ plus eigenvalues of $B$.
+¿ Los autovalores de $A+B$ coinciden con los autovalores de $A$ mas los autovalores de $B$?
+
+% \item Find the eigenvalues of $A$ and $B$ and $AB$ and $BA$:
+\item Encuentre los autovalores de $A$, $B$, $AB$ y $BA$:
+\[
+\def\quad{\hskip .8em}
+A=\begin{bmatrix} 1&0\\ 1&1\end{bmatrix}\qquad
+B=\begin{bmatrix} 1&2\\ 0&1\end{bmatrix}\qquad
+AB=\begin{bmatrix} 1&2\\ 1&3\end{bmatrix}\qquad
+BA=\begin{bmatrix} 3&2\\ 1&1\end{bmatrix}. \]
+\begin{itemize}
+% 	\item [(a)] Are the eigenvalues of $AB$ equal to eigenvalues of $A$ times eigenvalues of $B$?
+% 	\item [(b)] Are the eigenvalues of $AB$ equal to the eigenvalues of $BA$?
+	\item [(a)] ¿Son los autovalores de $AB$ iguales a los autovalores de $A$ por los autovalores de $B$?
+	\item [(b)] ¿Son los autovalores de $AB$ iguales a los autovalores de $BA$?
+	\end{itemize}
+
+\item
+\begin{itemize}
+% \item[(a)] If you know that $\bi x$ is an eigenvector, the way to find $\la$ is to $\1$.
+% \item[(b)] If you know that $\la$ is an eigenvalue, the way to find  $\bi x$ is to $\1$.
+\item[(a)] Si sabe que $ x$ es un autovector, la manera de encontrar $\lambda$ es:.
+\item[(b)] Si sabe que $\lambda$ es un autovalor, la manera de encontrar  $x$ es:
+\end{itemize}
+
+% \item Find the eigenvalues and eigenvectors for both of these Markov matrices $A$ and $A^\infty$. Explain from those answers why $A^{100}$ is close to $A^\infty$:
+\item Encuentre los autovalores y autovectores para las dos matrices de Markov $A$ y $A^\infty$. Explique a partir de las respuestas por qué $A^{100}$ es cercana a $A^\infty$:
+%
+$$
+A=
+\begin{bmatrix} 0.6&0.2\\ 0.4&0.8\end{bmatrix}
+\quad \hbox{y} \quad
+A^\infty=
+\begin{bmatrix} 1/3&1/3\\ 2/3&2/3\end{bmatrix}.
+$$
+
+% \item {\bf The determinant\index[indx]{Determinant} of $A$ equals the product} $\la_1  \la_2\dotsb \la_n$. Start with the polynomial $\det (A-\la I)$  separated into its $n$ factors (always possible). Then  set $\la=0$\,:
+\item {\bf El determinante de $A$ es igual al producto} $\lambda_1  \lambda_2\dotsb \lambda_n$. Comience escribiendo el polinomio $\det (A-\lambda I)$  separado en sus $n$ factores (siempre posible). Luego tome $\lambda=0$\,:
+$$
+\det(A-\lambda I)=(\lambda_1-\lambda)
+(\lambda_2-\lambda)\dotsb (\lambda_n-\lambda)
+\quad\hbox{entonces}\quad\det A=.
+$$
+% Check this rule in Example 1 where the Markov matrix has $\la
+% =1$ and $\half$.
+Verifique esta regla en la matriz de Markov de la Sección~\ref{sec:semejanza}, que tiene $\lambda_1=1$ y $\lambda_2=1/2$.
+
+% \item The sum of the diagonal entries (the \emph{trace})\index{Trace}\index{Sum of eigenvalues} equals the sum of the eigenvalues:
+\item La suma de los elementos de la diagonal (la \emph{traza}) es igual a la suma de sus autovalores\,:
+$$
+%
+A=\begin{bmatrix} a&b\\ c&d\end{bmatrix}
+\quad\hbox{tiene}\quad
+\det(A-\lambda I)=
+\lambda^2-(a+d)\la+ad-bc=0.
+$$
+%
+% The~quadratic~formula~gives~the~eigenvalues
+La~fórmula~cuadrática~da~los~autovalores
+$\lambda\!=\!(a\!+\!d\!+\!\sqrt{\quad\mathstrut}\,)
+/2$~y~$\lambda\!=\!$.\linebreak
+% Their sum is $\1$. If $A$ has $\la_1=3$ and $\la_2=4$ then $\det (A-\la I)=\1$.
+Su suma es:. Si $A$ tiene $\lambda_1=3$ y $\lambda_2=4$ entonces $\det (A-\lambda I)=$:.
+
+% \item If $A$ has $\la_1=4$ and $\la_2=5$ then $\det (A-\la  I)=(\la-4)(\la-5)=\la^2-9\la+20$. Find three matrices that have  trace $a+d=9$ and determinant $20$ and $\la=4,5$.
+\item Sea $A$ con $\lambda_1=4$ y $\lambda_2=5$, luego $\det (A-\lambda  I)=(\lambda-4)(\lambda-5)=\lambda^2-9\lambda+20=0$. Encuentre tres matrices diferentes de $2\times 2$ que tengan autovalores $\lambda=4,5$. Notar que debe cumplirse que la traza es $9$ y su determinante $20$.
+
+% \item Choose the last rows of $A$ and $C$ to give eigenvalues $4,7$ and $1,2,3$:
+\item Elija las últimas filas de $A$ y $C$ para que tengan autovalores $4,7$ y $1,2,3$ respectivamente:
+\begin{displaymath}
+% \mbox{\bf Companion matrices}\index[indx]{Companion matrix}\qquad\qquad\qquad A=
+\mbox{\bf Matrices compañeras}\qquad\qquad\qquad A=
+  \begin{bmatrix}
+  0 & 1 \\ \ast & \ast
+	\end{bmatrix} \quad C=
+	\begin{bmatrix}
+	0 & 1 & 0 \\
+	0 & 0 & 1 \\
+	\ast & \ast & \ast
+	\end{bmatrix} .
+\end{displaymath}
+% \item \bmembf{The eigenvalues of $A$ equal the eigenvalues of  $A\transp $}.\index[indx]{Eigenvalues of $A\transp$ and $A^k$} This is because $\det (A-\la I)$ equals  $\det(A\transp -\la I)$. That is true because $\1$. Show by an  example that the eigenvectors of $A$ and $A\transp $ are  \emph{not} the same.
+\item La Proposición~\ref{prop:autovalores-traspuesta} dice que $A$ y $A^T$ tienen los
+mismos autovalores. Muestre con un ejemplo de $2\times2$, distinto del de la
+Observación~\ref{obs:autovect-traspuesta}, que los \emph{autovectores} de $A$ y de $A^T$
+no son los mismos. ¿Para qué matrices sí coinciden?
+
+% \item This matrix is singular with rank one. Find three $\la$'s  and three eigenvectors:
+\item La siguiente matriz es singular de rango uno. Encuentre tres $\lambda$ y tres autovectores:
+$$
+A=\begin{bmatrix} 1\\ 2\\ 1\end{bmatrix}
+\begin{bmatrix}2 & 1 & 2\end{bmatrix}=
+\begin{bmatrix} 2&1&2\\ 4&2&4\\ 2&1&2\end{bmatrix}.
+$$
+
+% \item Suppose $A$ and $B$ have the same eigenvalues  $\la_1,\dots,\la_n$ with the same independent eigenvectors $\bi  x_1,\dots,\bi x_n$. Then $A=B$. \emph{Reason}: Any vector $\bi  x$ is a combination $c_1\bi x_1+\cdots+c_n\bi x_n$. What  is~$A\bi x$? What is~$B\bi x$?
+\item Sabemos que si $A$ y $B$ tienen los mismos autovalores  $\lambda_1,\dots,\lambda_n$ con los mismos autovectores independientes $\bi  x_1,\dots,\bi x_n$, entonces $A=B$. Cualquier vector $\bi  x$ se puede escribir como una combinación $c_1\bi x_1+\cdots+c_n\bi x_n$. ¿\, Cómo se relacionan los coeficientes $c_i$ con el producto $A\bi x$\,? ¿\,Y con $B\bi x$\,?
+% \item Suppose $A$ has eigenvalues $0,3,5$ with independent  eigenvectors $\bi u,\bv,\bi w$.
+
+\item Suponga que $A$ tiene autovalores $0,3,5$ con autovectores independientes $\bi u,\bv,\bi w$.
+%
+\begin{itemize}
+% \item[(a)] Give a basis for the nullspace and a basis for the  column space.
+\item[(a)] Dé una base para el espacio nulo y una base para el espacio columna.
+% \item[(b)] Find a particular solution to $A\bi x=\bv+\bi w$.  Find all solutions.
+\item[(b)] Encuentre una solución particular para $A\bi x=\bv+\bi w$.  Encuentre todas las soluciones.
+% \item[(c)] $A\bi x\!=\!\bi u$~has~no~solution.~If~it~did~then~$\1$~would~be~in~the~column~space.
+\item[(c)] $A x\!=\! u$~no~tiene~solución.~Si~la~tuviera~entonces~$\1$~estaría~en~el~espacio~columna.
+\end{itemize}
+
+\item
+\begin{itemize}
+%   \item[(a)] Factor these two matrices into $A=X\Lambda X^{-1}$:
+\item[(a)] Factorice estas dos matrices en $A=X\Lambda X^{-1}$:
+  \begin{displaymath}
+  A=\begin{bmatrix} 1&2\\ 0&3\end{bmatrix} \qquad A=
+  \begin{bmatrix} 1&1\\ 3&3\end{bmatrix}.
+\end{displaymath}
+\item[(b)] Si $A=X\Lambda X^{-1}$ entonces $A^3=(\quad )(\quad )(\quad )$
+  y $A^{-1}=(\quad )(\quad )(\quad )$.
+\end{itemize}
+
+
+% \item Suppose $A=X\Lambda X^{-1}$. What is the eigenvalue matrix  for $A+2I$? What is the eigenvector matrix? Check that  $A+2I=(\quad ) (\quad )(\quad )^{-1}$.
+\item Suponga que $A=X\Lambda X^{-1}$. ¿\,Cuál es la matriz de autovalores para $A+2I$\,? ¿\,Cuál es la matriz de autovectores\,? Verifique que  $A+2I=(\quad ) (\quad )(\quad )^{-1}$.
+
+% % \item True or false: If the columns of $X$ (eigenvectors of $A)$   are linearly independent, then
+% \item Verdadero o falso: Si las columnas de $X$ (autovectores de $A)$ son linealmente independientes, entonces
+% \begin{itemize}
+%   \settowidth\dima{$A$}
+%   \def\S{\leavevmode\hbox to\dima{\hfil$S$\hfil}}
+% %   \item[(a)] $A$ is invertible
+% \item[(a)] $A$ es invertible,
+% %   \hitem[(b)] $A$ is diagonalizable\index[indx]{Diagonalization}
+% \hitem[(b)] $A$ es diagonalizable,
+% %   \item[(c)] \ $X$\ is invertible
+% \item[(c)] $X$ es invertible,
+% %   \!\!\!\hitem[(d)] $X$\ is diagonalizable.
+% \!\!\!\hitem[(d)] $X$\ es diagonalizable.
+% \end{itemize}
+
+% \item Write down the most general matrix that has eigenvectors
+\item Escriba la matriz más general que tiene autovectores
+  $\bigl[\begin{smallmatrix} \bm{1}\\
+    \bm{1}\end{smallmatrix}\bigr]$ y $\bigl[\begin{smallmatrix}
+    \ph \bm{1}\\ 
+    \bold{-1}\end{smallmatrix}\bigr]$.
+
+% \item True or false: If the eigenvalues of $A$ are $2,2,5$ then  the matrix is certainly
+\item Verdadero o falso: Si los autovalores de $A$ son $2,2,5$ entonces la matriz es sin dudas
+\begin{itemize}
+% \item[(a)] invertible
+\item[(a)] invertible,
+% \hitem[(b)] diagonalizable
+\hitem[(b)] diagonalizable,
+% \hitem[(c)] not diagonalizable.
+\hitem[(c)] no diagonalizable.
+\end{itemize}
+
+% \item True or false: If the only eigenvectors of $A$ are
+%   multiples of $(1,4)$ then $A$ has{\sm
+\item Verdadero o falso: Si los únicos autovectores de $A$ son  múltiplos de $(1,4)$ entonces $A$:
+%   {\sm
+% \begin{itemize}
+% \item[(a)] no inverse\kern-3.6pt
+% \hitem[(b)] a repeated eigenvalue\kern-3.6pt
+% \hitem[(c)]\hspace*{-.5em} no diagonalization $X\Lambda X^{-1}$.
+% \end{itemize}}
+
+\vspace{6pt}
+\centerline{(a) no tiene inversa,\qquad
+(b) tiene un autovalor repetido,\qquad
+(c) no tiene diagonalización $X\Lambda X^{-1}$.}
+
+% \item $A^k=X\Lambda^k X^{-1}$ approaches the zero matrix as   $k\to\infty$ if and only if every  $\lambda$ has absolute value less than $\1$. Which of these   matrices has $A^k\to0$?
+
+\item $A^k=X\Lambda^k X^{-1}$ se acerca a la matriz cero cuando $k\to\infty$ si y solo si todo  $\lambda$ tiene valor absoluto menor a $\1$. ¿\,Cuál de estas matrices cumple $A^k\to0$\,?
+\begin{displaymath}
+  A_1=\begin{bmatrix} .6&.9\\ .4&.1\end{bmatrix}\OG
+  A_2=\begin{bmatrix} .6&.9\\ .1&.6\end{bmatrix}.
+\end{displaymath}
+
+
+% \item Diagonalize $A$ and compute $X\Lambda^k X^{-1}$ to prove  this formula for $A^k$:
+\item Diagonalice $A$ y calcule $X\Lambda^k X^{-1}$ y demuestre la fórmula presentada para $A^k$:
+\begin{displaymath}
+  A=\begin{bmatrix} 2 & -1\\
+    -1 & 2\end{bmatrix}
+    \qquad\hbox{tiene}\qquad
+  A^k=\dfrac12\begin{bmatrix} 1+3^k & 1-3^k\\
+    1-3^k & 1+3^k\end{bmatrix}.
+\end{displaymath}
+
+% \item The eigenvalues of $A$ are 1 and 9, and the eigenvalues of $B$  are $-1$ and 9:
+\item Los autovalores de $A$ son 1 y 9, y los autovalores de $B$  son $-1$ y 9:
+\begin{displaymath}
+  A=\begin{bmatrix} 5&4\\ 4&5\end{bmatrix}\OG
+  B=\begin{bmatrix} 4&5\\ 5&4\end{bmatrix}.
+\end{displaymath}
+% Find a matrix square root of $A$ from $R=X\sqrt{\Lambda}\,X^{-1}$. Why is there no real matrix square root of $B$?
+Encuentre una matriz raíz cuadrada de $A$ a partir de $R=X\sqrt{\Lambda}\,X^{-1}$. ¿\,Por qué no hay una matriz real que sea raíz cuadrada de $B$\,?
+
+% \item Suppose the same $X$ diagonalizes both $A$ and $B$. They have the \emph{same eigenvectors} in $A=X\Lambda_1 X^{-1}$ and $B=X\Lambda_2 X^{-1}$. Prove that $AB=BA$.\index{Commuting matrices}
+\item Suponga que la misma $X$ diagonaliza a ambas matrices $A$ y  $B$. Tienen \emph{los mismos autovectores} en $A=X\Lambda_1 X^{-1}$ y $B=X\Lambda_2 X^{-1}$. Demuestre que $AB=BA$.
+
+% \item The transpose of $A=X\Lambda X^{-1}$ is $A^{\trans}=(X^{-1})^{\trans}\Lambda X^{\trans}$. The eigenvectors in $A^{\trans} \bi y=\la \bi y$ are the columns of that matrix $(X^{-1})^\trans$. They are often called \embf{left eigenvectors\index[indx]{Left eigenvectors} of $\bi{A}$}, because $\bi{y}\transp A=\la\bi{y}\transp$. How do you multiply matrices to find this formula for~$A$?
+\item La traspuesta de $A=X\Lambda X^{-1}$ es $A^{\trans}=(X^{-1})^{\trans}\Lambda X^{\trans}$. Los autovectores en $A^{\trans} \bi y=\lambda \bi y$ son las columnas de la matriz $(X^{-1})^\trans$. Se los conoce como \embf{autovectores a izquierda  de $\bi{A}$}, porque $\bi{y}\transp A=\lambda\bi{y}\transp$. ¿\,Cómo multiplicaría matrices para encontrar esta fórmula para~$A$\,?
+
+\vspace{-5pt}
+\begin{displaymath}
+\setlength{\fboxrule}{0.5pt}
+\fbox{$
+\hbox{\bf Suma de matrices de rango $\bm{1}$}\quad
+A=X\Lambda X^{-1}=\lambda_1\bi x_1\bi y^{\trans}_1+\cdots+\lambda_n\bi x_n\bi
+y^{\trans}_n.$}
+\end{displaymath}
+
+% \item \textbf{When is a matrix $\bi{A}$ similar\index[indx]{Similar matrices} to its eigenvalue matrix $\bi{\La}$}\,?
+\item \textbf{¿Cuándo es una matriz $\bi{A}$ semejante a su matriz de autovalores $\bi{\Lambda}$}\,?
+
+% $A$ and $\La$ always have the same eigenvalues. But similarity requires a matrix $B$ with $A=B\La B^{-1}$. Then $B$ is the \1 matrix and $A$ must have $n$ independent \1.
+$A$ y $\Lambda$ siempre tienen los mismos autovalores. Pero para que sean semejantes se requiere de una matriz $B$ con $A=B\Lambda B^{-1}$. Entonces $B$ es la matriz \1 y $A$ debe tener $n$ \1 independientes.
+
+\end{enumerate}
